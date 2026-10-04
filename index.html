@@ -630,9 +630,9 @@ window.renderMyBorrowed = function() {
     }).join('');
 };
 
-        
 
-        window.handleOfferSubmit = async function(e) {
+
+window.handleOfferSubmit = async function(e) {
             e.preventDefault();
             const title = document.getElementById('offer-title').value.trim();
             const category = document.getElementById('offer-category').value;
@@ -640,6 +640,9 @@ window.renderMyBorrowed = function() {
             const maxDays = type === 'Ausleihe' ? document.getElementById('offer-max-days').value : '0';
             const desc = document.getElementById('offer-desc').value.trim();
             const contact = document.getElementById('offer-contact').value.trim() || 'Nachbar';
+            
+            // Capture the new email input
+            const ownerEmail = document.getElementById('offer-email').value.trim();
 
             const newItem = {
                 title,
@@ -648,6 +651,7 @@ window.renderMyBorrowed = function() {
                 maxDays,
                 desc,
                 contact,
+                ownerEmail, // Save the email to the item document
                 status: 'available',
                 ownerId: activeUserId,
                 borrowerId: '',
@@ -674,6 +678,7 @@ window.renderMyBorrowed = function() {
                 showInfoModal("Fehler", "Gegenstand konnte nicht gespeichert werden.");
             }
         };
+
 
 window.borrowItem = function(id) {
     const item = itemsCache.find(i => i.id === id);
