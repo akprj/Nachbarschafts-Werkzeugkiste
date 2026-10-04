@@ -741,6 +741,8 @@ window.borrowItem = function(id) {
     });
 };
 
+
+
 window.returnItem = async function(id) {
     const item = itemsCache.find(i => i.id === id);
     if (!item) return;
@@ -757,15 +759,12 @@ window.returnItem = async function(id) {
         console.error("Error returning:", err);
     }
 };
-                item.status = 'available';
-                item.borrowerId = '';
-                item.borrowedAt = null;
-                showInfoModal("Rückgabe", "Das Werkzeug wurde erfolgreich zurückgegeben.");
-                renderAllViews();
-            } catch (err) {
-                console.error("Error returning:", err);
-            }
-        };
+
+
+
+
+
+        
 
 window.claimGiveaway = function(id) {
     const item = itemsCache.find(i => i.id === id);
