@@ -1065,8 +1065,11 @@ window.handleAdminAuthClick = function() {
 
                 if (configSnap.exists()) {
                     const data = configSnap.data();
-                    // Fallback to check both 'adminPassword' or 'password' keys, with whitespace trim
-                    const storedPassword = (data.adminPassword || data.password || '').trim();
+                    console.log("Database Data:", data);
+                    console.log("Entered Password:", JSON.stringify(pw));
+                    console.log("Stored Password:", JSON.stringify(data.adminPassword));
+
+                    const storedPassword = (data.adminPassword || '').trim();
                     const enteredPassword = (pw || '').trim();
 
                     if (enteredPassword === storedPassword) {
