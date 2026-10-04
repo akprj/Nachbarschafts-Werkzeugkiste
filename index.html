@@ -461,19 +461,25 @@
         }
 
         function updateAdminUIState() {
-            const labelEl = document.getElementById('tab-eintraege-label');
-            const titleEl = document.getElementById('section-eintraege-title');
-            const descEl = document.getElementById('section-eintraege-desc');
-            if (isAdminLoggedIn) {
-                if (labelEl) labelEl.innerText = "Alle Einträge";
-                if (titleEl) titleEl.innerText = "Alle eingetragenen Artikel & Spenden";
-                if (descEl) descEl.innerText = "Übersicht aller im System registrierten Werkzeuge und Gegenstände (Admin-Ansicht).";
-            } else {
-                if (labelEl) labelEl.innerText = "Meine Einträge";
-                if (titleEl) titleEl.innerText = "Meine eingetragenen Artikel";
-                if (descEl) descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Benutzer-ID.";
-            }
+    const labelEl = document.getElementById('tab-eintraege-label');
+    const titleEl = document.getElementById('section-eintraege-title');
+    const descEl = document.getElementById('section-eintraege-desc');
+
+    if (isAdminLoggedIn) {
+        if (labelEl) labelEl.innerText = "Alle Einträge";
+        if (titleEl) titleEl.innerText = "Alle eingetragenen Artikel & zu verschenkende Artikel";
+        if (descEl) {
+            descEl.innerText = "Übersicht aller im System registrierten Werkzeuge und Gegenstände (Admin-Ansicht).";
         }
+    } else {
+        if (labelEl) labelEl.innerText = "Artikelanfragen & Verwalten";
+        if (titleEl) titleEl.innerText = "Artikelanfragen & Verwalten";
+        if (descEl) {
+            descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Benutzer-ID.";
+        }
+    }
+}
+
 
 window.renderLibrary = function() {
     const grid = document.getElementById('library-grid');
