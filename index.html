@@ -1064,9 +1064,12 @@ window.handleAdminAuthClick = function() {
                 const configSnap = await getDoc(configRef);
 
                 if (configSnap.exists()) {
-                    const storedPassword = configSnap.data().adminPassword;
+                    const data = configSnap.data();
+                    // Fallback to check both 'adminPassword' or 'password' keys, with whitespace trim
+                    const storedPassword = (data.adminPassword || data.password || '').trim();
+                    const enteredPassword = (pw || '').trim();
 
-                    if (pw === storedPassword) {
+                    if (enteredPassword === storedPassword) {
                         isAdminLoggedIn = true;
                         document.getElementById('admin-status-badge').classList.remove('hidden');
                         document.getElementById('admin-auth-btn').innerText = "Admin ausloggen";
