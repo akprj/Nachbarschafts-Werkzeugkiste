@@ -254,19 +254,44 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'nachbarschafts-werkzeugkiste-default';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+  // --------------  My Firebase Project SDK starts here ---------------------
+        
+ // 1. Import all required Firebase SDKs from a single, consistent version (e.g., v12.19.0)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-        let app, db, auth;
-        let currentUser = null;
-        let activeUserId = '';
-        let itemsCache = [];
-        let unsubItems = null;
-        let isAdminLoggedIn = false;
+    // 2. Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDUs97-IvWqWCY5VktkzSUJ5j-xgx2sg40",
+        authDomain: "nachbarschafts-werkzeugkiste.firebaseapp.com",
+        projectId: "nachbarschafts-werkzeugkiste",
+        storageBucket: "nachbarschafts-werkzeugkiste.firebasestorage.app",
+        messagingSenderId: "29142381173",
+        appId: "1:29142381173:web:764af12ee6faccb3ecbe3c",
+        measurementId: "G-E1KFZV41GW"
+    };
+
+    // 3. Initialize Firebase services
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // 4. App state variables
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'nachbarschafts-werkzeugkiste-default';
+    let currentUser = null;
+    let activeUserId = '';
+    let itemsCache = [];
+    let unsubItems = null;
+    let isAdminLoggedIn = false;
+
+
+ // --------------  My Firebase Project SDK Import Ends here ---------------------
+
+        
 
         function generateCompactUserId() {
             const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -1083,5 +1108,9 @@ window.confirmReturn = async function(id) {
             return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
     </script>
+
+
+
+    
 </body>
 </html>
