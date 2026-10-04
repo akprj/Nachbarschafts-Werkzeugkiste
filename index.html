@@ -186,7 +186,7 @@
         <!-- 3. Verschenken Tab -->
         <section id="section-verschenken" class="space-y-6 hidden">
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold text-slate-800">Zu verschenken & Nachbarschafts-Spenden</h2>
+                <h2 class="text-xl font-bold text-slate-800">Zu verschenken & Nachbarschafts verstärken</h2>
                 <p class="text-sm text-slate-500 mt-0.5">Dinge, die Sie nicht mehr brauchen, aber zum Verschenken oder Weitergeben bestimmt sind.</p>
             </div>
             <div id="giveaway-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
@@ -505,7 +505,7 @@ window.renderLibrary = function() {
     const filtered = itemsCache.filter(item => {
         const matchSearch = item.title.toLowerCase().includes(search) || (item.desc || '').toLowerCase().includes(search);
         const matchCat = !cat || item.category === cat;
-        const matchType = item.type === 'Ausleihe';
+        const matchType = item.type === 'Ausleihe angefragt';
         return matchSearch && matchCat && matchType;
     });
 
@@ -600,7 +600,7 @@ window.renderLibrary = function() {
                             <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
                             ${isOwner && item.status === 'requested' ? `
     <div class="bg-purple-50 border border-purple-200 text-purple-900 text-xs p-3 rounded mb-3">
-        <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Interesse an Ihrem Spenden-Artikel bekundet!</p>
+        <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Interesse an Ihrem zu verschenkenden Artikel bekundet!</p>
         <p><span class="font-semibold">Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
         <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-purple-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
         <p class="mt-2 text-[10px] text-purple-700 italic border-t border-purple-200 pt-1">Diese Anfrage wurde auch an Ihre verknüpfte E-Mail-Adresse weitergeleitet.</p>
@@ -626,7 +626,7 @@ window.renderMyBorrowed = function() {
     const filtered = itemsCache.filter(item => item.borrowerId === activeUserId && ['requested', 'lent', 'return_pending'].includes(item.status));
 
     if (filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Sie haben derzeit keine Werkzeuge oder Spenden angefragt (ID: ${activeUserId}).</div>`;
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Sie haben derzeit keine Werkzeuge oder zu verschenkenden Artikel angefragt (ID: ${activeUserId}).</div>`;
         return;
     }
 
@@ -657,7 +657,8 @@ window.renderMyBorrowed = function() {
             <div>
                 <div class="flex justify-between items-start mb-2.5">
                     <span class="text-xs font-semibold ${isGiveaway ? 'bg-purple-50 text-purple-900' : 'bg-sky-50 text-sky-900'} px-2.5 py-1 rounded">
-                        ${isGiveaway ? 'Spende' : 'Ausleihe'}
+                        ${isGiveaway ? 'Zu verschenken' : 'Ausleihe'} - Angefragt`
+                        // Result: "Zu verschenken - Angefragt" OR "Ausleihe - Angefragt"
                     </span>
                     ${!isGiveaway ? timeBadge : ''}
                 </div>
