@@ -637,7 +637,6 @@ window.renderMyBorrowed = function() {
                 <div class="flex justify-between items-start mb-2.5">
                     <span class="text-xs font-semibold ${isGiveaway ? 'bg-purple-50 text-purple-900' : 'bg-sky-50 text-sky-900'} px-2.5 py-1 rounded">
                         ${isGiveaway ? 'Zu verschenken' : 'Ausleihe'} - Angefragt
-                        // Result: "Zu verschenken - Angefragt" OR "Ausleihe - Angefragt"
                     </span>
                     ${!isGiveaway ? timeBadge : ''}
                 </div>
@@ -732,7 +731,6 @@ window.renderMyItems = function() {
         `;
     }).join('');
 };
-
 
 
         
