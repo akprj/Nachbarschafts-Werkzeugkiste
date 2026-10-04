@@ -264,7 +264,8 @@
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
+    import { doc, getDoc } from "firebase/firestore";
+        
     // 2. Your web app's Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyDUs97-IvWqWCY5VktkzSUJ5j-xgx2sg40",
@@ -842,11 +843,6 @@ window.returnItem = async function(id) {
 };
 
 
-
-
-
-        
-
 window.claimGiveaway = function(id) {
     const item = itemsCache.find(i => i.id === id);
     if (!item) return;
@@ -957,7 +953,6 @@ window.confirmReturn = async function(id) {
         showInfoModal("Fehler", "Die Rückgabe konnte nicht bestätigt werden.");
     }
 };
-
 
 
         // --- Email Linking & ID Recovery ---
