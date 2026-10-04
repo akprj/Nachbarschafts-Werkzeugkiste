@@ -545,11 +545,11 @@
         };
 
 
-
 window.renderMyBorrowed = function() {
     const grid = document.getElementById('my-borrowed-grid');
     if (!grid) return;
-    const filtered = itemsCache.filter(item => item.borrowerId === activeUserId && item.status === 'requested');
+    
+    const filtered = itemsCache.filter(item => item.borrowerId === activeUserId && ['requested', 'lent', 'return_pending'].includes(item.status));
 
     if (filtered.length === 0) {
         grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Sie haben derzeit keine Werkzeuge oder Spenden angefragt (ID: ${activeUserId}).</div>`;
@@ -558,31 +558,51 @@ window.renderMyBorrowed = function() {
 
     grid.innerHTML = filtered.map(item => {
         const isGiveaway = item.type === 'Verschenken';
+        let timeBadge = '';
+        let actionButton = '';
+
+        if (item.status === 'requested') {
+            timeBadge = `<span class="text-xs bg-amber-100 text-amber-800 px-2.5 py-1 rounded">Wartet auf Bestätigung</span>`;
+            actionButton = `<span class="text-xs text-slate-500 italic">Noch nicht verliehen</span>`;
+        } else if (item.status === 'return_pending') {
+            timeBadge = `<span class="text-xs bg-blue-100 text-blue-800 px-2.5 py-1 rounded">Rückgabe beim Besitzer</span>`;
+            actionButton = `<span class="text-xs text-slate-500 italic">Wartet auf Empfangsbestätigung</span>`;
+        } else if (item.status === 'lent') {
+            const maxDays = parseInt(item.maxDays || '9', 10);
+            const msElapsed = Date.now() - (item.lentAt || Date.now());
+            const daysElapsed = Math.floor(msElapsed / (1000 * 60 * 60 * 24));
+            const daysLeft = maxDays - daysElapsed;
+            const timerColor = daysLeft <= 1 ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800';
+            
+            timeBadge = `<span class="text-xs font-bold ${timerColor} px-2.5 py-1 rounded">${daysLeft} Tage verbleibend</span>`;
+            actionButton = `<button onclick="returnItem('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">Zurückgeben</button>`;
+        }
         
         return `
         <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
             <div>
                 <div class="flex justify-between items-start mb-2.5">
-                    <span class="text-xs font-semibold ${isGiveaway ? 'bg-purple-50 text-purple-900' : 'bg-emerald-50 text-emerald-900'} px-2.5 py-1 rounded">
-                        ${isGiveaway ? 'Angefragt (Spende)' : 'Ausgeliehen'}
+                    <span class="text-xs font-semibold ${isGiveaway ? 'bg-purple-50 text-purple-900' : 'bg-sky-50 text-sky-900'} px-2.5 py-1 rounded">
+                        ${isGiveaway ? 'Spende' : 'Ausleihe'}
                     </span>
-                    ${!isGiveaway ? `<span class="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded">Max. ${item.maxDays || '9'} Tage</span>` : ''}
+                    ${!isGiveaway ? timeBadge : ''}
                 </div>
                 <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
                 <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
             </div>
             <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
                 <span class="text-slate-500 text-xs">Besitzer: ${escapeHtml(item.contact || 'Nachbar')}</span>
-                <button onclick="returnItem('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
-                    ${isGiveaway ? 'Abgeschlossen / Löschen' : 'Zurückgeben'}
-                </button>
+                ${actionButton}
             </div>
         </div>
         `;
     }).join('');
 };
+
+
         
-        window.renderMyItems = function() {
+        
+window.renderMyItems = function() {
     const grid = document.getElementById('my-items-grid');
     if (!grid) return;
     const filtered = itemsCache.filter(item => item.ownerId === activeUserId || isAdminLoggedIn);
@@ -615,17 +635,30 @@ window.renderMyBorrowed = function() {
             </div>
             <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
                 <span class="text-xs ${item.status === 'available' ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'}">
-                    ${item.status === 'available' ? 'Verfügbar' : (isGiveaway ? 'Reserviert' : 'Ausgeliehen')}
+                    ${item.status === 'available' ? 'Verfügbar' : (item.status === 'return_pending' ? 'Wartet auf Bestätigung' : 'Ausgeliehen / Reserviert')}
                 </span>
-                <button onclick="deleteMyItem('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
-                    Löschen
-                </button>
+                
+                <div class="flex gap-2">
+                    ${item.status === 'requested' && isGiveaway ? `
+                        <button onclick="completeGiveaway('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm">Abschließen</button>
+                    ` : ''}
+                    
+                    ${item.status === 'requested' && !isGiveaway ? `
+                        <button onclick="lendItem('${item.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3.5 rounded text-sm">Verleihen</button>
+                    ` : ''}
+
+                    ${item.status === 'return_pending' ? `
+                        <button onclick="confirmReturn('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm shadow">Empfang bestätigen</button>
+                    ` : ''}
+
+                    ${item.status === 'available' ? `
+                        <button onclick="deleteMyItem('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm">Löschen</button>
+                    ` : ''}
+                </div>
             </div>
-        </div>
         `;
     }).join('');
 };
-
 
 
 window.handleOfferSubmit = async function(e) {
@@ -710,17 +743,22 @@ window.borrowItem = function(id) {
     });
 };
 
-        window.returnItem = async function(id) {
-            const item = itemsCache.find(i => i.id === id);
-            if (!item) return;
-            try {
-                if (db) {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
-                        status: 'available',
-                        borrowerId: '',
-                        borrowedAt: null
-                    });
-                }
+window.returnItem = async function(id) {
+    const item = itemsCache.find(i => i.id === id);
+    if (!item) return;
+    try {
+        if (db) {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
+                status: 'return_pending' 
+            });
+        }
+        item.status = 'return_pending';
+        showInfoModal("Rückgabe angefragt", "Der Besitzer wurde benachrichtigt, den Empfang des Werkzeugs zu bestätigen.");
+        renderAllViews();
+    } catch (err) {
+        console.error("Error returning:", err);
+    }
+};
                 item.status = 'available';
                 item.borrowerId = '';
                 item.borrowedAt = null;
@@ -775,6 +813,72 @@ window.claimGiveaway = function(id) {
                 console.error("Error deleting item:", err);
             }
         };
+
+
+
+window.completeGiveaway = async function(id) {
+    if (!confirm("Möchten Sie diese Spende abschließen? Der Artikel wird als 'übergeben' markiert und dauerhaft aus der Liste entfernt.")) {
+        return;
+    }
+    try {
+        if (typeof db !== 'undefined' && db) {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id));
+        }
+        itemsCache = itemsCache.filter(i => i.id !== id);
+        renderAllViews();
+        showInfoModal("Erfolgreich übergeben", "Der Artikel wurde erfolgreich abgeholt bzw. übergeben und aus der Werkzeugkiste entfernt.");
+    } catch (err) {
+        console.error("Error completing giveaway:", err);
+        showInfoModal("Fehler", "Die Spende konnte nicht abgeschlossen werden.");
+    }
+};
+
+window.lendItem = async function(id) {
+    const item = itemsCache.find(i => i.id === id);
+    if (!item) return;
+    try {
+        if (db) {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
+                status: 'lent',
+                lentAt: Date.now()
+            });
+        }
+        item.status = 'lent';
+        item.lentAt = Date.now();
+        showInfoModal("Werkzeug verliehen", "Der Ausleih-Zeitraum hat begonnen!");
+        renderAllViews();
+    } catch (err) {
+        console.error("Error lending:", err);
+    }
+};
+
+window.confirmReturn = async function(id) {
+    const item = itemsCache.find(i => i.id === id);
+    if (!item) return;
+    try {
+        if (db) {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
+                status: 'available',
+                borrowerId: '',
+                borrowedAt: null,
+                lentAt: null,
+                borrowerContact: '',
+                borrowerEmail: ''
+            });
+        }
+        item.status = 'available';
+        item.borrowerId = '';
+        item.borrowedAt = null;
+        item.lentAt = null;
+        item.borrowerContact = '';
+        item.borrowerEmail = '';
+        showInfoModal("Rückgabe bestätigt", "Das Werkzeug ist nun wieder in der Bibliothek verfügbar.");
+        renderAllViews();
+    } catch (err) {
+        console.error("Error confirming return:", err);
+    }
+};
+
 
         // --- Email Linking & ID Recovery ---
         window.openLinkEmailModal = function() {
@@ -940,7 +1044,6 @@ window.claimGiveaway = function(id) {
 };
 
 
-        
         window.toggleModalPasswordVisibility = function() {
             const inputField = document.getElementById('modal-input');
             const eyeBtn = document.getElementById('modal-eye-btn');
