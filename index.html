@@ -257,14 +257,26 @@
 
     <script type="module">
 
-  // --------------  My Firebase Project SDK starts here ---------------------
         
- // 1. Import all required Firebase SDKs from a single, consistent version (e.g., v12.19.0)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-    import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-    import { doc, getDoc } from "firebase/firestore";
+// --------------  My Firebase Project SDK starts here ---------------------
+
+// 1. Import all required Firebase SDKs from a single, consistent version
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { 
+    getFirestore, 
+    collection, 
+    doc, 
+    getDoc, 
+    setDoc, 
+    updateDoc, 
+    deleteDoc, 
+    onSnapshot, 
+    getDocs 
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
         
     // 2. Your web app's Firebase configuration
     const firebaseConfig = {
@@ -308,8 +320,6 @@
 
 
  // --------------  My Firebase Project SDK Import Ends here ---------------------
-
-
 
         
         function generateCompactUserId() {
