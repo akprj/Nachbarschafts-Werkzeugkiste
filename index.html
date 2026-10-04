@@ -766,8 +766,6 @@ window.borrowItem = function(id) {
     });
 };
 
-
-
 window.returnItem = async function(id) {
     const item = itemsCache.find(i => i.id === id);
     if (!item) return;
@@ -784,11 +782,6 @@ window.returnItem = async function(id) {
         console.error("Error returning:", err);
     }
 };
-
-
-
-
-
         
 
 window.claimGiveaway = function(id) {
@@ -835,7 +828,6 @@ window.claimGiveaway = function(id) {
                 console.error("Error deleting item:", err);
             }
         };
-
 
 
 window.completeGiveaway = async function(id) {
