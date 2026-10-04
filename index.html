@@ -291,10 +291,26 @@
     let isAdminLoggedIn = false;
 
 
+    // 5. Expose instances, functions, and state to window scope so global handlers can use them
+    window.db = db;
+    window.auth = auth;
+    window.appId = appId;
+    window.updateDoc = updateDoc;
+    window.deleteDoc = deleteDoc;
+    window.doc = doc;
+    window.collection = collection;
+    
+    window.currentUser = currentUser;
+    window.activeUserId = activeUserId;
+    window.itemsCache = itemsCache;
+    window.isAdminLoggedIn = isAdminLoggedIn;
+
+
  // --------------  My Firebase Project SDK Import Ends here ---------------------
 
-        
 
+
+        
         function generateCompactUserId() {
             const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             const digits = '0123456789';
