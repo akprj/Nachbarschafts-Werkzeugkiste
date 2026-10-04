@@ -894,7 +894,7 @@ window.claimGiveaway = function(id) {
 
 
 window.completeGiveaway = async function(id) {
-    if (!confirm("Möchten Sie diese Spende abschließen? Der Artikel wird als 'übergeben' markiert und dauerhaft aus der Liste entfernt.")) {
+    if (!confirm("Möchten Sie diesen zu verschenkenden Artikel abschließen? Der Artikel wird als 'übergeben' markiert und dauerhaft aus der Liste entfernt.")) {
         return;
     }
     try {
@@ -906,7 +906,7 @@ window.completeGiveaway = async function(id) {
         showInfoModal("Erfolgreich übergeben", "Der Artikel wurde erfolgreich abgeholt bzw. übergeben und aus der Werkzeugkiste entfernt.");
     } catch (err) {
         console.error("Error completing giveaway:", err);
-        showInfoModal("Fehler", "Die Spende konnte nicht abgeschlossen werden.");
+        showInfoModal("Fehler", "Der zu verschenkende Artikel konnte nicht abgeschlossen werden.");
     }
 };
 
