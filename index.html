@@ -833,27 +833,29 @@ window.handleOfferSubmit = async function(e) {
 };
 
         
-
 window.handleBorrowerRequest = function(itemTitle, ownerEmail) {
     if (!ownerEmail) {
         showInfoModal("Fehler", "Für dieses Werkzeug ist keine E-Mail-Adresse des Verleihers hinterlegt.");
         return;
     }
 
-    const requestMsgInput = document.getElementById('req-message'); // Or your existing request text field ID
-    const requestMsg = requestMsgInput ? requestMsgInput.value.trim() : '';
+    const templateParams = {
+        to_email: ownerEmail,
+        item_title: itemTitle,
+        message: `Ein Nachbar hat eine Anfrage für dein Werkzeug "${itemTitle}" gestartet.`
+    };
 
-    const subject = encodeURIComponent(`Anfrage für Werkzeug: ${itemTitle}`);
-    const body = encodeURIComponent(
-        `Hallo,\n\n` +
-        `ein Nachbar hat eine Anfrage für dein Werkzeug "${itemTitle}" gestartet.\n\n` +
-        (requestMsg ? `Nachricht des Anfragenden:\n"${requestMsg}"\n\n` : '') +
-        `Viele Grüße`
-    );
-
-    // Sends directly to the lender's email without including borrower's email in the text
-    window.location.href = `mailto:${ownerEmail}?subject=${subject}&body=${body}`;
+    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+        .then(() => {
+            console.log('Email sent successfully!');
+        })
+        .catch((error) => {
+            console.error('Failed to send email:', error);
+        });
 };
+
+
+        
 
 
         
