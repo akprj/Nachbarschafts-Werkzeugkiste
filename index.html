@@ -1034,27 +1034,51 @@ window.confirmReturn = async function(id) {
             showInfoModal("Admin Kontakt", "Bei Fragen, Problemen oder Moderationsanliegen erreichen Sie das Administrationsteam der Nachbarschaft unter: admin@nachbarschafts-werkzeugkiste.de");
         };
 
+
+
         window.handleAdminAuthClick = function() {
-            if (isAdminLoggedIn) {
-                isAdminLoggedIn = false;
-                document.getElementById('admin-status-badge').classList.add('hidden');
-                document.getElementById('admin-auth-btn').innerText = "Admin Einloggen";
-                showInfoModal("Abgemeldet", "Sie haben den Admin-Modus verlassen.");
-                renderAllViews();
-            } else {
-                openCustomModal("Admin Einloggen", "Bitte geben Sie das Administrator-Passwort ein:", true, "Passwort eingeben...", (pw) => {
-                    if (pw === "$$@P@dm1nNW") {
+    if (isAdminLoggedIn) {
+        isAdminLoggedIn = false;
+        document.getElementById('admin-status-badge').classList.add('hidden');
+        document.getElementById('admin-auth-btn').innerText = "Admin Einloggen";
+        showInfoModal("Abgemeldet", "Sie haben den Admin-Modus verlassen.");
+        renderAllViews();
+    } else {
+        openCustomModal("Admin Einloggen", "Bitte geben Sie das Administrator-Passwort ein:", true, "Passwort eingeben...", async (pw) => {
+            if (!pw) return;
+
+            try {
+                // Fetch the stored password from Firestore
+                const configRef = doc(db, 'app_config', 'admin_settings');
+                const configSnap = await getDoc(configRef);
+
+                if (configSnap.exists()) {
+                    const storedPassword = configSnap.data().adminPassword;
+
+                    if (pw === storedPassword) {
                         isAdminLoggedIn = true;
                         document.getElementById('admin-status-badge').classList.remove('hidden');
                         document.getElementById('admin-auth-btn').innerText = "Admin ausloggen";
                         showInfoModal("Erfolg", "Admin-Modus aktiv!");
                         renderAllViews();
-                    } else if (pw) {
+                    } else {
                         showInfoModal("Fehler", "Falsches Passwort.");
                     }
-                }, 'password', 'Einloggen');
+                } else {
+                    showInfoModal("Fehler", "Konfiguration in Firestore nicht gefunden (app_config/admin_settings).");
+                }
+            } catch (err) {
+                console.error("Firestore read error:", err);
+                showInfoModal("Fehler", "Verbindung zur Datenbank fehlgeschlagen: " + err.message);
             }
-        };
+        }, 'password', 'Einloggen');
+    }
+};
+
+
+
+
+        
 
         // Modal Helpers
         let modalCallback = null;
