@@ -1059,17 +1059,12 @@ window.handleAdminAuthClick = function() {
             if (!pw) return;
 
             try {
-                // Fetch the stored password from Firestore
                 const configRef = doc(db, 'app_config', 'admin_settings');
                 const configSnap = await getDoc(configRef);
 
                 if (configSnap.exists()) {
                     const data = configSnap.data();
-                    console.log("Database Data:", data);
-                    console.log("Entered Password:", JSON.stringify(pw));
-                    console.log("Stored Password:", JSON.stringify(data.adminPassword));
-
-                    const storedPassword = (data.adminPassword || '').trim();
+                    const storedPassword = (Object.values(data)[0] || '').trim();
                     const enteredPassword = (pw || '').trim();
 
                     if (enteredPassword === storedPassword) {
