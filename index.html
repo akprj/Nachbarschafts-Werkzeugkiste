@@ -547,7 +547,7 @@ window.renderLibrary = function() {
                     ${isOwner && item.status === 'requested' ? `
                         <div class="bg-amber-50 border border-amber-200 text-amber-900 text-xs p-3 rounded mb-3">
                             <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Ihr Werkzeug angefragt!</p>
-                            <p><span class="font-semibold">Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
+                            <p><span class="font-semibold">Besitzer Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
                             <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-amber-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
                         </div>
                     ` : ''}
@@ -650,7 +650,7 @@ window.renderMyBorrowed = function() {
                 <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
             </div>
             <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
-                <span class="text-slate-500 text-xs">Besitzer: ${escapeHtml(item.contact || 'Nachbar')}</span>
+                <span class="text-slate-500 text-xs">Besitzer Kontakt: ${escapeHtml(item.contact || 'Nachbar')}</span>
                 ${actionButton}
             </div>
         </div>
