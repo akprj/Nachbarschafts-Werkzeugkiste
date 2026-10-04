@@ -697,7 +697,7 @@ window.renderMyItems = function() {
                 
                 ${item.status === 'requested' ? `
                     <div class="${isGiveaway ? 'bg-purple-50 border-purple-200 text-purple-900' : 'bg-amber-50 border-amber-200 text-amber-900'} border text-xs p-3 rounded mb-3">
-                        <p class="font-bold mb-1.5">🔔 ${isGiveaway ? 'Interesse an Spenden-Artikel!' : 'Ausleih-Anfrage eingegangen!'}</p>
+                        <p class="font-bold mb-1.5">🔔 ${isGiveaway ? 'Interesse an Ihrem zu verschenkenden Artikel!' : 'Ausleih-Anfrage eingegangen!'}</p>
                         <p><span class="font-semibold">Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
                         <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:opacity-80">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
                     </div>
