@@ -665,7 +665,20 @@ window.renderMyItems = function() {
 
     grid.innerHTML = filtered.map(item => {
         const isGiveaway = item.type === 'Verschenken';
-        
+        let statusLabel = 'Verfügbar';
+        let statusColor = 'text-emerald-700 font-semibold';
+
+        if (item.status === 'requested') {
+            statusLabel = isGiveaway ? 'Interesse angefragt' : 'Ausleih-Anfrage eingegangen';
+            statusColor = 'text-amber-700 font-semibold';
+        } else if (item.status === 'lent') {
+            statusLabel = 'Verliehen';
+            statusColor = 'text-blue-800 font-semibold';
+        } else if (item.status === 'return_pending') {
+            statusLabel = 'Rückgabe wartet auf Bestätigung';
+            statusColor = 'text-purple-700 font-semibold';
+        }
+
         return `
         <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
             <div>
@@ -675,35 +688,42 @@ window.renderMyItems = function() {
                 </div>
                 <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
                 <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
+                
                 ${item.status === 'requested' ? `
                     <div class="${isGiveaway ? 'bg-purple-50 border-purple-200 text-purple-900' : 'bg-amber-50 border-amber-200 text-amber-900'} border text-xs p-3 rounded mb-3">
                         <p class="font-bold mb-1.5">🔔 ${isGiveaway ? 'Interesse an Spenden-Artikel!' : 'Ausleih-Anfrage eingegangen!'}</p>
                         <p><span class="font-semibold">Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
                         <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:opacity-80">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
-                        <p class="mt-2 text-[10px] opacity-80 italic border-t border-current pt-1">Diese Anfrage wurde auch an Ihre verknüpfte E-Mail-Adresse weitergeleitet.</p>
                     </div>
                 ` : ''}
             </div>
+
             <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
-                <span class="text-xs ${item.status === 'available' ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'}">
-                    ${item.status === 'available' ? 'Verfügbar' : (item.status === 'return_pending' ? 'Wartet auf Bestätigung' : 'Ausgeliehen / Reserviert')}
-                </span>
+                <span class="text-xs ${statusColor}">${statusLabel}</span>
                 
                 <div class="flex gap-2">
                     ${item.status === 'requested' && isGiveaway ? `
-                        <button onclick="completeGiveaway('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm">Abschließen</button>
+                        <button onclick="completeGiveaway('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                            Übergeben & Abschließen
+                        </button>
                     ` : ''}
                     
                     ${item.status === 'requested' && !isGiveaway ? `
-                        <button onclick="lendItem('${item.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3.5 rounded text-sm">Verleihen</button>
+                        <button onclick="lendItem('${item.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                            Verleihen Bestätigen
+                        </button>
                     ` : ''}
 
                     ${item.status === 'return_pending' ? `
-                        <button onclick="confirmReturn('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm shadow">Empfang bestätigen</button>
+                        <button onclick="confirmReturn('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm shadow transition-colors">
+                            Empfang Bestätigen
+                        </button>
                     ` : ''}
 
                     ${item.status === 'available' ? `
-                        <button onclick="deleteMyItem('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm">Löschen</button>
+                        <button onclick="deleteMyItem('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                            Löschen
+                        </button>
                     ` : ''}
                 </div>
             </div>
@@ -712,6 +732,9 @@ window.renderMyItems = function() {
     }).join('');
 };
 
+
+
+        
 window.handleOfferSubmit = async function(e) {
             e.preventDefault();
             const title = document.getElementById('offer-title').value.trim();
@@ -865,7 +888,6 @@ window.claimGiveaway = function(id) {
         };
 
 
-
 window.completeGiveaway = async function(id) {
     if (!confirm("Möchten Sie diese Spende abschließen? Der Artikel wird als 'übergeben' markiert und dauerhaft aus der Liste entfernt.")) {
         return;
@@ -887,7 +909,7 @@ window.lendItem = async function(id) {
     const item = itemsCache.find(i => i.id === id);
     if (!item) return;
     try {
-        if (db) {
+        if (typeof db !== 'undefined' && db) {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
                 status: 'lent',
                 lentAt: Date.now()
@@ -899,6 +921,7 @@ window.lendItem = async function(id) {
         renderAllViews();
     } catch (err) {
         console.error("Error lending:", err);
+        showInfoModal("Fehler", "Das Werkzeug konnte nicht als verliehen markiert werden.");
     }
 };
 
@@ -906,7 +929,7 @@ window.confirmReturn = async function(id) {
     const item = itemsCache.find(i => i.id === id);
     if (!item) return;
     try {
-        if (db) {
+        if (typeof db !== 'undefined' && db) {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
                 status: 'available',
                 borrowerId: '',
@@ -926,8 +949,10 @@ window.confirmReturn = async function(id) {
         renderAllViews();
     } catch (err) {
         console.error("Error confirming return:", err);
+        showInfoModal("Fehler", "Die Rückgabe konnte nicht bestätigt werden.");
     }
 };
+
 
 
         // --- Email Linking & ID Recovery ---
