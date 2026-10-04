@@ -1037,14 +1037,13 @@ window.openAdminContactModal = function() {
     );
 };
 
-
 window.handleAdminAuthClick = function() {
     if (isAdminLoggedIn) {
         isAdminLoggedIn = false;
         document.getElementById('admin-status-badge').classList.add('hidden');
         document.getElementById('admin-auth-btn').innerText = "Admin Einloggen";
         showInfoModal("Abgemeldet", "Sie haben den Admin-Modus verlassen.");
-        renderAllViews();
+        if (typeof renderAllViews === 'function') renderAllViews();
     } else {
         openCustomModal("Admin Einloggen", "Bitte geben Sie das Administrator-Passwort ein:", true, "Passwort eingeben...", async (pw) => {
             if (!pw) return;
@@ -1062,7 +1061,7 @@ window.handleAdminAuthClick = function() {
                         document.getElementById('admin-status-badge').classList.remove('hidden');
                         document.getElementById('admin-auth-btn').innerText = "Admin ausloggen";
                         showInfoModal("Erfolg", "Admin-Modus aktiv!");
-                        renderAllViews();
+                        if (typeof renderAllViews === 'function') renderAllViews();
                     } else {
                         showInfoModal("Fehler", "Falsches Passwort.");
                     }
@@ -1078,9 +1077,6 @@ window.handleAdminAuthClick = function() {
 };
 
 
-
-
-        
 
         // Modal Helpers
         let modalCallback = null;
