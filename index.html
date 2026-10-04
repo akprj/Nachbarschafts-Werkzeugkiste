@@ -406,7 +406,7 @@
 
         function initFirestoreListener() {
             if (!db) {
-                itemsCache = getMockItems();
+                itemsCache = [];
                 renderAllViews();
                 return;
             }
@@ -420,41 +420,18 @@
                     items.push(data);
                 });
                 
-                if (items.length === 0) {
-                    const mocks = getMockItems();
-                    itemsCache = mocks;
-                    mocks.forEach(async (m) => {
-                        try {
-                            await setDoc(doc(colRef, m.id), m);
-                        } catch(err) {
-                            console.error("Error seeding mock:", err);
-                        }
-                    });
-                } else {
-                    itemsCache = items;
-                }
+                // Set the cache directly to the retrieved items (empty or not)
+                itemsCache = items;
                 renderAllViews();
             }, (error) => {
                 console.error("Firestore snapshot error:", error);
-                if (itemsCache.length === 0) {
-                    itemsCache = getMockItems();
-                }
+                // Clear the cache on error instead of loading mocks
+                itemsCache = [];
                 renderAllViews();
             });
         }
 
-
-        /*   --------- GETTING MOCK ITEMS --------------
         
-        function getMockItems() {
-            return [
-                { id: '1', title: 'Akku-Bohrschrauber', category: 'Heimwerken', type: 'Ausleihe', maxDays: '9', status: 'available', desc: 'Starker 18V Bohrschrauber mit 2 Akkus.', contact: 'Thomas (Hausecke 3)', ownerId: 'ABCD1234', borrowerId: '', borrowedAt: null },
-                { id: '2', title: 'Rasenmäher Benzin', category: 'Garten', type: 'Ausleihe', maxDays: '7', status: 'available', desc: 'Zuverlässig, für mittelgroße Gärten.', contact: 'Sabine', ownerId: 'WXYZ5678', borrowerId: '', borrowedAt: null },
-                { id: '3', title: 'Alte Kommode (Holz)', category: 'Haushalt', type: 'Verschenken', status: 'available', desc: 'Guter Zustand, nur Abholung.', contact: 'Michael', ownerId: 'TEST9999', borrowerId: '', borrowedAt: null }
-            ];
-        }
-
-*/
 
         window.switchTab = function(tabName) {
             ['bibliothek', 'anbieten', 'verschenken', 'ausleihen', 'eintraege'].forEach(t => {
