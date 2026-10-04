@@ -325,40 +325,42 @@
             return /^[A-Z]{4}[0-9]{4}$/.test(id);
         }
 
+
+
+
         window.onload = async function() {
-            try {
-                if (Object.keys(firebaseConfig).length > 0) {
-                    app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    auth = getAuth(app);
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                    currentUser = auth.currentUser;
-                }
-            } catch (e) {
-                console.error("Firebase init error:", e);
-            }
+    try {
+        // Firebase is already initialized globally above, just handle authentication
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+            await signInAnonymously(auth);
+        }
+        currentUser = auth.currentUser;
+    } catch (e) {
+        console.error("Firebase auth error:", e);
+    }
 
-            let storedId = localStorage.getItem('nb_user_id');
-            let isFirstTime = false;
-            
-            // If storedId is missing or doesn't match the new 4-letter + 4-digit format, issue a new one
-            if (!storedId || !isValidNewFormat(storedId)) {
-                storedId = generateCompactUserId();
-                localStorage.setItem('nb_user_id', storedId);
-                isFirstTime = true;
-            }
-            activeUserId = storedId;
-            updateUserIdDisplays();
-            initFirestoreListener();
+    let storedId = localStorage.getItem('nb_user_id');
+    let isFirstTime = false;
+    
+    // If storedId is missing or doesn't match the new 4-letter + 4-digit format, issue a new one
+    if (!storedId || !isValidNewFormat(storedId)) {
+        storedId = generateCompactUserId();
+        localStorage.setItem('nb_user_id', storedId);
+        isFirstTime = true;
+    }
+    activeUserId = storedId;
+    updateUserIdDisplays();
+    initFirestoreListener();
 
-            if (isFirstTime) {
-                showWelcomeModal(activeUserId);
-            }
-        };
+    if (isFirstTime) {
+        showWelcomeModal(activeUserId);
+    }
+};
+
+
+                
 
         function updateUserIdDisplays() {
             const el = document.getElementById('global-user-id-display');
