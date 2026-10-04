@@ -799,12 +799,63 @@ window.handleOfferSubmit = async function(e) {
         };
 
 
+        window.handleSendRequestEmail = function(itemTitle, ownerEmail) {
+    const borrowerEmailInput = document.getElementById('req-email');
+    const borrowerEmail = borrowerEmailInput ? borrowerEmailInput.value.trim() : '';
+
+    if (!borrowerEmail) {
+        showInfoModal("Fehler", "Bitte geben Sie Ihre E-Mail-Adresse ein.");
+        return;
+    }
+
+    if (!ownerEmail) {
+        showInfoModal("Fehler", "Für dieses Werkzeug ist keine E-Mail-Adresse des Verleihers hinterlegt.");
+        return;
+    }
+
+    const subject = encodeURIComponent(`Anfrage für Werkzeug: ${itemTitle}`);
+    const body = encodeURIComponent(
+        `Hallo,\n\n` +
+        `ich möchte gerne folgendes Werkzeug ausleihen: "${itemTitle}".\n\n` +
+        `Meine E-Mail-Adresse für die Rückmeldung lautet: ${borrowerEmail}\n\n` +
+        `Viele Grüße`
+    );
+
+    window.location.href = `mailto:${ownerEmail}?subject=${subject}&body=${body}`;
+};
+
+        
+
+window.handleBorrowerRequest = function(itemTitle, ownerEmail) {
+    if (!ownerEmail) {
+        showInfoModal("Fehler", "Für dieses Werkzeug ist keine E-Mail-Adresse des Verleihers hinterlegt.");
+        return;
+    }
+
+    const requestMsgInput = document.getElementById('req-message'); // Or your existing request text field ID
+    const requestMsg = requestMsgInput ? requestMsgInput.value.trim() : '';
+
+    const subject = encodeURIComponent(`Anfrage für Werkzeug: ${itemTitle}`);
+    const body = encodeURIComponent(
+        `Hallo,\n\n` +
+        `ein Nachbar hat eine Anfrage für dein Werkzeug "${itemTitle}" gestartet.\n\n` +
+        (requestMsg ? `Nachricht des Anfragenden:\n"${requestMsg}"\n\n` : '') +
+        `Viele Grüße`
+    );
+
+    // Sends directly to the lender's email without including borrower's email in the text
+    window.location.href = `mailto:${ownerEmail}?subject=${subject}&body=${body}`;
+};
+
+
+        
 window.borrowItem = function(id) {
     const item = itemsCache.find(i => i.id === id);
     if (!item) return;
     
     openRequestModal("Werkzeug ausleihen", async (reqContact, reqEmail) => {
         if (!reqContact || !reqEmail) {
+            // Trigger mailto email to lender
             showInfoModal("Fehler", "Bitte füllen Sie beide Felder aus (Name/Adresse & E-Mail).");
             return;
         }
@@ -824,6 +875,10 @@ window.borrowItem = function(id) {
             item.borrowedAt = Date.now();
             item.borrowerContact = reqContact;
             item.borrowerEmail = reqEmail;
+
+            if (item.ownerEmail) {
+                handleBorrowerRequest(item.title, item.ownerEmail);
+            }
             
             showInfoModal("Ausleihe erfolgreich", "Das Werkzeug wurde für Sie reserviert / ausgeliehen. Der Besitzer wurde benachrichtigt!");
             renderAllViews();
