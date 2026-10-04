@@ -1030,13 +1030,15 @@ window.confirmReturn = async function(id) {
                 }, 'email', 'Wiederherstellen');
         };
 
-        window.openAdminContactModal = function() {
-            showInfoModal("Admin Kontakt", "Bei Fragen, Problemen oder Moderationsanliegen erreichen Sie das Administrationsteam der Nachbarschaft unter: admin@nachbarschafts-werkzeugkiste.de");
-        };
+window.openAdminContactModal = function() {
+    showInfoModal(
+        "Admin Kontakt", 
+        "Bei Fragen, Problemen oder Moderationsanliegen erreichen Sie das Administrationsteam der Nachbarschaft unter:<br><br><a href='mailto:noumanahmad1987@gmail.com' class='text-blue-600 underline hover:text-blue-800 font-medium'>noumanahmad1987@gmail.com</a>"
+    );
+};
 
 
-
-        window.handleAdminAuthClick = function() {
+window.handleAdminAuthClick = function() {
     if (isAdminLoggedIn) {
         isAdminLoggedIn = false;
         document.getElementById('admin-status-badge').classList.add('hidden');
