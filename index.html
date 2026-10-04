@@ -475,64 +475,90 @@
             }
         }
 
-        window.renderLibrary = function() {
-            const grid = document.getElementById('library-grid');
-            if (!grid) return;
-            const search = (document.getElementById('search-input')?.value || '').toLowerCase();
-            const cat = document.getElementById('filter-category')?.value || '';
+window.renderLibrary = function() {
+    const grid = document.getElementById('library-grid');
+    if (!grid) return;
+    const search = (document.getElementById('search-input')?.value || '').toLowerCase();
+    const cat = document.getElementById('filter-category')?.value || '';
 
-            const filtered = itemsCache.filter(item => {
-                const matchSearch = item.title.toLowerCase().includes(search) || (item.desc || '').toLowerCase().includes(search);
-                const matchCat = !cat || item.category === cat;
-                const matchType = item.type === 'Ausleihe';
-                return matchSearch && matchCat && matchType;
-            });
+    const filtered = itemsCache.filter(item => {
+        const matchSearch = item.title.toLowerCase().includes(search) || (item.desc || '').toLowerCase().includes(search);
+        const matchCat = !cat || item.category === cat;
+        const matchType = item.type === 'Ausleihe';
+        return matchSearch && matchCat && matchType;
+    });
 
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Keine Werkzeuge gefunden.</div>`;
-                return;
-            }
+    if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Keine Werkzeuge gefunden.</div>`;
+        return;
+    }
 
-            grid.innerHTML = filtered.map(item => {
-                const maxDays = item.maxDays || '9';
-                const isOwner = item.ownerId === activeUserId;
-                return `
-                    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start gap-2 mb-2.5 flex-wrap">
-                                <span class="text-xs font-semibold bg-blue-50 text-blue-900 px-2.5 py-1 rounded">${escapeHtml(item.category)}</span>
-                                <span class="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded">Max. ${maxDays} Tage</span>
-                            </div>
-                            <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
-                            <p class="text-sm text-slate-600 mb-4 line-clamp-2">${escapeHtml(item.desc || '')}</p>
-                            ${isOwner && item.status === 'requested' ? `
-    <div class="bg-amber-50 border border-amber-200 text-amber-900 text-xs p-3 rounded mb-3">
-        <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Ihr Werkzeug angefragt!</p>
-        <p><span class="font-semibold">Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
-        <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-amber-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
-        <p class="mt-2 text-[10px] text-amber-700 italic border-t border-amber-200 pt-1">Diese Anfrage wurde auch an Ihre verknüpfte E-Mail-Adresse weitergeleitet.</p>
-    </div>
-` : ''}
-                        </div>
-                        <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
-                            <span class="text-slate-500 text-xs">Kontakt: ${escapeHtml(item.contact || 'Nachbar')}</span>
-                            ${item.status === 'available' ? `
-                                <button onclick="borrowItem('${item.id}')" class="bg-blue-900 hover:bg-blue-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
-                                    Ausleihen
-                                </button>
-                            ` : `
-                                ${item.borrowerId === activeUserId || isAdminLoggedIn ? `
-                                    <button onclick="returnItem('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
-                                        Zurückgeben
-                                    </button>
-                                ` : `<span class="text-slate-400 italic text-xs">Ausgeliehen</span>`}
-                            `}
-                        </div>
-                    </div>
+    grid.innerHTML = filtered.map(item => {
+        const maxDays = item.maxDays || '9';
+        const isOwner = item.ownerId === activeUserId;
+        const isBorrower = item.borrowerId === activeUserId;
+
+        // Build button or status indicator for each item
+        let actionUI = '';
+
+        if (item.status === 'available') {
+            actionUI = `
+                <button onclick="borrowItem('${item.id}')" class="bg-blue-900 hover:bg-blue-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                    Ausleihen
+                </button>
+            `;
+        } else if (isBorrower || isAdminLoggedIn) {
+            // Only the borrower (or admin) gets the "Zurückgeben" option for returning early or returning
+            if (item.status === 'return_pending') {
+                actionUI = `<span class="text-blue-800 font-medium text-xs bg-blue-50 px-2.5 py-1.5 rounded">Rückgabe läuft</span>`;
+            } else {
+                actionUI = `
+                    <button onclick="returnItem('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                        Zurückgeben
+                    </button>
                 `;
-            }).join('');
-        };
+            }
+        } else {
+            // Other users only see status labels
+            if (item.status === 'requested') {
+                actionUI = `<span class="text-amber-800 font-medium text-xs bg-amber-100 px-2.5 py-1.5 rounded">Angefragt</span>`;
+            } else if (item.status === 'lent') {
+                actionUI = `<span class="text-slate-600 font-medium text-xs bg-slate-100 px-2.5 py-1.5 rounded">Ausgeliehen</span>`;
+            } else if (item.status === 'return_pending') {
+                actionUI = `<span class="text-slate-500 font-medium text-xs bg-slate-100 px-2.5 py-1.5 rounded">Rückgabe läuft</span>`;
+            }
+        }
 
+        return `
+            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start gap-2 mb-2.5 flex-wrap">
+                        <span class="text-xs font-semibold bg-blue-50 text-blue-900 px-2.5 py-1 rounded">${escapeHtml(item.category)}</span>
+                        <span class="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded">Max. ${maxDays} Tage</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
+                    <p class="text-sm text-slate-600 mb-4 line-clamp-2">${escapeHtml(item.desc || '')}</p>
+                    ${isOwner && item.status === 'requested' ? `
+                        <div class="bg-amber-50 border border-amber-200 text-amber-900 text-xs p-3 rounded mb-3">
+                            <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Ihr Werkzeug angefragt!</p>
+                            <p><span class="font-semibold">Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
+                            <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-amber-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
+                    <span class="text-slate-500 text-xs">Kontakt: ${escapeHtml(item.contact || 'Nachbar')}</span>
+                    ${actionUI}
+                </div>
+            </div>
+        `;
+    }).join('');
+};
+
+
+        
+        
+        
         window.renderGiveaways = function() {
             const grid = document.getElementById('giveaway-grid');
             if (!grid) return;
