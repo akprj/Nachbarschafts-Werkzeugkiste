@@ -816,7 +816,9 @@ window.handleBorrowerRequest = function(itemTitle, ownerEmail, borrowerContact, 
     const templateParams = {
         to_email: ownerEmail,
         item_title: itemTitle,
-        message: `Ein Nachbar (${borrowerContact}, E-Mail: ${borrowerEmail}) hat eine Anfrage für dein Werkzeug "${itemTitle}" gestartet.`
+        borrower_contact: borrowerContact, // <-- ADDED
+        borrower_email: borrowerEmail,     // <-- ADDED
+        message: `Ein Nachbar (${borrowerContact}, E-Mail: ${borrowerEmail}) hat eine Anfrage für Ihr Werkzeug/Ihren Gegenstand "${itemTitle}" gestartet.`
     };
 
     emailjs.send('service_83hht9o', 'template_9lyyyce', templateParams)
