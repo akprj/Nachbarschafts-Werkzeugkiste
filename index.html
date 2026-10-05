@@ -805,33 +805,9 @@ window.handleOfferSubmit = async function(e) {
         };
 
 
-        window.handleSendRequestEmail = function(itemTitle, ownerEmail) {
-    const borrowerEmailInput = document.getElementById('req-email');
-    const borrowerEmail = borrowerEmailInput ? borrowerEmailInput.value.trim() : '';
 
-    if (!borrowerEmail) {
-        showInfoModal("Fehler", "Bitte geben Sie Ihre E-Mail-Adresse ein.");
-        return;
-    }
-
-    if (!ownerEmail) {
-        showInfoModal("Fehler", "Für dieses Werkzeug ist keine E-Mail-Adresse des Verleihers hinterlegt.");
-        return;
-    }
-
-    const subject = encodeURIComponent(`Anfrage für Werkzeug: ${itemTitle}`);
-    const body = encodeURIComponent(
-        `Hallo,\n\n` +
-        `ich möchte gerne folgendes Werkzeug ausleihen: "${itemTitle}".\n\n` +
-        `Meine E-Mail-Adresse für die Rückmeldung lautet: ${borrowerEmail}\n\n` +
-        `Viele Grüße`
-    );
-
-    window.location.href = `mailto:${ownerEmail}?subject=${subject}&body=${body}`;
-};
-
-        
-window.handleBorrowerRequest = function(itemTitle, ownerEmail) {
+// 1. EmailJS Handler (includes borrower contact details in message)
+window.handleBorrowerRequest = function(itemTitle, ownerEmail, borrowerContact, borrowerEmail) {
     if (!ownerEmail) {
         showInfoModal("Fehler", "Für dieses Werkzeug ist keine E-Mail-Adresse des Verleihers hinterlegt.");
         return;
@@ -840,27 +816,25 @@ window.handleBorrowerRequest = function(itemTitle, ownerEmail) {
     const templateParams = {
         to_email: ownerEmail,
         item_title: itemTitle,
-        message: `Ein Nachbar hat eine Anfrage für dein Werkzeug "${itemTitle}" gestartet.`
+        message: `Ein Nachbar (${borrowerContact}, E-Mail: ${borrowerEmail}) hat eine Anfrage für dein Werkzeug "${itemTitle}" gestartet.`
     };
 
     emailjs.send('service_83hht9o', 'template_9lyyyce', templateParams)
         .then(() => {
-            console.log('Email sent successfully!');
+            console.log('Email sent successfully via EmailJS!');
         })
         .catch((error) => {
-            console.error('Failed to send email:', error);
+            console.error('Failed to send email via EmailJS:', error);
         });
 };
 
-
-        
+// 2. Borrow Item Handler
 window.borrowItem = function(id) {
     const item = itemsCache.find(i => i.id === id);
     if (!item) return;
     
     openRequestModal("Werkzeug ausleihen", async (reqContact, reqEmail) => {
         if (!reqContact || !reqEmail) {
-            // Trigger mailto email to lender
             showInfoModal("Fehler", "Bitte füllen Sie beide Felder aus (Name/Adresse & E-Mail).");
             return;
         }
@@ -881,8 +855,9 @@ window.borrowItem = function(id) {
             item.borrowerContact = reqContact;
             item.borrowerEmail = reqEmail;
 
+            // Trigger silent background email via EmailJS
             if (item.ownerEmail) {
-                handleBorrowerRequest(item.title, item.ownerEmail);
+                handleBorrowerRequest(item.title, item.ownerEmail, reqContact, reqEmail);
             }
             
             showInfoModal("Ausleihe erfolgreich", "Das Werkzeug wurde für Sie reserviert / ausgeliehen. Der Besitzer wurde benachrichtigt!");
@@ -893,7 +868,9 @@ window.borrowItem = function(id) {
     });
 };
 
+        
 
+        
 
 window.returnItem = async function(id) {
     const item = itemsCache.find(i => i.id === id);
@@ -1186,8 +1163,8 @@ window.handleAdminAuthClick = function() {
     
     const htmlContent = `
         <p class="mb-3 text-slate-700 font-medium">Bitte geben Sie Ihre Kontaktdaten ein, damit der Besitzer Sie erreichen kann.</p>
-        <input type="text" id="req-contact" class="w-full border border-slate-300 rounded-lg p-3 mb-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Name & Adresse (z.B. Max, Haus Nr. 5)">
-        <input type="email" id="req-email" class="w-full border border-slate-300 rounded-lg p-3 mb-2 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Ihre E-Mail-Adresse/Anfrage per E-Mail senden">
+        <input type="text" id="req-contact" class="w-full border border-slate-300 rounded-lg p-3 mb-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Name & Adresse (z.B. Maximus, Ludwigstraße Haus Nr. 5)">
+        <input type="email" id="req-email" class="w-full border border-slate-300 rounded-lg p-3 mb-2 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Ihre E-Mail-Adresse">
         <div class="bg-blue-50 border border-blue-200 rounded p-2.5 mt-2">
             <p class="text-xs text-blue-800 leading-tight">
                 <strong>Datenschutz-Hinweis:</strong> Ihre E-Mail-Adresse wird dem Ausleiher / Beschenkten nicht öffentlich angezeigt. Sie wird ausschließlich dazu verwendet, dem Besitzer die Benachrichtigungsdetails per E-Mail und in seiner privaten Ansicht bereitzustellen.
