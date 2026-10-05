@@ -205,7 +205,7 @@
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
                     <h2 class="text-xl font-bold text-slate-800">Meine aktiven Ausleihen & Anfragen</h2>
-                    <p class="text-sm text-slate-500 mt-0.5">Übersicht aller Werkzeuge, die Sie derzeit angefragt oder geliehen haben. Verwaltet über Ihre Benutzer-ID.</p>
+                    <p class="text-sm text-slate-500 mt-0.5">Übersicht aller Werkzeuge, die Sie derzeit angefragt oder geliehen haben. Verwaltet über Ihre Konto-ID.</p>
                 </div>
                 <button onclick="openSwitchUserIdModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 transition-colors whitespace-nowrap">
                     🔑 ID wechseln
@@ -221,7 +221,7 @@
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
                     <h2 id="section-eintraege-title" class="text-xl font-bold text-slate-800">Artikelanfragen & Verwalten</h2>
-                    <p id="section-eintraege-desc" class="text-sm text-slate-500 mt-0.5">Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Benutzer-ID.</p>
+                    <p id="section-eintraege-desc" class="text-sm text-slate-500 mt-0.5">Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Konto-ID.</p>
                 </div>
                 <button onclick="openSwitchUserIdModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 transition-colors whitespace-nowrap">
                     🔑 ID wechseln
@@ -383,7 +383,7 @@
             const text = activeUserId;
             if (window.clipboardData && window.clipboardData.setData) {
                 window.clipboardData.setData("Text", text);
-                showInfoModal("Erfolg", "Benutzer-ID in die Zwischenablage kopiert!");
+                showInfoModal("Erfolg", "Konto-ID in die Zwischenablage kopiert!");
             } else {
                 const dummy = document.createElement("textarea");
                 document.body.appendChild(dummy);
@@ -391,17 +391,17 @@
                 dummy.select();
                 document.execCommand("copy");
                 document.body.removeChild(dummy);
-                showInfoModal("Erfolg", "Benutzer-ID '" + text + "' in die Zwischenablage kopiert!");
+                showInfoModal("Erfolg", "Konto-ID '" + text + "' in die Zwischenablage kopiert!");
             }
         };
 
         function showWelcomeModal(id) {
-            const title = "Wichtiger Hinweis zu Ihrer Benutzer-ID (Dieses Browser/Gerät)";
+            const title = "Wichtiger Hinweis zu Ihrer Konto-ID (auf diesem Gerät/Browser)";
             const msgHtml = `
-                <p>Ihre zugewiesene Benutzer-ID lautet:</p>
+                <p>Ihre zugewiesene Konto-ID lautet:</p>
                 <div class="my-3"><span class="font-mono bg-blue-100 text-blue-900 font-bold px-3.5 py-2 rounded text-xl select-all inline-block">${id}</span></div>
                 <p>Diese ID ist der Schlüssel, mit dem Sie alle darüber erstellten Einträge und Anfragen einsehen und verwalten können</p>
-                <p>Sie können Ihre ID auch jederzeit manuell eingeben oder mit einer E-Mail-Adresse verknüpfen. Nach der Verknüpfung können Sie Ihre ID darüber jederzeit wiederherstellen, falls Sie sie in Zukunft vergessen sollten</p>
+                <p>Sie können Ihre Konto-ID auch jederzeit manuell eingeben oder mit einer E-Mail-Adresse verknüpfen. Nach der Verknüpfung können Sie Ihre Konto-ID darüber jederzeit wiederherstellen, falls Sie sie in Zukunft vergessen sollten</p>
             `;
             showHtmlModal(title, msgHtml);
         }
@@ -478,7 +478,7 @@
             } else {
                 if (labelEl) labelEl.innerText = "Artikelanfragen & Verwalten";
                 if (titleEl) titleEl.innerText = "Artikelanfragen & Verwalten";
-                if (descEl) descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Benutzer-ID.";
+                if (descEl) descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Konto-ID.";
             }
         }
 
@@ -607,7 +607,7 @@
                     <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 p-6">
                         <p class="text-slate-500 text-sm mb-3">Sie haben derzeit keine Werkzeuge oder Artikel angefragt (Aktuelle ID: <strong class="font-mono text-blue-900">${activeUserId}</strong>).</p>
                         <button onclick="openSwitchUserIdModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
-                            Andere Benutzer-ID eingeben
+                            Andere Konto-ID eingeben
                         </button>
                     </div>`;
                 return;
@@ -666,7 +666,7 @@
                     <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 p-6">
                         <p class="text-slate-500 text-sm mb-3">Sie haben noch keine Artikel unter Ihrer aktuellen ID (<strong class="font-mono text-blue-900">${activeUserId}</strong>) eingetragen.</p>
                         <button onclick="openSwitchUserIdModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
-                            Vorhandene Benutzer-ID laden
+                            Vorhandene Konto-ID laden
                         </button>
                     </div>`;
                 return;
@@ -981,26 +981,26 @@
 
         // --- ID Switch Option for Different Users / Devices ---
         window.openSwitchUserIdModal = function() {
-            openCustomModal("Benutzer-ID eingeben", 
-                "Geben Sie Ihre bestehende Benutzer-ID ein, um Ihre eigenen Artikel und Ausleih-Anfragen auf diesem Gerät zu laden:", 
+            openCustomModal("Konto-ID eingeben", 
+                "Geben Sie Ihre bestehende Konto-ID ein, um Ihre eigenen Artikel und Ausleih-Anfragen auf diesem Gerät zu laden:", 
                 true, "z.B. ABCD1234", (inputVal) => {
                     const cleanId = (inputVal || '').trim().toUpperCase();
                     if (!cleanId || cleanId.length < 4) {
-                        showInfoModal("Fehler", "Bitte geben Sie eine gültige Benutzer-ID ein.");
+                        showInfoModal("Fehler", "Bitte geben Sie eine gültige Konto-ID ein.");
                         return;
                     }
                     activeUserId = cleanId;
                     localStorage.setItem('nb_user_id', activeUserId);
                     updateUserIdDisplays();
                     renderAllViews();
-                    showInfoModal("Erfolg", `Ihre Benutzer-ID wurde auf '${activeUserId}' gesetzt. Ihre Ansichten wurden aktualisiert!`);
+                    showInfoModal("Erfolg", `Ihre Konto-ID wurde auf '${activeUserId}' gesetzt. Ihre Ansichten wurden aktualisiert!`);
                 }, 'text', 'ID Laden');
         };
 
         // --- Email Linking & ID Recovery ---
         window.openLinkEmailModal = function() {
             openCustomModal("E-Mail verknüpfen", 
-                "Verknüpfen Sie Ihre aktuelle Benutzer-ID (" + activeUserId + ") mit Ihrer E-Mail-Adresse, um Ihre ID in Zukunft jederzeit wiederherstellen zu können.", 
+                "Verknüpfen Sie Ihre aktuelle Konto-ID (" + activeUserId + ") mit Ihrer E-Mail-Adresse, um Ihre ID in Zukunft jederzeit wiederherstellen zu können.", 
                 true, "Ihre E-Mail-Adresse eingeben...", async (emailInput) => {
                     if (!emailInput || !emailInput.includes('@')) {
                         showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
@@ -1018,7 +1018,7 @@
                                 }
                             });
                             if (conflictId) {
-                                showInfoModal("Hinweis", `Diese E-Mail-Adresse ist bereits unter einer anderen Benutzer-ID (${conflictId}) gespeichert!`);
+                                showInfoModal("Hinweis", `Diese E-Mail-Adresse ist bereits unter einer anderen Konto-ID (${conflictId}) gespeichert!`);
                                 return;
                             }
                             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_emails', activeUserId), {
@@ -1028,7 +1028,7 @@
                             });
                         }
                         localStorage.setItem('nb_user_email_' + activeUserId, emailInput);
-                        showInfoModal("Erfolg", "Ihre E-Mail-Adresse wurde erfolgreich mit Ihrer Benutzer-ID verknüpft.");
+                        showInfoModal("Erfolg", "Ihre E-Mail-Adresse wurde erfolgreich mit Ihrer Konto-ID verknüpft.");
                     } catch(err) {
                         console.error("Email link error:", err);
                         showInfoModal("Fehler", "Verknüpfung fehlgeschlagen.");
@@ -1038,7 +1038,7 @@
 
         window.openRecoverIdModal = function() {
             openCustomModal("ID wiederherstellen", 
-                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein, um Ihre gespeicherte Benutzer-ID wiederherzustellen.", 
+                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein, um Ihre gespeicherte Konto-ID wiederherzustellen.", 
                 true, "Ihre verknüpfte E-Mail-Adresse...", async (emailInput) => {
                     if (!emailInput || !emailInput.includes('@')) {
                         showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
@@ -1061,9 +1061,9 @@
                             localStorage.setItem('nb_user_id', activeUserId);
                             updateUserIdDisplays();
                             renderAllViews();
-                            showInfoModal("Wiederhergestellt", `Ihre Benutzer-ID wurde erfolgreich wiederhergestellt: ${activeUserId}`);
+                            showInfoModal("Wiederhergestellt", `Ihre Konto-ID wurde erfolgreich wiederhergestellt: ${activeUserId}`);
                         } else {
-                            showInfoModal("Nicht gefunden", "Unter dieser E-Mail-Adresse wurde keine verknüpfte Benutzer-ID in der Datenbank gefunden.");
+                            showInfoModal("Nicht gefunden", "Unter dieser E-Mail-Adresse wurde keine verknüpfte Konto-ID in der Datenbank gefunden.");
                         }
                     } catch(err) {
                         console.error("Recovery error:", err);
@@ -1161,7 +1161,7 @@
                 <div class="space-y-3 text-sm text-slate-700">
                     <h4 class="font-bold text-slate-900 text-base">Datenschutzerklärung (DSGVO)</h4>
                     <p><strong>1. Verantwortlicher:</strong> Nachbarschafts-Werkzeugkiste Administration (<a href="mailto:noumanahmad1987@gmail.com" class="underline text-blue-800">noumanahmad1987@gmail.com</a>).</p>
-                    <p><strong>2. Datenerhebung:</strong> Zur Nutzung der Anwendung wird eine zufällige anonyme Benutzer-ID generiert. E-Mail-Adressen werden ausschließlich verarbeitet, wenn Sie diese beim Anbieten eines Artikels, bei Ausleih-Anfragen oder zur ID-Wiederherstellung freiwillig angeben.</p>
+                    <p><strong>2. Datenerhebung:</strong> Zur Nutzung der Anwendung wird eine zufällige anonyme Konto-ID generiert. E-Mail-Adressen werden ausschließlich verarbeitet, wenn Sie diese beim Anbieten eines Artikels, bei Ausleih-Anfragen oder zur ID-Wiederherstellung freiwillig angeben.</p>
                     <p><strong>3. Verwendungszweck:</strong> E-Mail-Adressen dienen ausschließlich der Weiterleitung von Benachrichtigungen über Ausleih-Anfragen per EmailJS an den jeweiligen Gegenstandsbesitzer. E-Mail-Adressen werden niemals öffentlich im System angezeigt.</p>
                     <p><strong>4. Speicherung & Drittanbieter:</strong> Daten werden sicher in Google Cloud Firestore gespeichert. Der E-Mail-Versand erfolgt über EmailJS. Es findet keine Weitergabe an kommerzielle Dritte statt.</p>
                     <p><strong>5. Ihre Rechte:</strong> Sie haben jederzeit das Recht auf Auskunft, Berichtigung oder Löschung Ihrer gespeicherten Daten. Wenden Sie sich hierzu an die oben genannte Kontaktadresse.</p>
