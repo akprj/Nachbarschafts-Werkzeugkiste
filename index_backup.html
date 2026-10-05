@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nachbarschafts-Werkzeugkiste</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <script>
+      (function(){
+         emailjs.init("Jl3q1NmY-n_2hu2V6");
+      })();
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; font-size: 1.05rem; }
+        .nav-tab {
+            padding: 0.95rem 1.2rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+            color: #4b5563;
+        }
+        .nav-tab:hover {
+            color: #1e3a8a;
+            background-color: #f8fafc;
+        }
+        .nav-tab.active {
+            color: #1e3a8a;
+            border-bottom-color: #1e3a8a;
+            background-color: #eff6ff;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen flex flex-col text-slate-800">
+
+    <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
+        <div class="bg-sky-50 border-b border-sky-100 px-4 py-3.5">
+            <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-sky-900 text-sm md:text-base">
+                <div class="flex flex-col gap-1.5 w-full md:w-auto">
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <span class="font-semibold">👤 Ihre ID (Browser/Gerät):</span>
+                        <span id="global-user-id-display" class="font-mono bg-sky-200 px-3 py-1 rounded select-all font-bold text-lg text-blue-900">...</span>
+                        <button onclick="copyUserId()" class="text-xs md:text-sm bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded transition-colors font-semibold">ID kopieren</button>
+                    </div>
+                    <p class="text-xs md:text-sm text-sky-800 font-medium">Mit dieser ID können Sie Ihre eingetragenen Artikel und geliehenen Werkzeuge auf einem neuen Gerät oder in einem anderen Browser wiederfinden.</p>
+                </div>
+                <div class="flex items-start gap-2.5 shrink-0 self-start md:self-center flex-wrap">
+                    <div class="flex flex-col items-center">
+                        <button onclick="openSwitchUserIdModal()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
+                            ID eingeben
+                        </button>
+                        <span class="text-[10px] text-sky-800 mt-1 leading-tight font-medium">Andere ID laden</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <button onclick="openLinkEmailModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
+                            E-Mail verknüpfen
+                        </button>
+                        <span class="text-[10px] text-sky-800 mt-1 leading-tight font-medium">Sichert ID für Zukunft</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <button onclick="openRecoverIdModal()" class="bg-sky-700 hover:bg-sky-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
+                            ID wiederherstellen
+                        </button>
+                        <span class="text-[10px] text-sky-800 mt-1 leading-tight text-center font-medium">Per E-Mail suchen</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between">
+            <h1 class="text-xl md:text-2xl font-bold text-blue-900 flex items-center gap-2">
+                <span>🛠️</span> Nachbarschafts-Werkzeugkiste
+            </h1>
+            <div class="text-xs md:text-sm text-slate-500 hidden sm:block">Teilen, Ausleihen & Nachbarschaft stärken</div>
+        </div>
+
+        <nav class="max-w-4xl mx-auto flex flex-wrap border-t border-slate-200" aria-label="Hauptnavigation">
+            <button id="tab-bibliothek" class="nav-tab active flex-1" onclick="switchTab('bibliothek')" aria-current="page">
+                Verleih-Bibliothek
+            </button>
+            <button id="tab-anbieten" class="nav-tab flex-1" onclick="switchTab('anbieten')">
+                Anbieten
+            </button>
+            <button id="tab-verschenken" class="nav-tab flex-1" onclick="switchTab('verschenken')">
+                Zu Verschenken
+            </button>
+            <button id="tab-ausleihen" class="nav-tab flex-1" onclick="switchTab('ausleihen')">
+                Meine Ausleih- & Schenkanfragen
+            </button>
+            <button id="tab-eintraege" class="nav-tab flex-1" onclick="switchTab('eintraege')">
+                <span id="tab-eintraege-label">Artikelanfragen & Verwalten</span>
+            </button>
+        </nav>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full p-4 md:p-6 pb-20">
+        <!-- 1. Verleih-Bibliothek Tab -->
+        <section id="section-bibliothek" class="space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Verleih-Bibliothek</h2>
+                    <p class="text-sm text-slate-500 mt-0.5">Finden Sie Werkzeuge in Ihrer Nachbarschaft zum Ausleihen.</p>
+                </div>
+                <div class="flex items-center gap-2.5 w-full md:w-auto">
+                    <input type="text" id="search-input" oninput="renderLibrary()" placeholder="Werkzeug suchen..." class="border border-slate-300 rounded-lg px-3.5 py-2 text-sm md:text-base w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-900">
+                    <select id="filter-category" onchange="renderLibrary()" class="border border-slate-300 rounded-lg px-3.5 py-2 text-sm md:text-base bg-white focus:outline-none focus:ring-2 focus:ring-blue-900">
+                        <option value="">Alle Kategorien</option>
+                        <option value="Heimwerken">Heimwerken</option>
+                        <option value="Garten">Garten</option>
+                        <option value="Haushalt">Haushalt</option>
+                        <option value="Freizeit">Freizeit</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="library-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                <!-- Dynamische Einträge -->
+            </div>
+        </section>
+
+        <!-- 2. Anbieten Tab -->
+        <section id="section-anbieten" class="space-y-6 hidden">
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 max-w-xl mx-auto">
+                <h2 class="text-xl font-bold text-slate-800 mb-1">Werkzeug oder Gegenstand anbieten</h2>
+                <p class="text-sm text-slate-500 mb-5">Teilen Sie Ihr Werkzeug mit Nachbarn. Sie können es zur Ausleihe oder zum Verschenken einstellen.</p>
+                
+                <form id="offer-form" onsubmit="handleOfferSubmit(event)" class="space-y-4.5">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Titel des Gegenstands *</label>
+                        <input type="text" id="offer-title" required class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="z.B. Bosch Akku-Schrauber">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Kategorie *</label>
+                            <select id="offer-category" required class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                                <option value="Heimwerken">Heimwerken</option>
+                                <option value="Garten">Garten</option>
+                                <option value="Haushalt">Haushalt</option>
+                                <option value="Freizeit">Freizeit</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Art des Angebots *</label>
+                            <select id="offer-type" required onchange="toggleDurationField(this.value)" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                                <option value="Ausleihe">Zum Ausleihen</option>
+                                <option value="Verschenken">Zu Verschenken</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="duration-container">
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Max. Ausleihdauer *</label>
+                        <select id="offer-max-days" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base bg-white focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                            <option value="3">3 Tage</option>
+                            <option value="5">5 Tage</option>
+                            <option value="7">7 Tage</option>
+                            <option value="9">9 Tage</option>
+                            <option value="11">11 Tage</option>
+                            <option value="13">13 Tage</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Beschreibung & Zustand</label>
+                        <textarea id="offer-desc" rows="3" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Zustand, Abholort oder Besonderheiten..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ihre Name / Kontakt (optional)</label>
+                        <input type="text" id="offer-contact" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="z.B. Andreas (Straße, Haus Nr. 4)">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ihre E-Mail-Adresse (für Benachrichtigungen) *</label>
+                        <input type="email" id="offer-email" required class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Ihre E-Mail-Adresse eintragen">
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg text-base transition-colors shadow-sm">
+                        Gegenstand einstellen
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 3. Verschenken Tab -->
+        <section id="section-verschenken" class="space-y-6 hidden">
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold text-slate-800">Zu verschenken & Nachbarschaft stärken</h2>
+                <p class="text-sm text-slate-500 mt-0.5">Dinge, die Sie nicht mehr brauchen, aber zum Verschenken oder Weitergeben bestimmt sind.</p>
+            </div>
+            <div id="giveaway-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                <!-- Dynamisch -->
+            </div>
+        </section>
+
+        <!-- 4. Meine Ausleihen Tab -->
+        <section id="section-ausleihen" class="space-y-6 hidden">
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Meine aktiven Ausleihen & Anfragen</h2>
+                    <p class="text-sm text-slate-500 mt-0.5">Übersicht aller Werkzeuge, die Sie derzeit angefragt oder geliehen haben. Verwaltet über Ihre Konto-ID.</p>
+                </div>
+                <button onclick="openSwitchUserIdModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 transition-colors whitespace-nowrap">
+                    🔑 ID wechseln
+                </button>
+            </div>
+            <div id="my-borrowed-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                <!-- Dynamisch -->
+            </div>
+        </section>
+
+        <!-- 5. Meine Einträge Tab -->
+        <section id="section-eintraege" class="space-y-6 hidden">
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h2 id="section-eintraege-title" class="text-xl font-bold text-slate-800">Artikelanfragen & Verwalten</h2>
+                    <p id="section-eintraege-desc" class="text-sm text-slate-500 mt-0.5">Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Konto-ID.</p>
+                </div>
+                <button onclick="openSwitchUserIdModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 transition-colors whitespace-nowrap">
+                    🔑 ID wechseln
+                </button>
+            </div>
+            <div id="my-items-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                <!-- Dynamisch -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer with Admin Buttons & Legal Links -->
+    <footer class="bg-white border-t border-slate-200 py-6 px-4 mt-auto">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
+            <div class="text-slate-500 flex items-center gap-2.5 flex-wrap text-center md:text-left">
+                <span>© 2026 Nachbarschafts-Werkzeugkiste. Alle Rechte vorbehalten.</span>
+                <span id="admin-status-badge" class="hidden bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded text-xs">Admin-Modus aktiv</span>
+            </div>
+            <div class="flex items-center gap-3 flex-wrap justify-center">
+                <button onclick="openTermsModal()" class="text-slate-600 hover:text-blue-900 underline text-xs md:text-sm">Nutzungsbedingungen</button>
+                <button onclick="openPrivacyModal()" class="text-slate-600 hover:text-blue-900 underline text-xs md:text-sm">Datenschutz</button>
+                <button onclick="openAdminContactModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
+                    Admin Kontakt
+                </button>
+                <button id="admin-auth-btn" onclick="handleAdminAuthClick()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
+                    Admin Einloggen
+                </button>
+                <button id="admin-change-pw-btn" onclick="openChangeAdminPasswordModal()" class="hidden bg-amber-700 hover:bg-amber-800 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
+                    Passwort ändern
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Universal Modal -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 md:p-8 border-2 border-blue-900">
+            <h3 id="modal-title" class="text-xl font-bold mb-3 text-blue-900">Hinweis</h3>
+            <div id="modal-message" class="text-sm md:text-base text-slate-700 mb-5 space-y-3.5 leading-relaxed max-h-[60vh] overflow-y-auto pr-1">Nachrichtentext hier.</div>
+            <div id="modal-input-container" class="hidden mb-4 relative">
+                <input type="text" id="modal-input" class="w-full border border-slate-300 rounded-lg p-3 text-sm md:text-base focus:ring-2 focus:ring-blue-900 focus:outline-none pr-12" placeholder="Ihre Eingabe">
+                <button type="button" id="modal-eye-btn" onclick="toggleModalPasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden text-sm font-medium focus:outline-none">
+                    👁️
+                </button>
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button id="modal-cancel-btn" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-sm py-2 px-4 rounded-lg transition-colors" onclick="closeModal()">Abbrechen</button>
+                <button id="modal-confirm-btn" class="bg-blue-900 hover:bg-blue-800 text-white font-semibold text-sm py-2 px-5 rounded-lg transition-colors" onclick="closeModal()">Verstanden</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // 1. Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            getDoc, 
+            setDoc, 
+            updateDoc, 
+            deleteDoc, 
+            onSnapshot, 
+            getDocs 
+        } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+        // 2. Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDUs97-IvWqWCY5VktkzSUJ5j-xgx2sg40",
+            authDomain: "nachbarschafts-werkzeugkiste.firebaseapp.com",
+            projectId: "nachbarschafts-werkzeugkiste",
+            storageBucket: "nachbarschafts-werkzeugkiste.firebasestorage.app",
+            messagingSenderId: "29142381173",
+            appId: "1:29142381173:web:764af12ee6faccb3ecbe3c",
+            measurementId: "G-E1KFZV41GW"
+        };
+
+        // 3. Initialize Services
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // 4. State
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'nachbarschafts-werkzeugkiste-default';
+        let currentUser = null;
+        let activeUserId = '';
+        let itemsCache = [];
+        let unsubItems = null;
+        let isAdminLoggedIn = false;
+
+        // Expose to window scope
+        window.db = db;
+        window.auth = auth;
+        window.appId = appId;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
+        window.doc = doc;
+        window.collection = collection;
+        
+        window.currentUser = currentUser;
+        window.activeUserId = activeUserId;
+        window.itemsCache = itemsCache;
+        window.isAdminLoggedIn = isAdminLoggedIn;
+
+        function generateCompactUserId() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const digits = '0123456789';
+            let res = '';
+            for (let i = 0; i < 4; i++) res += letters.charAt(Math.floor(Math.random() * letters.length));
+            for (let i = 0; i < 4; i++) res += digits.charAt(Math.floor(Math.random() * digits.length));
+            return res;
+        }
+
+        function isValidNewFormat(id) {
+            return /^[A-Z]{4}[0-9]{4}$/.test(id);
+        }
+
+        window.onload = async function() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                currentUser = auth.currentUser;
+            } catch (e) {
+                console.error("Firebase auth error:", e);
+            }
+
+            let storedId = localStorage.getItem('nb_user_id');
+            let isFirstTime = false;
+            
+            if (!storedId || !isValidNewFormat(storedId)) {
+                storedId = generateCompactUserId();
+                localStorage.setItem('nb_user_id', storedId);
+                isFirstTime = true;
+            }
+            activeUserId = storedId;
+            updateUserIdDisplays();
+            initFirestoreListener();
+
+            if (isFirstTime) {
+                showWelcomeModal(activeUserId);
+            }
+        };
+
+        function updateUserIdDisplays() {
+            const el = document.getElementById('global-user-id-display');
+            if (el) el.innerText = activeUserId;
+        }
+
+        window.copyUserId = function() {
+            const text = activeUserId;
+            if (window.clipboardData && window.clipboardData.setData) {
+                window.clipboardData.setData("Text", text);
+                showInfoModal("Erfolg", "Konto-ID in die Zwischenablage kopiert!");
+            } else {
+                const dummy = document.createElement("textarea");
+                document.body.appendChild(dummy);
+                dummy.value = text;
+                dummy.select();
+                document.execCommand("copy");
+                document.body.removeChild(dummy);
+                showInfoModal("Erfolg", "Konto-ID '" + text + "' in die Zwischenablage kopiert!");
+            }
+        };
+
+        function showWelcomeModal(id) {
+            const title = "Wichtiger Hinweis zu Ihrer Konto-ID (auf diesem Gerät/Browser)";
+            const msgHtml = `
+                <p>Ihre zugewiesene Konto-ID lautet:</p>
+                <div class="my-3"><span class="font-mono bg-blue-100 text-blue-900 font-bold px-3.5 py-2 rounded text-xl select-all inline-block">${id}</span></div>
+                <p>Diese ID ist der Schlüssel, mit dem Sie alle darüber erstellten Einträge und Anfragen einsehen und verwalten können</p>
+                <p>Sie können Ihre Konto-ID auch jederzeit manuell eingeben oder mit einer E-Mail-Adresse verknüpfen. Nach der Verknüpfung können Sie Ihre Konto-ID darüber jederzeit wiederherstellen, falls Sie sie in Zukunft vergessen sollten</p>
+            `;
+            showHtmlModal(title, msgHtml);
+        }
+
+        window.toggleDurationField = function(typeVal) {
+            const container = document.getElementById('duration-container');
+            if (container) {
+                if (typeVal === 'Verschenken') {
+                    container.classList.add('hidden');
+                } else {
+                    container.classList.remove('hidden');
+                }
+            }
+        };
+
+        function initFirestoreListener() {
+            if (!db) {
+                itemsCache = [];
+                renderAllViews();
+                return;
+            }
+            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
+            if (unsubItems) unsubItems();
+            unsubItems = onSnapshot(colRef, (snapshot) => {
+                const items = [];
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    data.id = docSnap.id;
+                    items.push(data);
+                });
+                itemsCache = items;
+                renderAllViews();
+            }, (error) => {
+                console.error("Firestore snapshot error:", error);
+                itemsCache = [];
+                renderAllViews();
+            });
+        }
+
+        window.switchTab = function(tabName) {
+            ['bibliothek', 'anbieten', 'verschenken', 'ausleihen', 'eintraege'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                const sec = document.getElementById(`section-${t}`);
+                if (btn && sec) {
+                    if (t === tabName) {
+                        btn.classList.add('active');
+                        sec.classList.remove('hidden');
+                    } else {
+                        btn.classList.remove('active');
+                        sec.classList.add('hidden');
+                    }
+                }
+            });
+            renderAllViews();
+        };
+
+        function renderAllViews() {
+            renderLibrary();
+            renderGiveaways();
+            renderMyBorrowed();
+            renderMyItems();
+            updateAdminUIState();
+        }
+
+        function updateAdminUIState() {
+            const labelEl = document.getElementById('tab-eintraege-label');
+            const titleEl = document.getElementById('section-eintraege-title');
+            const descEl = document.getElementById('section-eintraege-desc');
+
+            if (isAdminLoggedIn) {
+                if (labelEl) labelEl.innerText = "Alle Einträge";
+                if (titleEl) titleEl.innerText = "Alle eingetragenen Artikel & zu verschenkende Artikel";
+                if (descEl) descEl.innerText = "Übersicht aller im System registrierten Werkzeuge und Gegenstände (Admin-Ansicht).";
+            } else {
+                if (labelEl) labelEl.innerText = "Artikelanfragen & Verwalten";
+                if (titleEl) titleEl.innerText = "Artikelanfragen & Verwalten";
+                if (descEl) descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Konto-ID.";
+            }
+        }
+
+        window.renderLibrary = function() {
+            const grid = document.getElementById('library-grid');
+            if (!grid) return;
+            const search = (document.getElementById('search-input')?.value || '').toLowerCase();
+            const cat = document.getElementById('filter-category')?.value || '';
+
+            const filtered = itemsCache.filter(item => {
+                const matchSearch = item.title.toLowerCase().includes(search) || (item.desc || '').toLowerCase().includes(search);
+                const matchCat = !cat || item.category === cat;
+                const matchType = item.type === 'Ausleihe';
+                return matchSearch && matchCat && matchType;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Keine Werkzeuge gefunden.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => {
+                const maxDays = item.maxDays || '9';
+                const isOwner = item.ownerId === activeUserId;
+                const isBorrower = item.borrowerId === activeUserId;
+
+                let actionUI = '';
+
+                if (item.status === 'available') {
+                    actionUI = `
+                        <button onclick="borrowItem('${item.id}')" class="bg-blue-900 hover:bg-blue-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                            Ausleihen
+                        </button>
+                    `;
+                } else if (isBorrower || isAdminLoggedIn) {
+                    if (item.status === 'return_pending') {
+                        actionUI = `<span class="text-blue-800 font-medium text-xs bg-blue-50 px-2.5 py-1.5 rounded">Rückgabe läuft</span>`;
+                    } else {
+                        actionUI = `
+                            <button onclick="returnItem('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                Zurückgeben
+                            </button>
+                        `;
+                    }
+                } else {
+                    if (item.status === 'requested') {
+                        actionUI = `<span class="text-amber-800 font-medium text-xs bg-amber-100 px-2.5 py-1.5 rounded">Angefragt</span>`;
+                    } else if (item.status === 'lent') {
+                        actionUI = `<span class="text-slate-600 font-medium text-xs bg-slate-100 px-2.5 py-1.5 rounded">Ausgeliehen</span>`;
+                    } else if (item.status === 'return_pending') {
+                        actionUI = `<span class="text-slate-500 font-medium text-xs bg-slate-100 px-2.5 py-1.5 rounded">Rückgabe läuft</span>`;
+                    }
+                }
+
+                return `
+                    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start gap-2 mb-2.5 flex-wrap">
+                                <span class="text-xs font-semibold bg-blue-50 text-blue-900 px-2.5 py-1 rounded">${escapeHtml(item.category)}</span>
+                                <span class="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded">Max. ${maxDays} Tage</span>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
+                            <p class="text-sm text-slate-600 mb-4 line-clamp-2">${escapeHtml(item.desc || '')}</p>
+                            ${isOwner && item.status === 'requested' ? `
+                                <div class="bg-amber-50 border border-amber-200 text-amber-900 text-xs p-3 rounded mb-3">
+                                    <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Ihr Werkzeug angefragt!</p>
+                                    <p><span class="font-semibold">Entleiher Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
+                                    <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-amber-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
+                            <span class="text-slate-500 text-xs">Verleiher Kontakt:<br> ${escapeHtml(item.contact || 'Nachbar')}</span>
+                            ${actionUI}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        window.renderGiveaways = function() {
+            const grid = document.getElementById('giveaway-grid');
+            if (!grid) return;
+            const filtered = itemsCache.filter(item => item.type === 'Verschenken');
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Derzeit keine zu verschenkenden Gegenstände.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => {
+                const isOwner = item.ownerId === activeUserId;
+                return `
+                    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-semibold bg-purple-50 text-purple-900 px-2.5 py-1 rounded mb-2.5 inline-block">${escapeHtml(item.category)}</span>
+                            <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
+                            <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
+                            ${isOwner && item.status === 'requested' ? `
+                                <div class="bg-purple-50 border border-purple-200 text-purple-900 text-xs p-3 rounded mb-3">
+                                    <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Interesse an Ihrem zu verschenkenden Artikel bekundet!</p>
+                                    <p><span class="font-semibold">Entleiher Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
+                                    <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-purple-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
+                            <span class="text-slate-500 text-xs">${escapeHtml(item.contact || 'Nachbar')}</span>
+                            <button onclick="claimGiveaway('${item.id}')" class="bg-purple-800 hover:bg-purple-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                Abholen / Anfragen
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        window.renderMyBorrowed = function() {
+            const grid = document.getElementById('my-borrowed-grid');
+            if (!grid) return;
+            
+            const filtered = itemsCache.filter(item => item.borrowerId === activeUserId && ['requested', 'lent', 'return_pending'].includes(item.status));
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 p-6">
+                        <p class="text-slate-500 text-sm mb-3">Sie haben derzeit keine Werkzeuge oder Artikel angefragt (Aktuelle ID: <strong class="font-mono text-blue-900">${activeUserId}</strong>).</p>
+                        <button onclick="openSwitchUserIdModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
+                            Andere Konto-ID eingeben
+                        </button>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => {
+                const isGiveaway = item.type === 'Verschenken';
+                let timeBadge = '';
+                let actionButton = '';
+
+                if (item.status === 'requested') {
+                    timeBadge = `<span class="text-xs bg-amber-100 text-amber-800 px-2.5 py-1 rounded">Wartet auf Bestätigung</span>`;
+                    actionButton = `<span class="text-xs text-slate-500 italic">Noch nicht verliehen</span>`;
+                } else if (item.status === 'return_pending') {
+                    timeBadge = `<span class="text-xs bg-blue-100 text-blue-800 px-2.5 py-1 rounded">Rückgabe beim Besitzer</span>`;
+                    actionButton = `<span class="text-xs text-slate-500 italic">Wartet auf Empfangsbestätigung</span>`;
+                } else if (item.status === 'lent') {
+                    const maxDays = parseInt(item.maxDays || '9', 10);
+                    const msElapsed = Date.now() - (item.lentAt || Date.now());
+                    const daysElapsed = Math.floor(msElapsed / (1000 * 60 * 60 * 24));
+                    const daysLeft = maxDays - daysElapsed;
+                    const timerColor = daysLeft <= 1 ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800';
+                    
+                    timeBadge = `<span class="text-xs font-bold ${timerColor} px-2.5 py-1 rounded">${daysLeft} Tage verbleibend</span>`;
+                    actionButton = `<button onclick="returnItem('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">Zurückgeben</button>`;
+                }
+                
+                return `
+                <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2.5">
+                            <span class="text-xs font-semibold ${isGiveaway ? 'bg-purple-50 text-purple-900' : 'bg-sky-50 text-sky-900'} px-2.5 py-1 rounded">
+                                ${isGiveaway ? 'Zu verschenken' : (item.status === 'lent' ? 'Ausgeliehen' : item.status === 'return_pending' ? 'Rückgabe in Bearbeitung' : 'Ausleihe Angefragt')}
+                            </span>
+                            ${!isGiveaway ? timeBadge : ''}
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
+                        <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
+                    </div>
+                    <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
+                        <span class="text-slate-500 text-xs">Verleiher Kontakt: ${escapeHtml(item.contact || 'Nachbar')}</span>
+                        ${actionButton}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        };
+
+        window.renderMyItems = function() {
+            const grid = document.getElementById('my-items-grid');
+            if (!grid) return;
+            const filtered = itemsCache.filter(item => item.ownerId === activeUserId || isAdminLoggedIn);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 p-6">
+                        <p class="text-slate-500 text-sm mb-3">Sie haben noch keine Artikel unter Ihrer aktuellen ID (<strong class="font-mono text-blue-900">${activeUserId}</strong>) eingetragen.</p>
+                        <button onclick="openSwitchUserIdModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
+                            Vorhandene Konto-ID laden
+                        </button>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => {
+                const isGiveaway = item.type === 'Verschenken';
+                let statusLabel = 'Verfügbar';
+                let statusColor = 'text-emerald-700 font-semibold';
+
+                if (item.status === 'requested') {
+                    statusLabel = isGiveaway ? 'Interesse angefragt' : 'Ausleih-Anfrage eingegangen';
+                    statusColor = 'text-amber-700 font-semibold';
+                } else if (item.status === 'lent') {
+                    statusLabel = 'Verliehen';
+                    statusColor = 'text-blue-800 font-semibold';
+                } else if (item.status === 'return_pending') {
+                    statusLabel = 'Rückgabe wartet auf Bestätigung';
+                    statusColor = 'text-purple-700 font-semibold';
+                }
+
+                return `
+                <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2.5">
+                            <span class="text-xs font-semibold bg-blue-50 text-blue-900 px-2.5 py-1 rounded">${escapeHtml(item.category)}</span>
+                            <span class="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded">${item.type} ${!isGiveaway ? '(' + (item.maxDays || '9') + 'T)' : ''}</span>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
+                        <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
+                        
+                        ${item.status === 'requested' ? `
+                            <div class="${isGiveaway ? 'bg-purple-50 border-purple-200 text-purple-900' : 'bg-amber-50 border-amber-200 text-amber-900'} border text-xs p-3 rounded mb-3">
+                                <p class="font-bold mb-1.5">🔔 ${isGiveaway ? 'Interesse an Ihrem zu verschenkenden Artikel!' : 'Ausleih-Anfrage eingegangen!'}</p>
+                                <p><span class="font-semibold">Entleiher Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
+                                <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:opacity-80">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
+                        <span class="text-xs ${statusColor}">${statusLabel}</span>
+                        
+                        <div class="flex gap-2">
+                            ${item.status === 'requested' && isGiveaway ? `
+                                <button onclick="completeGiveaway('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                    Übergeben & Abschließen
+                                </button>
+                            ` : ''}
+                            
+                            ${item.status === 'requested' && !isGiveaway ? `
+                                <button onclick="lendItem('${item.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                    Verleihen Bestätigen
+                                </button>
+                            ` : ''}
+
+                            ${item.status === 'return_pending' ? `
+                                <button onclick="confirmReturn('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm shadow transition-colors">
+                                    Empfang Bestätigen
+                                </button>
+                            ` : ''}
+
+                            ${item.status === 'available' ? `
+                                <button onclick="deleteMyItem('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                    Löschen
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        };
+
+        window.handleOfferSubmit = async function(e) {
+            e.preventDefault();
+            const title = document.getElementById('offer-title').value.trim();
+            const category = document.getElementById('offer-category').value;
+            const type = document.getElementById('offer-type').value;
+            const maxDays = type === 'Ausleihe' ? document.getElementById('offer-max-days').value : '0';
+            const desc = document.getElementById('offer-desc').value.trim();
+            const contact = document.getElementById('offer-contact').value.trim() || 'Nachbar';
+            const ownerEmail = document.getElementById('offer-email').value.trim();
+
+            const newItem = {
+                title,
+                category,
+                type,
+                maxDays,
+                desc,
+                contact,
+                ownerEmail,
+                status: 'available',
+                ownerId: activeUserId,
+                borrowerId: '',
+                borrowedAt: null,
+                createdAt: Date.now()
+            };
+
+            try {
+                if (db) {
+                    const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
+                    const newDocRef = doc(colRef);
+                    newItem.id = newDocRef.id;
+                    await setDoc(newDocRef, newItem);
+                    itemsCache.push(newItem);
+                } else {
+                    newItem.id = 'local_' + Date.now();
+                    itemsCache.push(newItem);
+                }
+                document.getElementById('offer-form').reset();
+                switchTab('bibliothek');
+                showInfoModal("Erfolg", "Ihr Gegenstand wurde erfolgreich in der Nachbarschafts-Werkzeugkiste eingetragen!");
+            } catch (err) {
+                console.error("Error adding item:", err);
+                showInfoModal("Fehler", "Gegenstand konnte nicht gespeichert werden.");
+            }
+        };
+
+        // EmailJS Dispatch Function
+        window.handleBorrowerRequest = function(itemTitle, ownerEmail, borrowerContact, borrowerEmail) {
+            if (!ownerEmail) {
+                showInfoModal("Fehler", "Für dieses Werkzeug ist keine E-Mail-Adresse des Verleihers hinterlegt.");
+                return;
+            }
+
+            const templateParams = {
+                to_email: ownerEmail,
+                item_title: itemTitle,
+                borrower_contact: borrowerContact,
+                borrower_email: borrowerEmail,
+                message: `Ein Nachbar (${borrowerContact}, E-Mail: ${borrowerEmail}) hat eine Anfrage für Ihr Werkzeug/Ihren Gegenstand "${itemTitle}" gestartet.`
+            };
+
+            emailjs.send('service_83hht9o', 'template_9lyyyce', templateParams)
+                .then(() => {
+                    console.log('Email sent successfully via EmailJS!');
+                })
+                .catch((error) => {
+                    console.error('Failed to send email via EmailJS:', error);
+                });
+        };
+
+        window.borrowItem = function(id) {
+            const item = itemsCache.find(i => i.id === id);
+            if (!item) return;
+            
+            openRequestModal("Werkzeug ausleihen", async (reqContact, reqEmail) => {
+                if (!reqContact || !reqEmail) {
+                    showInfoModal("Fehler", "Bitte füllen Sie beide Felder aus (Name/Adresse & E-Mail).");
+                    return;
+                }
+
+                try {
+                    if (db) {
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
+                            status: 'requested',
+                            borrowerId: activeUserId,
+                            borrowedAt: Date.now(),
+                            borrowerContact: reqContact,
+                            borrowerEmail: reqEmail
+                        });
+                    }
+                    item.status = 'requested';
+                    item.borrowerId = activeUserId;
+                    item.borrowedAt = Date.now();
+                    item.borrowerContact = reqContact;
+                    item.borrowerEmail = reqEmail;
+
+                    if (item.ownerEmail) {
+                        handleBorrowerRequest(item.title, item.ownerEmail, reqContact, reqEmail);
+                    }
+                    
+                    showInfoModal("Ausleihe erfolgreich", "Das Werkzeug wurde für Sie reserviert / ausgeliehen. Der Besitzer wurde benachrichtigt!");
+                    renderAllViews();
+                } catch (err) {
+                    console.error("Error borrowing:", err);
+                }
+            });
+        };
+
+        window.returnItem = async function(id) {
+            const item = itemsCache.find(i => i.id === id);
+            if (!item) return;
+            try {
+                if (db) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
+                        status: 'return_pending' 
+                    });
+                }
+                item.status = 'return_pending';
+                showInfoModal("Rückgabe angefragt", "Der Besitzer wurde benachrichtigt, den Empfang des Werkzeugs zu bestätigen.");
+                renderAllViews();
+            } catch (err) {
+                console.error("Error returning:", err);
+            }
+        };
+
+        window.claimGiveaway = function(id) {
+            const item = itemsCache.find(i => i.id === id);
+            if (!item) return;
+            
+            openRequestModal("Gegenstand abholen", async (reqContact, reqEmail) => {
+                if (!reqContact || !reqEmail) {
+                    showInfoModal("Fehler", "Bitte füllen Sie beide Felder aus (Name/Adresse & E-Mail).");
+                    return;
+                }
+
+                try {
+                    if (db) {
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
+                            status: 'requested',
+                            borrowerId: activeUserId,
+                            borrowerContact: reqContact,
+                            borrowerEmail: reqEmail
+                        });
+                    }
+                    item.status = 'requested';
+                    item.borrowerId = activeUserId;
+                    item.borrowerContact = reqContact;
+                    item.borrowerEmail = reqEmail;
+
+                    if (item.ownerEmail) {
+                        handleBorrowerRequest(item.title, item.ownerEmail, reqContact, reqEmail);
+                    }
+                    
+                    showInfoModal("Abholhinweis", `Der Besitzer wurde über Ihr Interesse informiert und hat Ihre Kontaktdaten erhalten!`);
+                    renderAllViews();
+                } catch(e) {
+                    console.error(e);
+                }
+            });
+        };
+
+        window.deleteMyItem = async function(id) {
+            try {
+                if (db) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id));
+                }
+                itemsCache = itemsCache.filter(i => i.id !== id);
+                renderAllViews();
+                showInfoModal("Gelöscht", "Ihr Artikel wurde aus der Datenbank entfernt.");
+            } catch (err) {
+                console.error("Error deleting item:", err);
+            }
+        };
+
+        window.completeGiveaway = async function(id) {
+            if (!confirm("Möchten Sie diesen zu verschenkenden Artikel abschließen? Der Artikel wird als 'übergeben' markiert und dauerhaft aus der Liste entfernt.")) {
+                return;
+            }
+            try {
+                if (db) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id));
+                }
+                itemsCache = itemsCache.filter(i => i.id !== id);
+                renderAllViews();
+                showInfoModal("Erfolgreich übergeben", "Der Artikel wurde erfolgreich abgeholt bzw. übergeben und aus der Werkzeugkiste entfernt.");
+            } catch (err) {
+                console.error("Error completing giveaway:", err);
+                showInfoModal("Fehler", "Der zu verschenkende Artikel konnte nicht abgeschlossen werden.");
+            }
+        };
+
+        window.lendItem = async function(id) {
+            const item = itemsCache.find(i => i.id === id);
+            if (!item) return;
+            try {
+                if (db) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
+                        status: 'lent',
+                        lentAt: Date.now()
+                    });
+                }
+                item.status = 'lent';
+                item.lentAt = Date.now();
+                showInfoModal("Werkzeug verliehen", "Der Ausleih-Zeitraum hat begonnen!");
+                renderAllViews();
+            } catch (err) {
+                console.error("Error lending:", err);
+                showInfoModal("Fehler", "Das Werkzeug konnte nicht als verliehen markiert werden.");
+            }
+        };
+
+        window.confirmReturn = async function(id) {
+            const item = itemsCache.find(i => i.id === id);
+            if (!item) return;
+            try {
+                if (db) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
+                        status: 'available',
+                        borrowerId: '',
+                        borrowedAt: null,
+                        lentAt: null,
+                        borrowerContact: '',
+                        borrowerEmail: ''
+                    });
+                }
+                item.status = 'available';
+                item.borrowerId = '';
+                item.borrowedAt = null;
+                item.lentAt = null;
+                item.borrowerContact = '';
+                item.borrowerEmail = '';
+                showInfoModal("Rückgabe bestätigt", "Das Werkzeug ist nun wieder in der Bibliothek verfügbar.");
+                renderAllViews();
+            } catch (err) {
+                console.error("Error confirming return:", err);
+                showInfoModal("Fehler", "Die Rückgabe konnte nicht bestätigt werden.");
+            }
+        };
+
+        // --- ID Switch Option for Different Users / Devices ---
+        window.openSwitchUserIdModal = function() {
+            openCustomModal("Konto-ID eingeben", 
+                "Geben Sie Ihre bestehende Konto-ID ein, um Ihre eigenen Artikel und Ausleih-Anfragen auf diesem Gerät zu laden:", 
+                true, "z.B. ABCD1234", (inputVal) => {
+                    const cleanId = (inputVal || '').trim().toUpperCase();
+                    if (!cleanId || cleanId.length < 4) {
+                        showInfoModal("Fehler", "Bitte geben Sie eine gültige Konto-ID ein.");
+                        return;
+                    }
+                    activeUserId = cleanId;
+                    localStorage.setItem('nb_user_id', activeUserId);
+                    updateUserIdDisplays();
+                    renderAllViews();
+                    showInfoModal("Erfolg", `Ihre Konto-ID wurde auf '${activeUserId}' gesetzt. Ihre Ansichten wurden aktualisiert!`);
+                }, 'text', 'ID Laden');
+        };
+
+        // --- Email Linking & ID Recovery ---
+        window.openLinkEmailModal = function() {
+            openCustomModal("E-Mail verknüpfen", 
+                "Verknüpfen Sie Ihre aktuelle Konto-ID (" + activeUserId + ") mit Ihrer E-Mail-Adresse, um Ihre ID in Zukunft jederzeit wiederherstellen zu können.", 
+                true, "Ihre E-Mail-Adresse eingeben...", async (emailInput) => {
+                    if (!emailInput || !emailInput.includes('@')) {
+                        showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+                        return;
+                    }
+                    try {
+                        if (db) {
+                            const emailsRef = collection(db, 'artifacts', appId, 'public', 'data', 'user_emails');
+                            const snap = await getDocs(emailsRef);
+                            let conflictId = null;
+                            snap.forEach(d => {
+                                const dat = d.data();
+                                if (dat.email && dat.email.toLowerCase() === emailInput.toLowerCase() && dat.userId !== activeUserId) {
+                                    conflictId = dat.userId;
+                                }
+                            });
+                            if (conflictId) {
+                                showInfoModal("Hinweis", `Diese E-Mail-Adresse ist bereits unter einer anderen Konto-ID (${conflictId}) gespeichert!`);
+                                return;
+                            }
+                            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_emails', activeUserId), {
+                                userId: activeUserId,
+                                email: emailInput.toLowerCase(),
+                                updatedAt: Date.now()
+                            });
+                        }
+                        localStorage.setItem('nb_user_email_' + activeUserId, emailInput);
+                        showInfoModal("Erfolg", "Ihre E-Mail-Adresse wurde erfolgreich mit Ihrer Konto-ID verknüpft.");
+                    } catch(err) {
+                        console.error("Email link error:", err);
+                        showInfoModal("Fehler", "Verknüpfung fehlgeschlagen.");
+                    }
+                }, 'email', 'Verknüpfen');
+        };
+
+        window.openRecoverIdModal = function() {
+            openCustomModal("ID wiederherstellen", 
+                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein, um Ihre gespeicherte Konto-ID wiederherzustellen.", 
+                true, "Ihre verknüpfte E-Mail-Adresse...", async (emailInput) => {
+                    if (!emailInput || !emailInput.includes('@')) {
+                        showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+                        return;
+                    }
+                    try {
+                        let foundId = null;
+                        if (db) {
+                            const emailsRef = collection(db, 'artifacts', appId, 'public', 'data', 'user_emails');
+                            const snap = await getDocs(emailsRef);
+                            snap.forEach(d => {
+                                const dat = d.data();
+                                if (dat.email && dat.email.toLowerCase() === emailInput.toLowerCase()) {
+                                    foundId = dat.userId;
+                                }
+                            });
+                        }
+                        if (foundId) {
+                            activeUserId = foundId;
+                            localStorage.setItem('nb_user_id', activeUserId);
+                            updateUserIdDisplays();
+                            renderAllViews();
+                            showInfoModal("Wiederhergestellt", `Ihre Konto-ID wurde erfolgreich wiederhergestellt: ${activeUserId}`);
+                        } else {
+                            showInfoModal("Nicht gefunden", "Unter dieser E-Mail-Adresse wurde keine verknüpfte Konto-ID in der Datenbank gefunden.");
+                        }
+                    } catch(err) {
+                        console.error("Recovery error:", err);
+                        showInfoModal("Fehler", "Wiederherstellung fehlgeschlagen.");
+                    }
+                }, 'email', 'Wiederherstellen');
+        };
+
+        // --- Admin Authentication & Password Management ---
+        window.openAdminContactModal = function() {
+            showInfoModal(
+                "Admin Kontakt", 
+                "Bei Fragen, Problemen oder Moderationsanliegen erreichen Sie das Administrationsteam der Nachbarschaft unter:<br><br><a href='mailto:noumanahmad1987@gmail.com' class='text-blue-600 underline hover:text-blue-800 font-medium'>noumanahmad1987@gmail.com</a>"
+            );
+        };
+
+        window.handleAdminAuthClick = function() {
+            if (isAdminLoggedIn) {
+                isAdminLoggedIn = false;
+                document.getElementById('admin-status-badge').classList.add('hidden');
+                document.getElementById('admin-change-pw-btn').classList.add('hidden');
+                document.getElementById('admin-auth-btn').innerText = "Admin Einloggen";
+                showInfoModal("Abgemeldet", "Sie haben den Admin-Modus verlassen.");
+                renderAllViews();
+            } else {
+                openCustomModal("Admin Einloggen", "Bitte geben Sie das Administrator-Passwort ein:", true, "Passwort eingeben...", async (pw) => {
+                    if (!pw) return;
+
+                    try {
+                        const configRef = doc(db, 'app_config', 'admin_settings');
+                        const configSnap = await getDoc(configRef);
+
+                        if (configSnap.exists()) {
+                            const data = configSnap.data();
+                            const storedPassword = (Object.values(data)[0] || '').trim();
+                            const enteredPassword = (pw || '').trim();
+
+                            if (enteredPassword === storedPassword) {
+                                isAdminLoggedIn = true;
+                                document.getElementById('admin-status-badge').classList.remove('hidden');
+                                document.getElementById('admin-change-pw-btn').classList.remove('hidden');
+                                document.getElementById('admin-auth-btn').innerText = "Admin ausloggen";
+                                showInfoModal("Erfolg", "Admin-Modus aktiv!");
+                                renderAllViews();
+                            } else {
+                                showInfoModal("Fehler", "Falsches Passwort.");
+                            }
+                        } else {
+                            showInfoModal("Fehler", "Konfiguration in Firestore nicht gefunden (app_config/admin_settings).");
+                        }
+                    } catch (err) {
+                        console.error("Firestore read error:", err);
+                        showInfoModal("Fehler", "Verbindung zur Datenbank fehlgeschlagen: " + err.message);
+                    }
+                }, 'password', 'Einloggen');
+            }
+        };
+
+        window.openChangeAdminPasswordModal = function() {
+            if (!isAdminLoggedIn) return;
+            openCustomModal("Admin-Passwort ändern", 
+                "Geben Sie ein neues Administrator-Passwort ein:", 
+                true, "Neues Passwort eingeben...", async (newPw) => {
+                    if (!newPw || newPw.trim().length < 4) {
+                        showInfoModal("Fehler", "Das neue Passwort muss mindestens 4 Zeichen lang sein.");
+                        return;
+                    }
+                    try {
+                        const configRef = doc(db, 'app_config', 'admin_settings');
+                        await setDoc(configRef, { password: newPw.trim() });
+                        showInfoModal("Erfolg", "Administrator-Passwort wurde erfolgreich geändert!");
+                    } catch (err) {
+                        console.error("Error updating admin password:", err);
+                        showInfoModal("Fehler", "Passwort konnte nicht aktualisiert werden.");
+                    }
+                }, 'password', 'Speichern');
+        };
+
+        // --- Legal Terms & Privacy Modals ---
+        window.openTermsModal = function() {
+            const html = `
+                <div class="space-y-3 text-sm text-slate-700">
+                    <h4 class="font-bold text-slate-900 text-base">Nutzungsbedingungen</h4>
+                    <p><strong>1. Gegenstand der Plattform:</strong> Die Nachbarschafts-Werkzeugkiste ist eine kostenlose Nachbarschaftsplattform zur privaten Vermittlung von Werkzeugen und Gegenständen zur Ausleihe oder Schenkung.</p>
+                    <p><strong>2. Eigenverantwortung:</strong> Jeder Nutzer ist für den ordnungsgemäßen Zustand und die pflegliche Behandlung der geliehenen Werkzeuge selbst verantwortlich. Übergabe, Fristen und Zustand werden direkt zwischen den Nachbarn vereinbart.</p>
+                    <p><strong>3. Haftungsausschluss:</strong> Der Betreiber der Plattform übernimmt keine Haftung für Beschädigungen, Verluste oder Personenschäden, die durch geliehene Gegenstände entstehen. Es handelt sich rein um eine Vermittlungshilfe.</p>
+                    <p><strong>4. Missbrauch:</strong> Das Einstellen rechtswidriger oder gefährlicher Gegenstände ist untersagt. Der Administrator behält sich das Recht vor, unpassende Einträge zu entfernen.</p>
+                </div>
+            `;
+            showHtmlModal("Nutzungsbedingungen", html);
+        };
+
+        window.openPrivacyModal = function() {
+            const html = `
+                <div class="space-y-3 text-sm text-slate-700">
+                    <h4 class="font-bold text-slate-900 text-base">Datenschutzerklärung (DSGVO)</h4>
+                    <p><strong>1. Verantwortlicher:</strong> Nachbarschafts-Werkzeugkiste Administration (<a href="mailto:noumanahmad1987@gmail.com" class="underline text-blue-800">noumanahmad1987@gmail.com</a>).</p>
+                    <p><strong>2. Datenerhebung:</strong> Zur Nutzung der Anwendung wird eine zufällige anonyme Konto-ID generiert. E-Mail-Adressen werden ausschließlich verarbeitet, wenn Sie diese beim Anbieten eines Artikels, bei Ausleih-Anfragen oder zur ID-Wiederherstellung freiwillig angeben.</p>
+                    <p><strong>3. Verwendungszweck:</strong> E-Mail-Adressen dienen ausschließlich der Weiterleitung von Benachrichtigungen über Ausleih-Anfragen per EmailJS an den jeweiligen Gegenstandsbesitzer. E-Mail-Adressen werden niemals öffentlich im System angezeigt.</p>
+                    <p><strong>4. Speicherung & Drittanbieter:</strong> Daten werden sicher in Google Cloud Firestore gespeichert. Der E-Mail-Versand erfolgt über EmailJS. Es findet keine Weitergabe an kommerzielle Dritte statt.</p>
+                    <p><strong>5. Ihre Rechte:</strong> Sie haben jederzeit das Recht auf Auskunft, Berichtigung oder Löschung Ihrer gespeicherten Daten. Wenden Sie sich hierzu an die oben genannte Kontaktadresse.</p>
+                </div>
+            `;
+            showHtmlModal("Datenschutzerklärung", html);
+        };
+
+        // --- Modal Helpers ---
+        let modalCallback = null;
+        function openCustomModal(title, message, showInput, placeholder, callback, inputType = 'text', confirmBtnText = 'Verstanden') {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerHTML = `<p>${message}</p>`;
+            document.getElementById('modal-confirm-btn').innerText = confirmBtnText;
+            const inputContainer = document.getElementById('modal-input-container');
+            const inputField = document.getElementById('modal-input');
+            const cancelBtn = document.getElementById('modal-cancel-btn');
+            const eyeBtn = document.getElementById('modal-eye-btn');
+            
+            if (showInput) {
+                inputContainer.classList.remove('hidden');
+                inputField.value = '';
+                inputField.placeholder = placeholder || '';
+                inputField.type = inputType;
+                cancelBtn.classList.remove('hidden');
+                if (inputType === 'password') {
+                    eyeBtn.classList.remove('hidden');
+                } else {
+                    eyeBtn.classList.add('hidden');
+                }
+            } else {
+                inputContainer.classList.add('hidden');
+                cancelBtn.classList.add('hidden');
+                eyeBtn.classList.add('hidden');
+            }
+            modalCallback = callback;
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        window.openRequestModal = function(title, callback) {
+            document.getElementById('modal-title').innerText = title;
+            
+            const htmlContent = `
+                <p class="mb-3 text-slate-700 font-medium">Bitte geben Sie Ihre Kontaktdaten ein, damit der Besitzer Sie erreichen kann.</p>
+                <input type="text" id="req-contact" class="w-full border border-slate-300 rounded-lg p-3 mb-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Name & Adresse (z.B. Maximus, Ludwigstraße Haus Nr. 5)">
+                <input type="email" id="req-email" class="w-full border border-slate-300 rounded-lg p-3 mb-2 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Ihre E-Mail-Adresse">
+                <div class="bg-blue-50 border border-blue-200 rounded p-2.5 mt-2">
+                    <p class="text-xs text-blue-800 leading-tight">
+                        <strong>Datenschutz-Hinweis:</strong> Ihre E-Mail-Adresse wird dem Ausleiher / Beschenkten nicht öffentlich angezeigt. Sie wird ausschließlich dazu verwendet, dem Besitzer die Benachrichtigungsdetails per E-Mail und in seiner privaten Ansicht bereitzustellen.
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('modal-message').innerHTML = htmlContent;
+            document.getElementById('modal-confirm-btn').innerText = "Anfragen";
+            document.getElementById('modal-input-container').classList.add('hidden');
+            document.getElementById('modal-cancel-btn').classList.remove('hidden');
+            document.getElementById('modal-eye-btn').classList.add('hidden');
+            
+            modalCallback = () => {
+                const reqContact = document.getElementById('req-contact') ? document.getElementById('req-contact').value : '';
+                const reqEmail = document.getElementById('req-email') ? document.getElementById('req-email').value : '';
+                callback(reqContact, reqEmail);
+            };
+            
+            document.getElementById('modal').classList.remove('hidden');
+        };
+
+        window.toggleModalPasswordVisibility = function() {
+            const inputField = document.getElementById('modal-input');
+            const eyeBtn = document.getElementById('modal-eye-btn');
+            if (inputField.type === 'password') {
+                inputField.type = 'text';
+                eyeBtn.innerText = '🙈';
+            } else {
+                inputField.type = 'password';
+                eyeBtn.innerText = '👁️';
+            }
+        };
+
+        function showHtmlModal(title, htmlContent) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerHTML = htmlContent;
+            document.getElementById('modal-confirm-btn').innerText = "Verstanden";
+            document.getElementById('modal-input-container').classList.add('hidden');
+            document.getElementById('modal-cancel-btn').classList.add('hidden');
+            document.getElementById('modal-eye-btn').classList.add('hidden');
+            modalCallback = null;
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        window.showInfoModal = function(title, message) {
+            openCustomModal(title, message, false, '', null, 'text', 'Verstanden');
+        };
+
+        window.closeModal = function() {
+            const inputField = document.getElementById('modal-input');
+            const val = inputField ? inputField.value : '';
+            document.getElementById('modal').classList.add('hidden');
+            if (modalCallback) {
+                const cb = modalCallback;
+                modalCallback = null;
+                cb(val);
+            }
+        };
+
+        function escapeHtml(str) {
+            return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
