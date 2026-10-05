@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nachbarschafts-Werkzeugkiste</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+<script>
+  (function(){
+     emailjs.init("Jl3q1NmY-n_2hu2V6");
+  })();
+</script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; font-size: 1.05rem; }
@@ -168,11 +176,13 @@
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ihre E-Mail-Adresse (für Benachrichtigungen) *</label>
                         <input type="email" id="offer-email" required class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Ihre E-Mail-Adresse eintragen">
+                        
+                        <!--   Datenshutz-Hinweis
                         <div class="bg-blue-50 border border-blue-200 rounded p-2.5 mt-2">
                             <p class="text-xs text-blue-800 leading-tight">
                                 <strong>Wichtiger Hinweis:</strong> Diese E-Mail-Adresse wird benötigt, um Sie explizit bei Ausleih-Anfragen für Ihr Werkzeug oder bei Interesse an Ihren "Zu Verschenken"-Artikeln zu benachrichtigen. Sie wird anderen Nutzern nicht öffentlich angezeigt.
                             </p>
-                        </div>
+                        </div> --->
                     </div>
                     <!-- END NEW FIELD -->
 
@@ -257,14 +267,26 @@
 
     <script type="module">
 
-  // --------------  My Firebase Project SDK starts here ---------------------
         
- // 1. Import all required Firebase SDKs from a single, consistent version (e.g., v12.19.0)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-    import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-    import { doc, getDoc } from "firebase/firestore";
+// --------------  My Firebase Project SDK starts here ---------------------
+
+// 1. Import all required Firebase SDKs from a single, consistent version
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
+import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { 
+    getFirestore, 
+    collection, 
+    doc, 
+    getDoc, 
+    setDoc, 
+    updateDoc, 
+    deleteDoc, 
+    onSnapshot, 
+    getDocs 
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
         
     // 2. Your web app's Firebase configuration
     const firebaseConfig = {
@@ -308,8 +330,6 @@
 
 
  // --------------  My Firebase Project SDK Import Ends here ---------------------
-
-
 
         
         function generateCompactUserId() {
@@ -548,13 +568,13 @@ window.renderLibrary = function() {
                     ${isOwner && item.status === 'requested' ? `
                         <div class="bg-amber-50 border border-amber-200 text-amber-900 text-xs p-3 rounded mb-3">
                             <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Ihr Werkzeug angefragt!</p>
-                            <p><span class="font-semibold">Besitzer Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
+                            <p><span class="font-semibold">Entleiher Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
                             <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-amber-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
                         </div>
                     ` : ''}
                 </div>
                 <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
-                    <span class="text-slate-500 text-xs">Kontakt: ${escapeHtml(item.contact || 'Nachbar')}</span>
+                    <span class="text-slate-500 text-xs">Verleiher Kontakt:<br> ${escapeHtml(item.contact || 'Nachbar')}</span>
                     ${actionUI}
                 </div>
             </div>
@@ -563,8 +583,6 @@ window.renderLibrary = function() {
 };
 
 
-        
-        
         
         window.renderGiveaways = function() {
             const grid = document.getElementById('giveaway-grid');
@@ -587,7 +605,7 @@ window.renderLibrary = function() {
                             ${isOwner && item.status === 'requested' ? `
     <div class="bg-purple-50 border border-purple-200 text-purple-900 text-xs p-3 rounded mb-3">
         <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Interesse an Ihrem zu verschenkenden Artikel bekundet!</p>
-        <p><span class="font-semibold">Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
+        <p><span class="font-semibold">Entleiher Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
         <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-purple-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
         <p class="mt-2 text-[10px] text-purple-700 italic border-t border-purple-200 pt-1">Diese Anfrage wurde auch an Ihre verknüpfte E-Mail-Adresse weitergeleitet.</p>
     </div>
@@ -643,7 +661,7 @@ window.renderMyBorrowed = function() {
             <div>
                 <div class="flex justify-between items-start mb-2.5">
                     <span class="text-xs font-semibold ${isGiveaway ? 'bg-purple-50 text-purple-900' : 'bg-sky-50 text-sky-900'} px-2.5 py-1 rounded">
-                        ${isGiveaway ? 'Zu verschenken' : 'Ausleihe'} Angefragt
+                        ${isGiveaway ? 'Zu verschenken' : (item.status === 'lent' ? 'Ausgeliehen' : item.status === 'return_pending' ? 'Rückgabe in Bearbeitung' : 'Ausleihe Angefragt')}
                     </span>
                     ${!isGiveaway ? timeBadge : ''}
                 </div>
@@ -651,7 +669,7 @@ window.renderMyBorrowed = function() {
                 <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
             </div>
             <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
-                <span class="text-slate-500 text-xs">Besitzer Kontakt: ${escapeHtml(item.contact || 'Nachbar')}</span>
+                <span class="text-slate-500 text-xs">Verleiher Kontakt: ${escapeHtml(item.contact || 'Nachbar')}</span>
                 ${actionButton}
             </div>
         </div>
@@ -699,7 +717,7 @@ window.renderMyItems = function() {
                 ${item.status === 'requested' ? `
                     <div class="${isGiveaway ? 'bg-purple-50 border-purple-200 text-purple-900' : 'bg-amber-50 border-amber-200 text-amber-900'} border text-xs p-3 rounded mb-3">
                         <p class="font-bold mb-1.5">🔔 ${isGiveaway ? 'Interesse an Ihrem zu verschenkenden Artikel!' : 'Ausleih-Anfrage eingegangen!'}</p>
-                        <p><span class="font-semibold">Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
+                        <p><span class="font-semibold">Entleiher Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
                         <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:opacity-80">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
                     </div>
                 ` : ''}
@@ -789,6 +807,32 @@ window.handleOfferSubmit = async function(e) {
         };
 
 
+
+// 1. EmailJS Handler (includes borrower contact details in message)
+window.handleBorrowerRequest = function(itemTitle, ownerEmail, borrowerContact, borrowerEmail) {
+    if (!ownerEmail) {
+        showInfoModal("Fehler", "Für dieses Werkzeug ist keine E-Mail-Adresse des Verleihers hinterlegt.");
+        return;
+    }
+
+    const templateParams = {
+        to_email: ownerEmail,
+        item_title: itemTitle,
+        borrower_contact: borrowerContact, // <-- ADDED
+        borrower_email: borrowerEmail,     // <-- ADDED
+        message: `Ein Nachbar (${borrowerContact}, E-Mail: ${borrowerEmail}) hat eine Anfrage für Ihr Werkzeug/Ihren Gegenstand "${itemTitle}" gestartet.`
+    };
+
+    emailjs.send('service_83hht9o', 'template_9lyyyce', templateParams)
+        .then(() => {
+            console.log('Email sent successfully via EmailJS!');
+        })
+        .catch((error) => {
+            console.error('Failed to send email via EmailJS:', error);
+        });
+};
+
+// 2. Borrow Item Handler
 window.borrowItem = function(id) {
     const item = itemsCache.find(i => i.id === id);
     if (!item) return;
@@ -814,6 +858,11 @@ window.borrowItem = function(id) {
             item.borrowedAt = Date.now();
             item.borrowerContact = reqContact;
             item.borrowerEmail = reqEmail;
+
+            // Trigger silent background email via EmailJS
+            if (item.ownerEmail) {
+                handleBorrowerRequest(item.title, item.ownerEmail, reqContact, reqEmail);
+            }
             
             showInfoModal("Ausleihe erfolgreich", "Das Werkzeug wurde für Sie reserviert / ausgeliehen. Der Besitzer wurde benachrichtigt!");
             renderAllViews();
@@ -823,7 +872,9 @@ window.borrowItem = function(id) {
     });
 };
 
+        
 
+        
 
 window.returnItem = async function(id) {
     const item = itemsCache.find(i => i.id === id);
@@ -1030,31 +1081,54 @@ window.confirmReturn = async function(id) {
                 }, 'email', 'Wiederherstellen');
         };
 
-        window.openAdminContactModal = function() {
-            showInfoModal("Admin Kontakt", "Bei Fragen, Problemen oder Moderationsanliegen erreichen Sie das Administrationsteam der Nachbarschaft unter: admin@nachbarschafts-werkzeugkiste.de");
-        };
+window.openAdminContactModal = function() {
+    showInfoModal(
+        "Admin Kontakt", 
+        "Bei Fragen, Problemen oder Moderationsanliegen erreichen Sie das Administrationsteam der Nachbarschaft unter:<br><br><a href='mailto:noumanahmad1987@gmail.com' class='text-blue-600 underline hover:text-blue-800 font-medium'>noumanahmad1987@gmail.com</a>"
+    );
+};
 
-        window.handleAdminAuthClick = function() {
-            if (isAdminLoggedIn) {
-                isAdminLoggedIn = false;
-                document.getElementById('admin-status-badge').classList.add('hidden');
-                document.getElementById('admin-auth-btn').innerText = "Admin Einloggen";
-                showInfoModal("Abgemeldet", "Sie haben den Admin-Modus verlassen.");
-                renderAllViews();
-            } else {
-                openCustomModal("Admin Einloggen", "Bitte geben Sie das Administrator-Passwort ein:", true, "Passwort eingeben...", (pw) => {
-                    if (pw === "$$@P@dm1nNW") {
+window.handleAdminAuthClick = function() {
+    if (isAdminLoggedIn) {
+        isAdminLoggedIn = false;
+        document.getElementById('admin-status-badge').classList.add('hidden');
+        document.getElementById('admin-auth-btn').innerText = "Admin Einloggen";
+        showInfoModal("Abgemeldet", "Sie haben den Admin-Modus verlassen.");
+        if (typeof renderAllViews === 'function') renderAllViews();
+    } else {
+        openCustomModal("Admin Einloggen", "Bitte geben Sie das Administrator-Passwort ein:", true, "Passwort eingeben...", async (pw) => {
+            if (!pw) return;
+
+            try {
+                const configRef = doc(db, 'app_config', 'admin_settings');
+                const configSnap = await getDoc(configRef);
+
+                if (configSnap.exists()) {
+                    const data = configSnap.data();
+                    const storedPassword = (Object.values(data)[0] || '').trim();
+                    const enteredPassword = (pw || '').trim();
+
+                    if (enteredPassword === storedPassword) {
                         isAdminLoggedIn = true;
                         document.getElementById('admin-status-badge').classList.remove('hidden');
                         document.getElementById('admin-auth-btn').innerText = "Admin ausloggen";
                         showInfoModal("Erfolg", "Admin-Modus aktiv!");
-                        renderAllViews();
-                    } else if (pw) {
+                        if (typeof renderAllViews === 'function') renderAllViews();
+                    } else {
                         showInfoModal("Fehler", "Falsches Passwort.");
                     }
-                }, 'password', 'Einloggen');
+                } else {
+                    showInfoModal("Fehler", "Konfiguration in Firestore nicht gefunden (app_config/admin_settings).");
+                }
+            } catch (err) {
+                console.error("Firestore read error:", err);
+                showInfoModal("Fehler", "Verbindung zur Datenbank fehlgeschlagen: " + err.message);
             }
-        };
+        }, 'password', 'Einloggen');
+    }
+};
+
+
 
         // Modal Helpers
         let modalCallback = null;
@@ -1093,7 +1167,7 @@ window.confirmReturn = async function(id) {
     
     const htmlContent = `
         <p class="mb-3 text-slate-700 font-medium">Bitte geben Sie Ihre Kontaktdaten ein, damit der Besitzer Sie erreichen kann.</p>
-        <input type="text" id="req-contact" class="w-full border border-slate-300 rounded-lg p-3 mb-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Name & Adresse (z.B. Max, Haus Nr. 5)">
+        <input type="text" id="req-contact" class="w-full border border-slate-300 rounded-lg p-3 mb-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Name & Adresse (z.B. Maximus, Ludwigstraße Haus Nr. 5)">
         <input type="email" id="req-email" class="w-full border border-slate-300 rounded-lg p-3 mb-2 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Ihre E-Mail-Adresse">
         <div class="bg-blue-50 border border-blue-200 rounded p-2.5 mt-2">
             <p class="text-xs text-blue-800 leading-tight">
