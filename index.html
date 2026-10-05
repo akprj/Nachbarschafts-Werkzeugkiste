@@ -396,12 +396,12 @@
         };
 
         function showWelcomeModal(id) {
-            const title = "Wichtiger Hinweis zu Ihrer Benutzer-ID";
+            const title = "Wichtiger Hinweis zu Ihrer Benutzer-ID (Dieses Browser/Gerät)";
             const msgHtml = `
                 <p>Ihre zugewiesene Benutzer-ID lautet:</p>
                 <div class="my-3"><span class="font-mono bg-blue-100 text-blue-900 font-bold px-3.5 py-2 rounded text-xl select-all inline-block">${id}</span></div>
-                <p>Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können.</p>
-                <p>Sie können Ihre ID auch jederzeit manuell eingeben oder mit einer E-Mail-Adresse verknüpfen.</p>
+                <p>Diese ID ist der Schlüssel, mit dem Sie alle darüber erstellten Einträge und Anfragen einsehen und verwalten können</p>
+                <p>Sie können Ihre ID auch jederzeit manuell eingeben oder mit einer E-Mail-Adresse verknüpfen. Nach der Verknüpfung können Sie Ihre ID darüber jederzeit wiederherstellen, falls Sie sie in Zukunft vergessen sollten</p>
             `;
             showHtmlModal(title, msgHtml);
         }
