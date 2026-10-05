@@ -45,16 +45,13 @@
             <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-sky-900 text-sm md:text-base">
                 <div class="flex flex-col gap-1.5 w-full md:w-auto">
                     <div class="flex items-center gap-2.5 flex-wrap">
-                        <span class="font-semibold">👤 Ihre Benutzer-ID:</span>
+                        <span class="font-semibold">👤 Ihre Konto--ID:</span>
                         <span id="global-user-id-display" class="font-mono bg-sky-200 px-3 py-1 rounded select-all font-bold text-lg text-blue-900">...</span>
                         <button onclick="copyUserId()" class="text-xs md:text-sm bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded transition-colors font-semibold">ID kopieren</button>
                     </div>
                     <p class="text-xs md:text-sm text-sky-800 font-medium">Mit dieser ID können Sie Ihre eingetragenen Artikel und geliehenen Werkzeuge auf einem neuen Gerät oder in einem anderen Browser wiederfinden.</p>
                 </div>
                 <div class="flex items-start gap-2.5 shrink-0 self-start md:self-center flex-wrap">
-                    <button id="reset-original-id-btn" onclick="resetToOriginalUserId()" class="hidden bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
-                        🔄 Zur Original-ID
-                    </button>
                     <div class="flex flex-col items-center">
                         <button onclick="openSwitchUserIdModal()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
                             ID eingeben
@@ -205,14 +202,9 @@
 
         <!-- 4. Meine Ausleihen Tab -->
         <section id="section-ausleihen" class="space-y-6 hidden">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div>
-                    <h2 class="text-xl font-bold text-slate-800">Meine aktiven Ausleihen & Anfragen</h2>
-                    <p class="text-sm text-slate-500 mt-0.5">Übersicht aller Werkzeuge, die Sie derzeit angefragt oder geliehen haben. Verwaltet über Ihre Benutzer-ID.</p>
-                </div>
-                <button onclick="openSwitchUserIdModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 transition-colors whitespace-nowrap">
-                    🔑 ID wechseln
-                </button>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold text-slate-800">Meine aktiven Ausleihen & Anfragen</h2>
+                <p class="text-sm text-slate-500 mt-0.5">Übersicht aller Werkzeuge, die Sie derzeit angefragt oder geliehen haben. Verwaltet über Ihre Konto--ID.</p>
             </div>
             <div id="my-borrowed-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
                 <!-- Dynamisch -->
@@ -221,14 +213,9 @@
 
         <!-- 5. Meine Einträge Tab -->
         <section id="section-eintraege" class="space-y-6 hidden">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div>
-                    <h2 id="section-eintraege-title" class="text-xl font-bold text-slate-800">Artikelanfragen & Verwalten</h2>
-                    <p id="section-eintraege-desc" class="text-sm text-slate-500 mt-0.5">Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Benutzer-ID.</p>
-                </div>
-                <button onclick="openSwitchUserIdModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 transition-colors whitespace-nowrap">
-                    🔑 ID wechseln
-                </button>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <h2 id="section-eintraege-title" class="text-xl font-bold text-slate-800">Artikelanfragen & Verwalten</h2>
+                <p id="section-eintraege-desc" class="text-sm text-slate-500 mt-0.5">Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Konto--ID.</p>
             </div>
             <div id="my-items-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
                 <!-- Dynamisch -->
@@ -360,11 +347,10 @@
                 console.error("Firebase auth error:", e);
             }
 
-            // Permanent device ID logic (localStorage)
+            // 1. Permanent Browser/Device ID (Saved ONLY in localStorage)
             let originalId = localStorage.getItem('nb_original_user_id');
             let isFirstTime = false;
 
-            // Migrate old single key if present
             if (!originalId) {
                 let oldStoredId = localStorage.getItem('nb_user_id');
                 if (oldStoredId && isValidNewFormat(oldStoredId)) {
@@ -378,7 +364,8 @@
             }
             localStorage.setItem('nb_original_user_id', originalId);
 
-            // Active session ID logic (sessionStorage)
+            // 2. Active Session ID (Saved ONLY in sessionStorage for temporary overrides)
+            // On new tab or browser reopen, sessionStorage is empty, so it defaults back to originalId.
             let sessionSwitchedId = sessionStorage.getItem('nb_session_user_id');
             if (sessionSwitchedId && isValidNewFormat(sessionSwitchedId)) {
                 activeUserId = sessionSwitchedId;
@@ -397,23 +384,13 @@
         function updateUserIdDisplays() {
             const el = document.getElementById('global-user-id-display');
             if (el) el.innerText = activeUserId;
-
-            const origId = localStorage.getItem('nb_original_user_id');
-            const resetBtn = document.getElementById('reset-original-id-btn');
-            if (resetBtn) {
-                if (origId && activeUserId !== origId) {
-                    resetBtn.classList.remove('hidden');
-                } else {
-                    resetBtn.classList.add('hidden');
-                }
-            }
         }
 
         window.copyUserId = function() {
             const text = activeUserId;
             if (window.clipboardData && window.clipboardData.setData) {
                 window.clipboardData.setData("Text", text);
-                showInfoModal("Erfolg", "Benutzer-ID in die Zwischenablage kopiert!");
+                showInfoModal("Erfolg", "Konto--ID in die Zwischenablage kopiert!");
             } else {
                 const dummy = document.createElement("textarea");
                 document.body.appendChild(dummy);
@@ -421,28 +398,17 @@
                 dummy.select();
                 document.execCommand("copy");
                 document.body.removeChild(dummy);
-                showInfoModal("Erfolg", "Benutzer-ID '" + text + "' in die Zwischenablage kopiert!");
-            }
-        };
-
-        window.resetToOriginalUserId = function() {
-            const origId = localStorage.getItem('nb_original_user_id');
-            if (origId) {
-                activeUserId = origId;
-                sessionStorage.removeItem('nb_session_user_id');
-                updateUserIdDisplays();
-                renderAllViews();
-                showInfoModal("Geräte-ID geladen", `Sie sind wieder mit Ihrer ursprünglichen Geräte-ID (${activeUserId}) verbunden.`);
+                showInfoModal("Erfolg", "Konto--ID '" + text + "' in die Zwischenablage kopiert!");
             }
         };
 
         function showWelcomeModal(id) {
-            const title = "Wichtiger Hinweis zu Ihrer Benutzer-ID";
+            const title = "Wichtiger Hinweis zu Ihrer Konto--ID";
             const msgHtml = `
-                <p>Ihre zugewiesene Geräte-Benutzer-ID lautet:</p>
+                <p>Ihre zugewiesene Geräte-Konto--ID lautet:</p>
                 <div class="my-3"><span class="font-mono bg-blue-100 text-blue-900 font-bold px-3.5 py-2 rounded text-xl select-all inline-block">${id}</span></div>
                 <p>Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können.</p>
-                <p>Sie bleibt fest auf diesem Gerät gespeichert, auch wenn Sie vorübergehend eine andere ID laden.</p>
+                <p>Sie bleibt fest auf diesem Gerät gespeichert. Selbst wenn Sie vorübergehend eine andere ID laden, wird beim Öffnen eines neuen Tabs oder Neustarten des Browsers automatisch wieder diese Geräte-ID angezeigt.</p>
             `;
             showHtmlModal(title, msgHtml);
         }
@@ -519,7 +485,7 @@
             } else {
                 if (labelEl) labelEl.innerText = "Artikelanfragen & Verwalten";
                 if (titleEl) titleEl.innerText = "Artikelanfragen & Verwalten";
-                if (descEl) descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Benutzer-ID.";
+                if (descEl) descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Konto--ID.";
             }
         }
 
@@ -646,10 +612,7 @@
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 p-6">
-                        <p class="text-slate-500 text-sm mb-3">Sie haben derzeit keine Werkzeuge oder Artikel angefragt (Aktuelle ID: <strong class="font-mono text-blue-900">${activeUserId}</strong>).</p>
-                        <button onclick="openSwitchUserIdModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
-                            Andere Benutzer-ID eingeben
-                        </button>
+                        <p class="text-slate-500 text-sm">Sie haben derzeit keine Werkzeuge oder Artikel angefragt (Aktuelle ID: <strong class="font-mono text-blue-900">${activeUserId}</strong>).</p>
                     </div>`;
                 return;
             }
@@ -705,10 +668,7 @@
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 p-6">
-                        <p class="text-slate-500 text-sm mb-3">Sie haben noch keine Artikel unter Ihrer aktuellen ID (<strong class="font-mono text-blue-900">${activeUserId}</strong>) eingetragen.</p>
-                        <button onclick="openSwitchUserIdModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
-                            Vorhandene Benutzer-ID laden
-                        </button>
+                        <p class="text-slate-500 text-sm">Sie haben noch keine Artikel unter Ihrer aktuellen ID (<strong class="font-mono text-blue-900">${activeUserId}</strong>) eingetragen.</p>
                     </div>`;
                 return;
             }
@@ -1020,21 +980,22 @@
             }
         };
 
-        // --- ID Switch Option for Session Only ---
+        // --- Temporary ID Switch (Stored ONLY in sessionStorage) ---
         window.openSwitchUserIdModal = function() {
-            openCustomModal("Benutzer-ID eingeben", 
-                "Geben Sie eine andere Benutzer-ID ein, um deren Einträge oder Ausleihen in dieser Sitzung einzusehen:", 
+            openCustomModal("Konto--ID eingeben", 
+                "Geben Sie eine andere Konto--ID ein, um deren Einträge oder Ausleihen in dieser Tab-Sitzung einzusehen:", 
                 true, "z.B. ABCD1234", (inputVal) => {
                     const cleanId = (inputVal || '').trim().toUpperCase();
                     if (!cleanId || cleanId.length < 4) {
-                        showInfoModal("Fehler", "Bitte geben Sie eine gültige Benutzer-ID ein.");
+                        showInfoModal("Fehler", "Bitte geben Sie eine gültige Konto--ID ein.");
                         return;
                     }
                     activeUserId = cleanId;
+                    // Save ONLY to sessionStorage, NEVER to localStorage
                     sessionStorage.setItem('nb_session_user_id', activeUserId);
                     updateUserIdDisplays();
                     renderAllViews();
-                    showInfoModal("Erfolg", `Ihre Benutzer-ID wurde für diese Sitzung auf '${activeUserId}' gesetzt. Beim Öffnen eines neuen Tabs oder beim Neustart des Browsers wird automatisch wieder Ihre Geräte-ID geladen.`);
+                    showInfoModal("ID Geladen", `Sie sind in dieser Sitzung temporär mit '${activeUserId}' verbunden. Wenn Sie einen neuen Tab öffnen oder den Browser neu starten, wird automatisch wieder Ihre ursprüngliche Geräte-ID geladen.`);
                 }, 'text', 'ID Laden');
         };
 
@@ -1059,7 +1020,7 @@
                                 }
                             });
                             if (conflictId) {
-                                showInfoModal("Hinweis", `Diese E-Mail-Adresse ist bereits unter einer anderen Benutzer-ID (${conflictId}) gespeichert!`);
+                                showInfoModal("Hinweis", `Diese E-Mail-Adresse ist bereits unter einer anderen Konto--ID (${conflictId}) gespeichert!`);
                                 return;
                             }
                             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_emails', activeUserId), {
@@ -1069,7 +1030,7 @@
                             });
                         }
                         localStorage.setItem('nb_user_email_' + activeUserId, emailInput);
-                        showInfoModal("Erfolg", "Ihre E-Mail-Adresse wurde erfolgreich mit Ihrer Benutzer-ID verknüpft.");
+                        showInfoModal("Erfolg", "Ihre E-Mail-Adresse wurde erfolgreich mit Ihrer Konto--ID verknüpft.");
                     } catch(err) {
                         console.error("Email link error:", err);
                         showInfoModal("Fehler", "Verknüpfung fehlgeschlagen.");
@@ -1079,7 +1040,7 @@
 
         window.openRecoverIdModal = function() {
             openCustomModal("ID wiederherstellen", 
-                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein, um Ihre gespeicherte Benutzer-ID wiederherzustellen.", 
+                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein, um Ihre gespeicherte Konto--ID für diese Sitzung zu laden.", 
                 true, "Ihre verknüpfte E-Mail-Adresse...", async (emailInput) => {
                     if (!emailInput || !emailInput.includes('@')) {
                         showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
@@ -1102,9 +1063,9 @@
                             sessionStorage.setItem('nb_session_user_id', activeUserId);
                             updateUserIdDisplays();
                             renderAllViews();
-                            showInfoModal("Wiederhergestellt", `Ihre Benutzer-ID wurde für diese Sitzung wiederhergestellt: ${activeUserId}`);
+                            showInfoModal("Wiederhergestellt", `Ihre Konto--ID wurde für diese Sitzung geladen: ${activeUserId}`);
                         } else {
-                            showInfoModal("Nicht gefunden", "Unter dieser E-Mail-Adresse wurde keine verknüpfte Benutzer-ID in der Datenbank gefunden.");
+                            showInfoModal("Nicht gefunden", "Unter dieser E-Mail-Adresse wurde keine verknüpfte Konto--ID in der Datenbank gefunden.");
                         }
                     } catch(err) {
                         console.error("Recovery error:", err);
@@ -1202,7 +1163,7 @@
                 <div class="space-y-3 text-sm text-slate-700">
                     <h4 class="font-bold text-slate-900 text-base">Datenschutzerklärung (DSGVO)</h4>
                     <p><strong>1. Verantwortlicher:</strong> Nachbarschafts-Werkzeugkiste Administration (<a href="mailto:noumanahmad1987@gmail.com" class="underline text-blue-800">noumanahmad1987@gmail.com</a>).</p>
-                    <p><strong>2. Datenerhebung:</strong> Zur Nutzung der Anwendung wird eine zufällige anonyme Benutzer-ID generiert. E-Mail-Adressen werden ausschließlich verarbeitet, wenn Sie diese beim Anbieten eines Artikels, bei Ausleih-Anfragen oder zur ID-Wiederherstellung freiwillig angeben.</p>
+                    <p><strong>2. Datenerhebung:</strong> Zur Nutzung der Anwendung wird eine zufällige anonyme Konto--ID generiert. E-Mail-Adressen werden ausschließlich verarbeitet, wenn Sie diese beim Anbieten eines Artikels, bei Ausleih-Anfragen oder zur ID-Wiederherstellung freiwillig angeben.</p>
                     <p><strong>3. Verwendungszweck:</strong> E-Mail-Adressen dienen ausschließlich der Weiterleitung von Benachrichtigungen über Ausleih-Anfragen per EmailJS an den jeweiligen Gegenstandsbesitzer. E-Mail-Adressen werden niemals öffentlich im System angezeigt.</p>
                     <p><strong>4. Speicherung & Drittanbieter:</strong> Daten werden sicher in Google Cloud Firestore gespeichert. Der E-Mail-Versand erfolgt über EmailJS. Es findet keine Weitergabe an kommerzielle Dritte statt.</p>
                     <p><strong>5. Ihre Rechte:</strong> Sie haben jederzeit das Recht auf Auskunft, Berichtigung oder Löschung Ihrer gespeicherten Daten. Wenden Sie sich hierzu an die oben genannte Kontaktadresse.</p>
