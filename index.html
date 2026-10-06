@@ -42,17 +42,8 @@
 
     <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
         <div class="bg-sky-50 border-b border-sky-100 px-4 py-3.5">
-            <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-sky-900 text-sm md:text-base">
-                <div class="flex flex-col gap-1.5 w-full md:w-auto">
-                    <div class="flex items-center gap-2.5 flex-wrap">
-                        <span class="font-semibold">👤 Ihre Konto-ID:</span>
-                        <span id="global-user-id-display" class="font-mono bg-sky-200 px-3 py-1 rounded select-all font-bold text-lg text-blue-900">...</span>
-                        <button onclick="copyUserId()" class="text-xs md:text-sm bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded transition-colors font-semibold">ID kopieren</button>
-                        <button id="link-email-top-btn" onclick="openLinkEmailModal()" class="text-xs md:text-sm bg-blue-900 hover:bg-blue-800 text-white px-3 py-1.5 rounded transition-colors font-semibold">Konto-ID verknüpfen</button>
-                    </div>
-                    <p class="text-xs md:text-sm text-sky-800 font-medium">Mit dieser ID können Sie Ihre eingetragenen Artikel und geliehenen Werkzeuge auf einem neuen Gerät oder in einem anderen Browser wiederfinden.</p>
-                </div>
-                <div class="flex items-start gap-2.5 shrink-0 self-start md:self-center flex-wrap">
+            <div class="max-w-4xl mx-auto flex items-center justify-end gap-3 text-sky-900 text-sm md:text-base">
+                <div class="flex items-start gap-2.5 shrink-0 flex-wrap">
                     <div class="flex flex-col items-center">
                         <button onclick="openSwitchUserIdModal()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
                             ID-Laden
@@ -297,7 +288,6 @@
         let itemsCache = [];
         let unsubItems = null;
         let isAdminLoggedIn = false;
-        let timerInterval = null;
 
         // Brevo Email Helper Function
         async function sendBrevoEmail(toEmail, subject, textContent) {
@@ -364,98 +354,47 @@
                 activeUserId = originalId;
             }
 
-            updateUserIdDisplays();
             initFirestoreListener();
 
-            // Check if user has already linked email
+            // Check if user has already linked email / unlocked the platform
             const isLinked = localStorage.getItem('nb_email_linked_' + activeUserId);
             if (isFirstTime || isLinked !== 'true') {
-                showWelcomeModal(activeUserId);
-            } else {
-                startVerknuepfenTimer();
+                showWelcomeModal();
             }
         };
 
-        function updateUserIdDisplays() {
-            const el = document.getElementById('global-user-id-display');
-            if (el) el.innerText = activeUserId;
-        }
-
-        function startVerknuepfenTimer() {
-            const topBtn = document.getElementById('link-email-top-btn');
-            if (!topBtn) return;
-
-            const isLinked = localStorage.getItem('nb_email_linked_' + activeUserId);
-            if (isLinked === 'true') {
-                topBtn.classList.add('hidden');
-                return;
-            }
-
-            let startTime = localStorage.getItem('nb_timer_start_' + activeUserId);
-            if (!startTime) {
-                startTime = Date.now();
-                localStorage.setItem('nb_timer_start_' + activeUserId, startTime);
-            } else {
-                startTime = parseInt(startTime, 10);
-            }
-
-            const duration = 120 * 1000;
-
-            function updateTimer() {
-                const elapsed = Date.now() - startTime;
-                const remaining = Math.max(0, Math.ceil((duration - elapsed) / 1000));
-
-                if (remaining <= 0) {
-                    topBtn.classList.add('hidden');
-                    if (timerInterval) clearInterval(timerInterval);
-                } else {
-                    topBtn.classList.remove('hidden');
-                    topBtn.innerText = `Konto-ID verknüpfen (${remaining}s)`;
-                }
-            }
-
-            updateTimer();
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(updateTimer, 1000);
-        }
-
-        window.copyUserId = function() {
-            const text = activeUserId;
-            navigator.clipboard.writeText(text).then(() => {
-                showInfoModal("Erfolg", "Konto-ID '" + text + "' in die Zwischenablage kopiert!");
-            }).catch(() => {
-                showInfoModal("Hinweis", "Konto-ID: " + text);
-            });
-        };
-
-        // Welcome Modal (Unclosable until email is linked)
-        function showWelcomeModal(id) {
+        // Welcome Modal (Unclosable until email is linked or ID loaded)
+        function showWelcomeModal() {
             const title = "Wichtiger Hinweis";
             const msgHtml = `
-                <div class="space-y-3">
-                    <p class="font-semibold text-slate-800">👤 Ihre Konto-ID:</p>
-                    <div class="flex items-center gap-2">
-                        <span class="font-mono bg-blue-100 text-blue-900 font-bold px-3.5 py-2 rounded text-xl select-all inline-block">${id}</span>
-                        <button onclick="copyUserId()" class="text-xs md:text-sm bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded transition-colors font-semibold">ID kopieren</button>
-                    </div>
-                    <p class="text-xs md:text-sm text-slate-600 leading-relaxed">
-                        Mit dieser ID können Sie Ihre eingetragenen Artikel und geliehenen Werkzeuge auf einem neuen Gerät oder in einem anderen Browser wiederfinden.
-                    </p>
+                <div class="space-y-3 text-sm md:text-base text-slate-700 leading-relaxed">
+                    <p>Ihre Konto-ID lautet: <strong class="text-blue-900">(wird per E-Mail zugesendet)</strong></p>
+                    <p>Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können.</p>
+                    <p>Mit dieser ID können Sie Ihre eingetragenen Artikel und geliehenen Werkzeuge auf einem neuen Gerät oder in einem anderen Browser wiederfinden.</p>
+                    <p>Sie bleibt fest auf diesem Gerät gespeichert. Selbst wenn Sie vorübergehend eine andere ID laden, wird beim Öffnen eines neuen Tabs oder Neustarten des Browsers automatisch wieder diese Geräte-Konto-ID angezeigt.</p>
                 </div>
                 
-                <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-left my-4">
-                    <p class="font-bold text-amber-900 text-sm mb-1">✉️ Konto-ID verknüpfen (Erforderlich):</p>
-                    <p class="text-xs text-amber-800 mb-3">Bitte verknüpfen Sie Ihre E-Mail-Adresse, um fortzufahren. Wir senden Ihnen Ihre Konto-ID per EmailJS zu.</p>
-                    <div class="flex flex-col sm:flex-row gap-2">
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-left my-4 mt-6">
+                    <p class="font-bold text-blue-900 text-sm mb-1">Neu hier? Konto-ID per E-Mail anfordern:</p>
+                    <div class="flex flex-col sm:flex-row gap-2 mt-2">
                         <input type="email" id="welcome-email-input" placeholder="Ihre E-Mail-Adresse eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-900">
                         <button onclick="submitWelcomeEmailLink()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
-                            Konto-ID verknüpfen
+                            Konto erstellen & ID senden
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-left my-4">
+                    <p class="font-bold text-slate-800 text-sm mb-1">Bereits registriert? ID-Laden:</p>
+                    <div class="flex flex-col sm:flex-row gap-2 mt-2">
+                        <input type="text" id="welcome-id-input" placeholder="Ihre Konto-ID eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-slate-900 uppercase">
+                        <button onclick="submitWelcomeIdLoad()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
+                            ID-Laden & Eintreten
                         </button>
                     </div>
                 </div>
             `;
             
-            // Render unclosable modal
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-message').innerHTML = msgHtml;
             document.getElementById('modal-confirm-btn').classList.add('hidden');
@@ -475,14 +414,35 @@
 
             const success = await processAccountEmailLinking(emailVal);
             if (success) {
-                // Allow modal to close only after successful linking
+                // Allow user into the main page
                 document.getElementById('modal').classList.add('hidden');
                 document.getElementById('modal-confirm-btn').classList.remove('hidden');
-                showInfoModal("Erfolg", `Ihre Konto-ID (${activeUserId}) wurde verknüpft und per E-Mail an ${emailVal} gesendet!`);
+                showInfoModal("Erfolg", `Ihre Konto-ID wurde erfolgreich generiert und per E-Mail an ${emailVal} gesendet!`);
+                renderAllViews();
             }
         };
 
-        // Unified Email Binding via Firestore & EmailJS
+        window.submitWelcomeIdLoad = async function() {
+            const inputEl = document.getElementById('welcome-id-input');
+            const idVal = inputEl ? inputEl.value.trim().toUpperCase() : '';
+            
+            if (!idVal || idVal.length < 4) {
+                alert("Bitte geben Sie eine gültige Konto-ID ein.");
+                return;
+            }
+            
+            // Set session ID, mark as linked/authenticated, and allow entry
+            activeUserId = idVal;
+            sessionStorage.setItem('nb_session_user_id', activeUserId);
+            localStorage.setItem('nb_email_linked_' + activeUserId, 'true'); 
+            
+            document.getElementById('modal').classList.add('hidden');
+            document.getElementById('modal-confirm-btn').classList.remove('hidden');
+            showInfoModal("Willkommen zurück", `Ihre Konto-ID '${activeUserId}' wurde erfolgreich geladen.`);
+            renderAllViews();
+        };
+
+        // Unified Email Binding via Firestore & EmailJS with Brevo Fallback
         async function processAccountEmailLinking(emailInput) {
             const cleanEmail = emailInput.trim().toLowerCase();
             if (!cleanEmail || !cleanEmail.includes('@')) {
@@ -514,17 +474,30 @@
                 localStorage.setItem('nb_user_email_' + activeUserId, cleanEmail);
                 localStorage.setItem('nb_email_linked_' + activeUserId, 'true');
 
-                // Send Confirmation Email via EMAILJS
-                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-                    to_email: cleanEmail,
-                    user_id: activeUserId,
-                    subject: 'Ihre Konto-ID Verknüpfung',
-                    message: `Hallo!\n\nIhre Konto-ID lautet: ${activeUserId}\n\nMit dieser ID können Sie Ihre eingetragenen Artikel und geliehenen Werkzeuge auf einem neuen Gerät oder in einem anderen Browser wiederfinden.`
-                });
+                const emailMessage = `Hallo!\n\nIhre Konto-ID lautet: ${activeUserId}\n\nDiese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können.\n\nMit dieser ID können Sie Ihre eingetragenen Artikel und geliehenen Werkzeuge auf einem neuen Gerät oder in einem anderen Browser wiederfinden.\n\nSie bleibt fest auf diesem Gerät gespeichert. Selbst wenn Sie vorübergehend eine andere ID laden, wird beim Öffnen eines neuen Tabs oder Neustarten des Browsers automatisch wieder diese Geräte-Konto-ID angezeigt.`;
 
-                const topBtn = document.getElementById('link-email-top-btn');
-                if (topBtn) topBtn.classList.add('hidden');
-                if (timerInterval) clearInterval(timerInterval);
+                // Send Confirmation Email via EMAILJS (Fallback to Brevo if Limit Reached)
+                try {
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                        to_email: cleanEmail,
+                        user_id: activeUserId,
+                        subject: 'Ihre Konto-ID Verknüpfung',
+                        message: emailMessage
+                    });
+                } catch (emailJsError) {
+                    console.warn("EmailJS failed (limit reached?), falling back to Brevo:", emailJsError);
+                    
+                    const brevoSuccess = await sendBrevoEmail(
+                        cleanEmail,
+                        'Ihre Konto-ID Verknüpfung',
+                        emailMessage
+                    );
+                    
+                    if (!brevoSuccess) {
+                        alert("E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.");
+                        return false;
+                    }
+                }
 
                 return true;
             } catch(err) {
@@ -710,7 +683,7 @@
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 p-6">
-                        <p class="text-slate-500 text-sm">Sie haben derzeit keine Werkzeuge oder Artikel angefragt (Aktuelle Konto-ID: <strong class="font-mono text-blue-900">${activeUserId}</strong>).</p>
+                        <p class="text-slate-500 text-sm">Sie haben derzeit keine Werkzeuge oder Artikel angefragt.</p>
                     </div>`;
                 return;
             }
@@ -756,7 +729,7 @@
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 p-6">
-                        <p class="text-slate-500 text-sm">Sie haben noch keine Artikel unter Ihrer aktuellen Konto-ID (<strong class="font-mono text-blue-900">${activeUserId}</strong>) eingetragen.</p>
+                        <p class="text-slate-500 text-sm">Sie haben noch keine Artikel unter Ihrer aktuellen Konto-ID eingetragen.</p>
                     </div>`;
                 return;
             }
@@ -932,21 +905,9 @@
                     }
                     activeUserId = cleanId;
                     sessionStorage.setItem('nb_session_user_id', activeUserId);
-                    updateUserIdDisplays();
                     renderAllViews();
                     showInfoModal("ID Geladen", `Sie sind in dieser Sitzung temporär mit '${activeUserId}' verbunden.`);
                 }, 'text', 'ID Laden');
-        };
-
-        window.openLinkEmailModal = function() {
-            openCustomModal("E-Mail verknüpfen", 
-                "Verknüpfen Sie Ihre aktuelle Geräte-Konto-ID (" + activeUserId + ") mit Ihrer E-Mail-Adresse:", 
-                true, "Ihre E-Mail-Adresse eingeben...", async (emailInput) => {
-                    const success = await processAccountEmailLinking(emailInput);
-                    if (success) {
-                        showInfoModal("Erfolg", "Ihre Konto-ID wurde verknüpft und per EmailJS gesendet!");
-                    }
-                }, 'email', 'Verknüpfen');
         };
 
         // ID Recovery via BREVO
@@ -975,7 +936,6 @@
                         if (foundId) {
                             activeUserId = foundId;
                             sessionStorage.setItem('nb_session_user_id', activeUserId);
-                            updateUserIdDisplays();
                             renderAllViews();
 
                             // Send Recovery Email via BREVO
@@ -985,7 +945,7 @@
                                 `Hallo!\n\nIhre wiederhergestellte Konto-ID lautet: ${foundId}\n\nSie wurde in Ihrer aktuellen Browsersitzung geladen.`
                             );
 
-                            showInfoModal("Wiederhergestellt", `Ihre Konto-ID (${foundId}) wurde gefunden, geladen und an Ihre E-Mail (${cleanEmail}) gesendet!`);
+                            showInfoModal("Wiederhergestellt", `Ihre Konto-ID wurde gefunden, geladen und an Ihre E-Mail (${cleanEmail}) gesendet!`);
                         } else {
                             showInfoModal("Nicht gefunden", "Unter dieser E-Mail-Adresse wurde keine verknüpfte Konto-ID gefunden.");
                         }
