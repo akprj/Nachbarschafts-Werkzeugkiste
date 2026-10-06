@@ -206,55 +206,26 @@
     </main>
 
     <footer class="bg-white border-t border-slate-200 py-6 px-4 mt-auto">
-       
-            <div class="flex items-center gap-3 flex-wrap justify-center">
-                <button onclick="openAdminContactModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
-                    Admin Kontakt
-                </button>
-                <button id="admin-auth-btn" onclick="handleAdminAuthClick()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
-                    Admin Einloggen
-                </button>
-                 <button id="toggle-password-form-btn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-1.5 px-3 rounded text-xs">Admin Passwort ändern</button>
-            
-            <div id="password-change-form" style="display: none; margin-top: 15px;">
-                <div class="mb-3">
-                    <label class="block text-xs font-medium text-slate-600 mb-1" for="current-admin-pwd">Aktuelles Passwort:</label>
-                    <input class="w-full p-2 border border-slate-300 rounded text-sm" type="password" id="current-admin-pwd" required>
-                </div>
-                <div class="mb-3">
-                    <label class="block text-xs font-medium text-slate-600 mb-1" for="new-admin-pwd">Neues Passwort:</label>
-                    <input class="w-full p-2 border border-slate-300 rounded text-sm" type="password" id="new-admin-pwd" required>
-                </div>
-                <div class="mb-3">
-                    <label class="block text-xs font-medium text-slate-600 mb-1" for="confirm-admin-pwd">Neues Passwort bestätigen:</label>
-                    <input class="w-full p-2 border border-slate-300 rounded text-sm" type="password" id="confirm-admin-pwd" required>
-                </div>
-                <button id="save-new-password-btn" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-4 rounded text-xs">Passwort speichern</button>
-            </div>
-
-            </div>
-        
-
-
-        
-        <!-- PASTE THE ADMIN PASSWORD CHANGE SECTION HERE (Outside the flex row so it expands full-width or nicely beneath) -->
-        <div id="admin-settings-section" class="max-w-4xl mx-auto mt-6 p-4 bg-slate-50 border border-slate-200 rounded-lg hidden">
-            <h3 class="font-semibold text-slate-700 mb-3">Admin-Einstellungen</h3>
-           
+        <div class="flex items-center gap-3 flex-wrap justify-center">
+            <button onclick="openAdminContactModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
+                Admin Kontakt
+            </button>
+            <button id="admin-auth-btn" onclick="handleAdminAuthClick()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
+                Admin Einloggen
+            </button>
         </div>
 
+        <div id="admin-settings-section" class="max-w-4xl mx-auto mt-6 p-4 bg-slate-50 border border-slate-200 rounded-lg hidden">
+            <h3 class="font-semibold text-slate-700 mb-3">Admin-Einstellungen</h3>
+            <p class="text-sm text-slate-600">Sie sind aktuell im Admin-Modus angemeldet und können Einträge systemweit einsehen.</p>
+        </div>
 
-         <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
-            <div class="text-slate-500 flex items-center gap-2.5 flex-wrap text-center md:text-left">
-                <span>© 2026 Nachbarschafts-Werkzeugkiste</span>
-                <span id="admin-status-badge" class="hidden bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded text-xs">Admin-Modus aktiv</span>
-            </div>
-
+        <div class="max-w-4xl mx-auto flex flex-col items-center justify-center gap-2 text-sm mt-8">
+            <span class="text-slate-500 text-center">© 2026 Nachbarschafts-Werkzeugkiste</span>
+            <span id="admin-status-badge" class="hidden bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded text-xs">Admin-Modus aktiv</span>
+        </div>
     </footer>
 
-
-
-    
     <!-- Universal Modal -->
     <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 md:p-8 border-2 border-blue-900">
@@ -267,8 +238,8 @@
                 </button>
             </div>
             <div class="flex justify-end space-x-3">
-                <button id="modal-cancel-btn" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-sm py-2 px-4 rounded-lg transition-colors" onclick="closeModal()">Abbrechen</button>
-                <button id="modal-confirm-btn" class="bg-blue-900 hover:bg-blue-800 text-white font-semibold text-sm py-2 px-5 rounded-lg transition-colors" onclick="closeModal()">Verstanden</button>
+                <button id="modal-cancel-btn" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-sm py-2 px-4 rounded-lg transition-colors" onclick="closeModal(true)">Abbrechen</button>
+                <button id="modal-confirm-btn" class="bg-blue-900 hover:bg-blue-800 text-white font-semibold text-sm py-2 px-5 rounded-lg transition-colors" onclick="closeModal(false)">Verstanden</button>
             </div>
         </div>
     </div>
@@ -805,6 +776,24 @@
                     actionButton = `<button onclick="confirmReturn('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">Rückgabe bestätigen</button>`;
                 }
 
+                // Translated Status Logic
+                let statusDisplay = item.status;
+                let statusClass = "bg-slate-100 text-slate-600";
+                
+                if (item.status === 'available') {
+                    statusDisplay = 'Verfügbar';
+                    statusClass = "bg-emerald-100 text-emerald-800";
+                } else if (item.status === 'requested') {
+                    statusDisplay = 'Angefragt';
+                    statusClass = "bg-amber-100 text-amber-800";
+                } else if (item.status === 'lent') {
+                    statusDisplay = 'Ausgeliehen';
+                    statusClass = "bg-blue-100 text-blue-800";
+                } else if (item.status === 'return_pending') {
+                    statusDisplay = 'Rückgabe läuft';
+                    statusClass = "bg-purple-100 text-purple-800";
+                }
+
                 return `
                 <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
                     <div>
@@ -816,7 +805,7 @@
                         <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
                     </div>
                     <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
-                        <span class="text-xs text-slate-500">${item.status}</span>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded ${statusClass}">${statusDisplay}</span>
                         ${actionButton}
                     </div>
                 </div>
@@ -1065,35 +1054,105 @@
                 // LOGOUT LOGIC
                 isAdminLoggedIn = false;
                 document.getElementById('admin-status-badge').classList.add('hidden');
-                document.getElementById('admin-settings-section').classList.add('hidden'); // NEW FIX: Hide section
+                document.getElementById('admin-settings-section').classList.add('hidden'); 
                 document.getElementById('admin-auth-btn').innerText = "Admin Einloggen";
                 showInfoModal("Abgemeldet", "Sie haben den Admin-Modus verlassen.");
                 renderAllViews();
             } else {
-                // LOGIN LOGIC
-                openCustomModal("Admin Einloggen", "Bitte geben Sie das Passwort ein:", true, "Passwort eingeben...", async (pw) => {
-                    if (!pw) return;
+                // LOGIN LOGIC - Integrated Change Password functionality
+                openAdminAuthModal();
+            }
+        };
+
+        window.openAdminAuthModal = function() {
+            document.getElementById('modal-title').innerText = "Admin Einloggen";
+            document.getElementById('modal-message').innerHTML = `
+                <div id="admin-login-view">
+                    <p class="mb-3 text-slate-700 font-medium">Bitte geben Sie das Admin-Passwort ein:</p>
+                    <input type="password" id="admin-login-pwd" class="w-full border border-slate-300 rounded-lg p-3 mb-4 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Passwort eingeben...">
+                    <button type="button" onclick="toggleAdminAuthView(true)" class="text-xs text-blue-700 hover:underline">Admin Passwort ändern?</button>
+                </div>
+                <div id="admin-change-pwd-view" class="hidden">
+                    <p class="mb-3 text-slate-700 font-medium">Admin Passwort ändern:</p>
+                    <input type="password" id="current-admin-pwd-modal" class="w-full border border-slate-300 rounded-lg p-3 mb-2 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Aktuelles Passwort">
+                    <input type="password" id="new-admin-pwd-modal" class="w-full border border-slate-300 rounded-lg p-3 mb-2 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Neues Passwort">
+                    <input type="password" id="confirm-admin-pwd-modal" class="w-full border border-slate-300 rounded-lg p-3 mb-4 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Neues Passwort bestätigen">
+                    <button type="button" onclick="toggleAdminAuthView(false)" class="text-xs text-blue-700 hover:underline">Zurück zum Login</button>
+                </div>
+            `;
+            
+            document.getElementById('modal-confirm-btn').innerText = "Einloggen";
+            document.getElementById('modal-confirm-btn').classList.remove('hidden');
+            document.getElementById('modal-input-container').classList.add('hidden');
+            document.getElementById('modal-cancel-btn').classList.remove('hidden');
+            
+            modalCallback = async () => {
+                const isChangingPwd = !document.getElementById('admin-change-pwd-view').classList.contains('hidden');
+                
+                if (isChangingPwd) {
+                    const currentPwd = document.getElementById('current-admin-pwd-modal').value;
+                    const newPwd = document.getElementById('new-admin-pwd-modal').value;
+                    const confirmPwd = document.getElementById('confirm-admin-pwd-modal').value;
+                    
+                    if (newPwd !== confirmPwd) {
+                        alert("Die neuen Passwörter stimmen nicht überein.");
+                        return;
+                    }
+                    
                     try {
                         const configRef = doc(db, 'app_config', 'admin_settings');
                         const configSnap = await getDoc(configRef);
                         if (configSnap.exists()) {
                             const data = configSnap.data();
-                            if ((pw || '').trim() === (Object.values(data)[0] || '').trim()) {
-                                // Successful Login
-                                isAdminLoggedIn = true;
-                                document.getElementById('admin-status-badge').classList.remove('hidden');
-                                document.getElementById('admin-settings-section').classList.remove('hidden'); // NEW FIX: Show section
-                                document.getElementById('admin-auth-btn').innerText = "Admin ausloggen";
-                                showInfoModal("Erfolg", "Admin-Modus aktiv!");
-                                renderAllViews();
+                            if (currentPwd.trim() === (Object.values(data)[0] || '').trim()) {
+                                await setDoc(configRef, { password: newPwd.trim() });
+                                alert("Passwort erfolgreich geändert! Bitte melden Sie sich mit dem neuen Passwort an.");
+                                toggleAdminAuthView(false);
                             } else {
-                                showInfoModal("Fehler", "Falsches Passwort.");
+                                alert("Aktuelles Passwort ist falsch.");
                             }
                         }
                     } catch (err) {
-                        showInfoModal("Fehler", "Verbindungsfehler.");
+                        alert("Fehler beim Ändern des Passworts: " + err.message);
                     }
-                }, 'password', 'Einloggen');
+                } else {
+                    const pwd = document.getElementById('admin-login-pwd').value;
+                    if (!pwd) return;
+                    try {
+                        const configRef = doc(db, 'app_config', 'admin_settings');
+                        const configSnap = await getDoc(configRef);
+                        if (configSnap.exists()) {
+                            const data = configSnap.data();
+                            if (pwd.trim() === (Object.values(data)[0] || '').trim()) {
+                                isAdminLoggedIn = true;
+                                document.getElementById('admin-status-badge').classList.remove('hidden');
+                                document.getElementById('admin-settings-section').classList.remove('hidden');
+                                document.getElementById('admin-auth-btn').innerText = "Admin ausloggen";
+                                closeModal(true);
+                                showInfoModal("Erfolg", "Admin-Modus aktiv!");
+                                renderAllViews();
+                            } else {
+                                alert("Falsches Passwort.");
+                            }
+                        }
+                    } catch (err) {
+                        alert("Verbindungsfehler.");
+                    }
+                }
+            };
+            
+            document.getElementById('modal').classList.remove('hidden');
+        };
+
+        window.toggleAdminAuthView = function(showChangePwd) {
+            if (showChangePwd) {
+                document.getElementById('admin-login-view').classList.add('hidden');
+                document.getElementById('admin-change-pwd-view').classList.remove('hidden');
+                document.getElementById('modal-confirm-btn').innerText = "Passwort speichern";
+            } else {
+                document.getElementById('admin-change-pwd-view').classList.add('hidden');
+                document.getElementById('admin-login-view').classList.remove('hidden');
+                document.getElementById('modal-confirm-btn').innerText = "Einloggen";
             }
         };
 
@@ -1163,50 +1222,20 @@
             openCustomModal(title, message, false, '', null, 'text', 'Verstanden');
         };
 
-        window.closeModal = function() {
+        window.closeModal = function(isCancel = false) {
             const inputField = document.getElementById('modal-input');
             const val = inputField ? inputField.value : '';
             document.getElementById('modal').classList.add('hidden');
-            if (modalCallback) {
+            if (modalCallback && !isCancel) {
                 const cb = modalCallback;
                 modalCallback = null;
                 cb(val);
+            } else {
+                modalCallback = null;
             }
         };
 
-        // --- 17. Admin Settings Logic ---
-        document.getElementById('toggle-password-form-btn').addEventListener('click', () => {
-            const form = document.getElementById('password-change-form');
-            form.style.display = form.style.display === 'none' ? 'block' : 'none';
-        });
-
-        document.getElementById('save-new-password-btn').addEventListener('click', async () => {
-            const newPassword = document.getElementById('new-admin-pwd').value;
-            const confirmPassword = document.getElementById('confirm-admin-pwd').value;
-
-            if (newPassword !== confirmPassword) {
-                alert("Die neuen Passwörter stimmen nicht überein.");
-                return;
-            }
-
-            // Note: Since this app uses an encrypted config doc for PW, not standard Firebase Auth UpdatePassword,
-            // we update the Firestore document.
-            try {
-                const configRef = doc(db, 'app_config', 'admin_settings');
-                // Standard structure is a field 'password'
-                await setDoc(configRef, { password: newPassword.trim() });
-                alert("Passwort erfolgreich geändert!");
-                document.getElementById('password-change-form').style.display = 'none';
-                // Clear inputs
-                document.getElementById('current-admin-pwd').value = '';
-                document.getElementById('new-admin-pwd').value = '';
-                document.getElementById('confirm-admin-pwd').value = '';
-            } catch (error) {
-                alert("Fehler beim Ändern des Passworts: " + error.message);
-            }
-        });
-
-        // --- 18. HTML Escaping ---
+        // --- 17. HTML Escaping ---
         function escapeHtml(str) {
             return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
