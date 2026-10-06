@@ -388,7 +388,7 @@
             const msgHtml = `
                 <div class="space-y-3 text-sm md:text-base text-slate-700 leading-relaxed">
                     <p>Ihre Konto-ID lautet: <strong class="text-blue-900">${activeUserId}</strong></p>
-                    <p class="guideline-security-text">Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können. Aus Sicherheitsgründen ob senden Sie die oben angezeigte ID an Ihre E-Mail-Adresse und notieren bzw. speichern Sie diese gut für das nächste Mal.</p>
+                    <p class="guideline-security-text">Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können. Aus Sicherheitsgründen ob verknüpfen Sie die oben angezeigte ID mit Ihre E-Mail-Adresse oder notieren bzw. speichern Sie diese gut für das nächste Mal.</p>
                 </div>
                 
                 <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-left my-4 mt-6">
@@ -396,7 +396,7 @@
                     <div class="flex flex-col sm:flex-row gap-2 mt-2">
                         <input type="email" id="welcome-email-input" placeholder="Ihre E-Mail-Adresse eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-900">
                         <button onclick="submitWelcomeEmailLink()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
-                            Konto-ID mit Email verknüpfen & erhalten
+                            ID mit Email verknüpfen
                         </button>
                     </div>
                 </div>
@@ -407,7 +407,7 @@
                     <div class="flex flex-col sm:flex-row gap-2 mt-2">
                         <input type="text" id="welcome-id-input" placeholder="Ihre Konto-ID eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-slate-900 uppercase">
                         <button onclick="submitWelcomeIdLoad()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
-                            ID-Laden & Eintreten
+                            ID-Laden
                         </button>
                     </div>
                 </div>
