@@ -59,7 +59,7 @@
                         <button onclick="openSwitchUserIdModal()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
                             ID-Laden
                         </button>
-                        <span class="text-[10px] text-sky-800 mt-1 leading-tight font-medium">Ihre Konto-ID eingeben</span>
+                        <span class="text-[10px] text-sky-800 mt-1 leading-tight font-medium">Ihre ID eingeben</span>
                     </div>
                     <div class="flex flex-col items-center">
                         <button onclick="openRecoverIdModal()" class="bg-sky-700 hover:bg-sky-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
@@ -212,7 +212,7 @@
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h2 id="section-eintraege-title" class="text-xl font-bold text-slate-800">Artikelanfragen & Verwalten</h2>
-                    <p id="section-eintraege-desc" class="text-sm text-slate-500 mt-0.5">Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Konto-ID.</p>
+                    <p id="section-eintraege-desc" class="text-sm text-slate-500 mt-0.5">Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre ID.</p>
                 </div>
                 <button onclick="openSwitchUserIdModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition-colors shadow-sm shrink-0 whitespace-nowrap">
                     ID-Laden
@@ -387,12 +387,12 @@
             const title = "Wichtiger Hinweis";
             const msgHtml = `
                 <div class="space-y-3 text-sm md:text-base text-slate-700 leading-relaxed">
-                    <p>Ihre Konto-ID lautet: <strong class="text-blue-900">${activeUserId}</strong></p>
+                    <p>Ihre ID lautet: <strong class="text-blue-900">${activeUserId}</strong></p>
                     <p class="guideline-security-text">Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können. Aus Sicherheitsgründen ob verknüpfen Sie die oben angezeigte ID mit Ihre E-Mail-Adresse oder notieren bzw. speichern Sie diese gut für das nächste Mal.</p>
                 </div>
                 
                 <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-left my-4 mt-6">
-                    <p class="font-bold text-blue-900 text-sm mb-1">Konto-ID per E-Mail anfordern:</p>
+                    <p class="font-bold text-blue-900 text-sm mb-1">Ihre ID per E-Mail anfordern:</p>
                     <div class="flex flex-col sm:flex-row gap-2 mt-2">
                         <input type="email" id="welcome-email-input" placeholder="Ihre E-Mail-Adresse eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-900">
                         <button onclick="submitWelcomeEmailLink()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
@@ -405,7 +405,7 @@
                     <p class="font-bold text-slate-800 text-sm mb-1">ID-Laden:</p>
                     <p class="text-xs text-slate-600 mb-2">Entweder geben Sie die oben angezeigte ID hier ein, um mit einem neuen Account zu starten, oder falls Sie bereits früher eine ID hatten und damit Einträge sowie Artikelanfragen vorgenommen haben, geben Sie genau diese ID hier ein, um Ihre Einträge und angefragten Artikel wiederzusehen und zu verwalten.</p>
                     <div class="flex flex-col sm:flex-row gap-2 mt-2">
-                        <input type="text" id="welcome-id-input" placeholder="Ihre Konto-ID eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-slate-900 uppercase">
+                        <input type="text" id="welcome-id-input" placeholder="Ihre ID eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-slate-900 uppercase">
                         <button onclick="submitWelcomeIdLoad()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
                             ID-Laden
                         </button>
@@ -434,7 +434,7 @@
             if (success) {
                 document.getElementById('modal').classList.add('hidden');
                 document.getElementById('modal-confirm-btn').classList.remove('hidden');
-                showInfoModal("Erfolg", `Ihre Konto-ID wurde erfolgreich generiert und per E-Mail an ${emailVal} gesendet!`);
+                showInfoModal("Erfolg", `Ihre ID wurde erfolgreich generiert und per E-Mail an ${emailVal} gesendet!`);
                 renderAllViews();
             }
         };
@@ -444,7 +444,7 @@
             const idVal = inputEl ? inputEl.value.trim().toUpperCase() : '';
             
             if (!idVal || idVal.length < 4) {
-                alert("Bitte geben Sie eine gültige Konto-ID ein.");
+                alert("Bitte geben Sie eine gültige ID ein.");
                 return;
             }
             
@@ -452,7 +452,7 @@
             
             document.getElementById('modal').classList.add('hidden');
             document.getElementById('modal-confirm-btn').classList.remove('hidden');
-            showInfoModal("Willkommen zurück", `Ihre Konto-ID '${activeUserId}' wurde erfolgreich geladen.`);
+            showInfoModal("Willkommen zurück", `Ihre ID '${activeUserId}' wurde erfolgreich geladen.`);
             renderAllViews();
         };
 
@@ -478,7 +478,7 @@
                         // alert(`Diese E-Mail-Adresse ist bereits mit der ID ${existingId} verbunden.`);
 
                         // After (Secure):
-                        alert("Diese E-Mail-Adresse ist bereits mit einem Konto verknüpft. Bitte nutzen Sie Ihre bereits erhaltene Konto-ID oder treten Sie mit akteulle angegebene ID ein.");
+                        alert("Diese E-Mail-Adresse ist bereits mit einer ID verknüpft. Bitte nutzen Sie Ihre bereits erhaltene ID oder treten Sie mit akteulle angegebene ID ein.");
                         return false;
                     }
 
@@ -489,18 +489,18 @@
                     });
                 }
 
-                const emailMessage = `Hallo!\n\nIhre Konto-ID lautet: ${activeUserId}\n\nDiese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können.`;
+                const emailMessage = `Hallo!\n\nIhre ID lautet: ${activeUserId}\n\nDiese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können.`;
 
                 try {
                     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
                         to_email: cleanEmail,
                         user_id: activeUserId,
-                        subject: 'Ihre Konto-ID Verknüpfung',
+                        subject: 'Ihre ID Verknüpfung',
                         message: emailMessage
                     });
                 } catch (emailJsError) {
                     console.warn("EmailJS failed, falling back to Brevo:", emailJsError);
-                    await sendBrevoEmail(cleanEmail, 'Ihre Konto-ID Verknüpfung', emailMessage);
+                    await sendBrevoEmail(cleanEmail, 'Ihre ID Verknüpfung', emailMessage);
                 }
 
                 return true;
@@ -577,7 +577,7 @@
             } else {
                 if (labelEl) labelEl.innerText = "Artikelanfragen & Verwalten";
                 if (titleEl) titleEl.innerText = "Artikelanfragen & Verwalten";
-                if (descEl) descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Konto-ID.";
+                if (descEl) descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre ID.";
             }
         }
 
@@ -733,7 +733,7 @@
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 p-6">
-                        <p class="text-slate-500 text-sm">Sie haben noch keine Artikel unter Ihrer aktuellen Konto-ID eingetragen.</p>
+                        <p class="text-slate-500 text-sm">Sie haben noch keine Artikel unter Ihrer aktuellen ID eingetragen.</p>
                     </div>`;
                 return;
             }
@@ -895,12 +895,12 @@
         };
 
         window.openSwitchUserIdModal = function() {
-            openCustomModal("Konto-ID Laden", 
-                "Geben Sie Ihr Konto-ID ein:", 
+            openCustomModal("ID Laden", 
+                "Geben Sie Ihr ID ein:", 
                 true, "z.B. ABCD1234", (inputVal) => {
                     const cleanId = (inputVal || '').trim().toUpperCase();
                     if (!cleanId || cleanId.length < 4) {
-                        showInfoModal("Fehler", "Bitte geben Sie eine gültige Konto-ID ein.");
+                        showInfoModal("Fehler", "Bitte geben Sie eine gültige ID ein.");
                         return;
                     }
                     activeUserId = cleanId;
@@ -911,7 +911,7 @@
 
         window.openRecoverIdModal = function() {
             openCustomModal("ID wiederherstellen", 
-                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein. Ihre Konto-ID wird gesucht und per Brevo an Ihren Posteingang gesendet:", 
+                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein. Ihre ID wird gesucht und per Brevo an Ihren Posteingang gesendet:", 
                 true, "Ihre verknüpfte E-Mail-Adresse...", async (emailInput) => {
                     const cleanEmail = (emailInput || '').trim().toLowerCase();
                     if (!cleanEmail || !cleanEmail.includes('@')) {
@@ -937,13 +937,13 @@
 
                             await sendBrevoEmail(
                                 cleanEmail,
-                                "Ihre wiederhergestellte Konto-ID",
-                                `Hallo!\n\nIhre wiederhergestellte Konto-ID lautet: ${foundId}\n\nSie wurde geladen.`
+                                "Ihre wiederhergestellte ID",
+                                `Hallo!\n\nIhre wiederhergestellte ID lautet: ${foundId}\n\nSie wurde geladen.`
                             );
 
-                            showInfoModal("Wiederhergestellt", `Ihre Konto-ID wurde gefunden, geladen und an Ihre E-Mail (${cleanEmail}) gesendet!`);
+                            showInfoModal("Wiederhergestellt", `Ihre ID wurde gefunden, geladen und an Ihre E-Mail (${cleanEmail}) gesendet!`);
                         } else {
-                            showInfoModal("Nicht gefunden", "Unter dieser E-Mail-Adresse wurde keine verknüpfte Konto-ID gefunden.");
+                            showInfoModal("Nicht gefunden", "Unter dieser E-Mail-Adresse wurde keine verknüpfte ID gefunden.");
                         }
                     } catch(err) {
                         console.error("Recovery error:", err);
