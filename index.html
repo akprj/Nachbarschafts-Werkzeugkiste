@@ -671,12 +671,20 @@
             }
 
             grid.innerHTML = filtered.map(item => {
+                const isOwner = item.ownerId === activeUserId;
                 return `
                     <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
                         <div>
                             <span class="text-xs font-semibold bg-purple-50 text-purple-900 px-2.5 py-1 rounded mb-2.5 inline-block">${escapeHtml(item.category)}</span>
                             <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
                             <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
+                            ${isOwner && item.status === 'requested' ? `
+                                <div class="bg-purple-50 border border-purple-200 text-purple-900 text-xs p-3 rounded mb-3">
+                                    <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Interesse an Ihrem zu verschenkenden Artikel bekundet!</p>
+                                    <p><span class="font-semibold">Interessent Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
+                                    <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-purple-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
+                                </div>
+                            ` : ''}
                         </div>
                         <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
                             <span class="text-slate-500 text-xs">${escapeHtml(item.contact || 'Nachbar')}</span>
@@ -692,7 +700,10 @@
         window.renderMyBorrowed = function() {
             const grid = document.getElementById('my-borrowed-grid');
             if (!grid) return;
-            const filtered = itemsCache.filter(item => item.borrowerId === activeUserId && ['requested', 'lent', 'return_pending'].includes(item.status));
+            const filtered = itemsCache.filter(item =>
+                item.borrowerId === activeUserId &&
+                ['requested', 'lent', 'return_pending'].includes(item.status)
+            );
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
@@ -712,8 +723,10 @@
                 } else if (item.status === 'lent') {
                     timeBadge = `<span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded">Aktiv geliehen</span>`;
                     actionButton = `<button onclick="returnItem('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">Zurückgeben</button>`;
+                } else if (item.status === 'return_pending') {
+                    timeBadge = `<span class="text-xs bg-purple-100 text-purple-800 px-2.5 py-1 rounded">Rückgabe wartet auf Bestätigung</span>`;
                 }
-                
+
                 return `
                 <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
                     <div>
@@ -749,19 +762,68 @@
             }
 
             grid.innerHTML = filtered.map(item => {
+                const isGiveaway = item.type === 'Verschenken';
+                let statusLabel = 'Verfügbar';
+                let statusColor = 'text-emerald-700 font-semibold';
+
+                if (item.status === 'requested') {
+                    statusLabel = isGiveaway ? 'Interesse angefragt' : 'Ausleih-Anfrage eingegangen';
+                    statusColor = 'text-amber-700 font-semibold';
+                } else if (item.status === 'lent') {
+                    statusLabel = 'Verliehen';
+                    statusColor = 'text-blue-800 font-semibold';
+                } else if (item.status === 'return_pending') {
+                    statusLabel = 'Rückgabe wartet auf Bestätigung';
+                    statusColor = 'text-purple-700 font-semibold';
+                }
+
                 return `
                 <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-start mb-2.5">
                             <span class="text-xs font-semibold bg-blue-50 text-blue-900 px-2.5 py-1 rounded">${escapeHtml(item.category)}</span>
-                            <span class="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded">${item.type}</span>
+                            <span class="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded">${item.type} ${!isGiveaway ? '(' + (item.maxDays || '9') + 'T)' : ''}</span>
                         </div>
                         <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
                         <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
+
+                        ${item.status === 'requested' ? `
+                            <div class="${isGiveaway ? 'bg-purple-50 border-purple-200 text-purple-900' : 'bg-amber-50 border-amber-200 text-amber-900'} border text-xs p-3 rounded mb-3">
+                                <p class="font-bold mb-1.5">🔔 ${isGiveaway ? 'Interesse an Ihrem zu verschenkenden Artikel!' : 'Ausleih-Anfrage eingegangen!'}</p>
+                                <p><span class="font-semibold">Interessent/Entleiher Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
+                                <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:opacity-80">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
+                            </div>
+                        ` : ''}
                     </div>
+
                     <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
-                        <span class="text-xs text-slate-500">${item.status}</span>
-                        <button onclick="deleteMyItem('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">Löschen</button>
+                        <span class="text-xs ${statusColor}">${statusLabel}</span>
+
+                        <div class="flex gap-2">
+                            ${item.status === 'requested' && isGiveaway ? `
+                                <button onclick="completeGiveaway('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                    Übergeben & Abschließen
+                                </button>
+                            ` : ''}
+
+                            ${item.status === 'requested' && !isGiveaway ? `
+                                <button onclick="lendItem('${item.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                    Verleihen Bestätigen
+                                </button>
+                            ` : ''}
+
+                            ${item.status === 'return_pending' ? `
+                                <button onclick="confirmReturn('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm shadow transition-colors">
+                                    Empfang Bestätigen
+                                </button>
+                            ` : ''}
+
+                            ${item.status === 'available' ? `
+                                <button onclick="deleteMyItem('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                    Löschen
+                                </button>
+                            ` : ''}
+                        </div>
                     </div>
                 </div>
                 `;
@@ -789,6 +851,10 @@
                 status: 'available',
                 ownerId: activeUserId,
                 borrowerId: '',
+                borrowerContact: '',
+                borrowerEmail: '',
+                borrowedAt: null,
+                lentAt: null,
                 createdAt: Date.now()
             };
 
@@ -804,66 +870,115 @@
                 showInfoModal("Erfolg", "Ihr Gegenstand wurde erfolgreich eingetragen!");
             } catch (err) {
                 console.error("Error adding item:", err);
+                showInfoModal("Fehler", "Gegenstand konnte nicht gespeichert werden.");
             }
+        };
+
+        // Benachrichtigung des Besitzers: Brevo nutzt die beim Einstellen gespeicherte ownerEmail.
+        window.handleBorrowerRequest = async function(itemTitle, ownerEmail, borrowerContact, borrowerEmail, isGiveaway = false) {
+            if (!ownerEmail) {
+                console.warn("Keine ownerEmail für Benachrichtigung vorhanden.");
+                return false;
+            }
+
+            const subject = isGiveaway
+                ? `Interesse an Ihrem zu verschenkenden Artikel: ${itemTitle}`
+                : `Neue Ausleih-Anfrage für: ${itemTitle}`;
+
+            const message = isGiveaway
+                ? `Hallo!
+
+Ein Nachbar möchte Ihren zu verschenkenden Artikel "${itemTitle}" abholen.
+
+Kontaktdaten des Interessenten:
+Name/Kontakt: ${borrowerContact}
+E-Mail: ${borrowerEmail}
+
+Bitte setzen Sie sich direkt mit dem Nachbarn in Verbindung.`
+                : `Hallo!
+
+Ein Nachbar hat eine Anfrage für Ihr Werkzeug "${itemTitle}" gestellt.
+
+Kontaktdaten des Interessenten:
+Name/Kontakt: ${borrowerContact}
+E-Mail: ${borrowerEmail}
+
+Bitte öffnen Sie Ihre Artikelverwaltung, um die Anfrage zu bestätigen.`;
+
+            const sent = await sendBrevoEmail(ownerEmail, subject, message);
+            if (!sent) {
+                console.warn("Brevo konnte die Besitzer-Benachrichtigung nicht senden.");
+            }
+            return sent;
         };
 
         window.borrowItem = function(id) {
             const item = itemsCache.find(i => i.id === id);
-            if (!item) return;
-            
+            if (!item || item.status !== 'available') return;
+
             openRequestModal("Werkzeug ausleihen", async (reqContact, reqEmail) => {
                 if (!reqContact || !reqEmail) {
-                    showInfoModal("Fehler", "Bitte füllen Sie beide Felder aus.");
+                    showInfoModal("Fehler", "Bitte füllen Sie beide Felder aus (Name/Adresse & E-Mail).");
                     return;
                 }
+
+                const now = Date.now();
 
                 try {
                     if (db) {
                         await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
                             status: 'requested',
                             borrowerId: activeUserId,
+                            borrowedAt: now,
                             borrowerContact: reqContact,
                             borrowerEmail: reqEmail
                         });
                     }
 
-                    if (item.ownerEmail) {
-                        await sendBrevoEmail(
-                            item.ownerEmail,
-                            `Neue Anfrage für Ihren Artikel: ${item.title}`,
-                            `Hallo!\n\nEin Nachbar interessiert sich für Ihren Artikel "${item.title}".\n\nKontaktdaten des Interessenten:\nName/Kontakt: ${reqContact}\nE-Mail: ${reqEmail}\n\nBitte setzen Sie sich direkt mit dem Nachbarn in Verbindung.`
-                        );
-                    }
+                    item.status = 'requested';
+                    item.borrowerId = activeUserId;
+                    item.borrowedAt = now;
+                    item.borrowerContact = reqContact;
+                    item.borrowerEmail = reqEmail;
 
-                    showInfoModal("Ausleihe erfolgreich", "Das Werkzeug wurde für Sie angefragt und der Besitzer wurde benachrichtigt!");
+                    await handleBorrowerRequest(item.title, item.ownerEmail, reqContact, reqEmail, false);
+
+                    showInfoModal("Ausleih-Anfrage gesendet", "Ihre Anfrage wurde gespeichert und der Besitzer wurde per E-Mail benachrichtigt.");
                     renderAllViews();
                 } catch (err) {
                     console.error("Error borrowing:", err);
+                    showInfoModal("Fehler", "Die Ausleih-Anfrage konnte nicht gespeichert werden.");
                 }
             });
         };
 
         window.returnItem = async function(id) {
+            const item = itemsCache.find(i => i.id === id);
+            if (!item || item.borrowerId !== activeUserId || item.status !== 'lent') return;
+
             try {
                 if (db) {
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
-                        status: 'return_pending' 
+                        status: 'return_pending'
                     });
                 }
-                showInfoModal("Rückgabe angefragt", "Der Besitzer wurde benachrichtigt.");
+
+                item.status = 'return_pending';
+                showInfoModal("Rückgabe angefragt", "Die Rückgabe wartet jetzt auf die Bestätigung des Besitzers.");
                 renderAllViews();
             } catch (err) {
                 console.error("Error returning:", err);
+                showInfoModal("Fehler", "Die Rückgabe konnte nicht angefragt werden.");
             }
         };
 
         window.claimGiveaway = function(id) {
             const item = itemsCache.find(i => i.id === id);
-            if (!item) return;
-            
+            if (!item || item.type !== 'Verschenken' || item.status !== 'available') return;
+
             openRequestModal("Gegenstand abholen", async (reqContact, reqEmail) => {
                 if (!reqContact || !reqEmail) {
-                    showInfoModal("Fehler", "Bitte füllen Sie beide Felder aus.");
+                    showInfoModal("Fehler", "Bitte füllen Sie beide Felder aus (Name/Adresse & E-Mail).");
                     return;
                 }
 
@@ -877,30 +992,120 @@
                         });
                     }
 
-                    if (item.ownerEmail) {
-                        await sendBrevoEmail(
-                            item.ownerEmail,
-                            `Interesse an Ihrem zu verschenkenden Artikel: ${item.title}`,
-                            `Hallo!\n\nEin Nachbar möchte Ihren zu verschenkenden Artikel "${item.title}" abholen.\n\nKontaktdaten des Nachbarn:\nName/Kontakt: ${reqContact}\nE-Mail: ${reqEmail}`
-                        );
-                    }
+                    item.status = 'requested';
+                    item.borrowerId = activeUserId;
+                    item.borrowerContact = reqContact;
+                    item.borrowerEmail = reqEmail;
 
-                    showInfoModal("Abholhinweis", "Der Besitzer wurde benachrichtigt!");
+                    await handleBorrowerRequest(item.title, item.ownerEmail, reqContact, reqEmail, true);
+
+                    showInfoModal("Abholhinweis", "Der Besitzer wurde über Ihr Interesse informiert. Nach der Übergabe kann er den Artikel abschließen; dann wird er automatisch aus der Datenbank gelöscht.");
                     renderAllViews();
                 } catch(e) {
-                    console.error(e);
+                    console.error("Giveaway request error:", e);
+                    showInfoModal("Fehler", "Die Anfrage konnte nicht gespeichert werden.");
                 }
             });
         };
 
         window.deleteMyItem = async function(id) {
+            const item = itemsCache.find(i => i.id === id);
+            if (!item) return;
+            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+
             try {
                 if (db) {
                     await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id));
                 }
-                showInfoModal("Gelöscht", "Ihr Artikel wurde entfernt.");
+                itemsCache = itemsCache.filter(i => i.id !== id);
+                renderAllViews();
+                showInfoModal("Gelöscht", "Ihr Artikel wurde aus der Datenbank entfernt.");
             } catch (err) {
                 console.error("Error deleting item:", err);
+                showInfoModal("Fehler", "Der Artikel konnte nicht gelöscht werden.");
+            }
+        };
+
+        // Verschenken: Nach bestätigter Übergabe wird der Datensatz endgültig gelöscht.
+        window.completeGiveaway = async function(id) {
+            const item = itemsCache.find(i => i.id === id);
+            if (!item || item.type !== 'Verschenken') return;
+            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+            if (item.status !== 'requested') return;
+
+            if (!confirm("Möchten Sie diesen zu verschenkenden Artikel als übergeben abschließen? Danach wird er dauerhaft aus der Liste und Datenbank entfernt.")) {
+                return;
+            }
+
+            try {
+                if (db) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id));
+                }
+                itemsCache = itemsCache.filter(i => i.id !== id);
+                renderAllViews();
+                showInfoModal("Erfolgreich übergeben", "Der Artikel wurde als übergeben abgeschlossen und automatisch aus der Werkzeugkiste entfernt.");
+            } catch (err) {
+                console.error("Error completing giveaway:", err);
+                showInfoModal("Fehler", "Der zu verschenkende Artikel konnte nicht abgeschlossen werden.");
+            }
+        };
+
+        // Ausleihe: Besitzer bestätigt die Anfrage.
+        window.lendItem = async function(id) {
+            const item = itemsCache.find(i => i.id === id);
+            if (!item || item.type !== 'Ausleihe' || item.status !== 'requested') return;
+            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+
+            const now = Date.now();
+
+            try {
+                if (db) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
+                        status: 'lent',
+                        lentAt: now
+                    });
+                }
+
+                item.status = 'lent';
+                item.lentAt = now;
+                showInfoModal("Werkzeug verliehen", "Die Ausleihe wurde bestätigt. Der Ausleih-Zeitraum hat begonnen.");
+                renderAllViews();
+            } catch (err) {
+                console.error("Error lending:", err);
+                showInfoModal("Fehler", "Das Werkzeug konnte nicht als verliehen markiert werden.");
+            }
+        };
+
+        // Rückgabe: Besitzer bestätigt den Empfang; das Werkzeug wird wieder verfügbar.
+        window.confirmReturn = async function(id) {
+            const item = itemsCache.find(i => i.id === id);
+            if (!item || item.status !== 'return_pending') return;
+            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+
+            try {
+                if (db) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
+                        status: 'available',
+                        borrowerId: '',
+                        borrowedAt: null,
+                        lentAt: null,
+                        borrowerContact: '',
+                        borrowerEmail: ''
+                    });
+                }
+
+                item.status = 'available';
+                item.borrowerId = '';
+                item.borrowedAt = null;
+                item.lentAt = null;
+                item.borrowerContact = '';
+                item.borrowerEmail = '';
+
+                showInfoModal("Rückgabe bestätigt", "Das Werkzeug ist nun wieder in der Bibliothek verfügbar.");
+                renderAllViews();
+            } catch (err) {
+                console.error("Error confirming return:", err);
+                showInfoModal("Fehler", "Die Rückgabe konnte nicht bestätigt werden.");
             }
         };
 
@@ -920,19 +1125,25 @@
         };
 
         window.openRecoverIdModal = function() {
-            openCustomModal("ID wiederherstellen", 
-                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein. Ihre ID wird gesucht und per Brevo an Ihren Posteingang gesendet:", 
-                true, "Ihre verknüpfte E-Mail-Adresse...", async (emailInput) => {
+            openCustomModal(
+                "ID wiederherstellen",
+                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein. Ihre gefundene Konto-ID wird anschließend per EmailJS erneut an diese Adresse gesendet.",
+                true,
+                "Ihre verknüpfte E-Mail-Adresse...",
+                async (emailInput) => {
                     const cleanEmail = (emailInput || '').trim().toLowerCase();
                     if (!cleanEmail || !cleanEmail.includes('@')) {
                         showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
                         return;
                     }
+
                     try {
                         let foundId = null;
+
                         if (db) {
                             const emailsRef = collection(db, 'artifacts', appId, 'public', 'data', 'user_emails');
                             const snap = await getDocs(emailsRef);
+
                             snap.forEach(d => {
                                 const dat = d.data();
                                 if (dat.email && dat.email.toLowerCase() === cleanEmail) {
@@ -941,25 +1152,44 @@
                             });
                         }
 
-                        if (foundId) {
-                            activeUserId = foundId;
-                            renderAllViews();
+                        if (!foundId) {
+                            showInfoModal("Nicht gefunden", "Unter dieser E-Mail-Adresse wurde keine verknüpfte Konto-ID gefunden.");
+                            return;
+                        }
 
-                            await sendBrevoEmail(
-                                cleanEmail,
-                                "Ihre wiederhergestellte ID",
-                                `Hallo!\n\nIhre wiederhergestellte ID lautet: ${foundId}\n\nSie wurde geladen.`
-                            );
+                        activeUserId = foundId;
+                        sessionStorage.setItem('nb_session_user_id', activeUserId);
+                        updateUserIdDisplays();
+                        renderAllViews();
 
-                            showInfoModal("Wiederhergestellt", `Ihre ID wurde gefunden, geladen und an Ihre E-Mail (${cleanEmail}) gesendet!`);
-                        } else {
-                            showInfoModal("Nicht gefunden", "Unter dieser E-Mail-Adresse wurde keine verknüpfte ID gefunden.");
+                        const recoveryMessage =
+                            `Hallo!
+
+Ihre wiederhergestellte Konto-ID lautet: ${foundId}
+
+Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge verwalten können.`;
+
+                        try {
+                            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                                to_email: cleanEmail,
+                                user_id: foundId,
+                                subject: 'Ihre wiederhergestellte ID',
+                                message: recoveryMessage
+                            });
+
+                            showInfoModal("Wiederhergestellt", `Ihre ID wurde gefunden, geladen und erneut per E-Mail an ${cleanEmail} gesendet.`);
+                        } catch (emailJsError) {
+                            console.error("EmailJS recovery send error:", emailJsError);
+                            showInfoModal("Wiederhergestellt", `Ihre ID wurde gefunden und geladen, aber die E-Mail konnte nicht gesendet werden. Bitte prüfen Sie die EmailJS-Konfiguration.`);
                         }
                     } catch(err) {
                         console.error("Recovery error:", err);
                         showInfoModal("Fehler", "Wiederherstellung fehlgeschlagen. Bitte erneut versuchen.");
                     }
-                }, 'email', 'Wiederherstellen');
+                },
+                'email',
+                'Wiederherstellen'
+            );
         };
 
         window.openAdminContactModal = function() {
