@@ -1041,6 +1041,38 @@
             }
         };
 
+
+// ADD THIS AT THE END OF YOUR JAVASCRIPT FILE
+document.getElementById('toggle-password-form-btn').addEventListener('click', () => {
+    const form = document.getElementById('password-change-form');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+});
+
+document.getElementById('save-new-password-btn').addEventListener('click', async () => {
+    const newPassword = document.getElementById('new-admin-pwd').value;
+    const confirmPassword = document.getElementById('confirm-admin-pwd').value;
+
+    if (newPassword !== confirmPassword) {
+        alert("Die neuen Passwörter stimmen nicht überein.");
+        return;
+    }
+
+    const user = firebase.auth().currentUser;
+    if (user) {
+        try {
+            await user.updatePassword(newPassword);
+            alert("Passwort erfolgreich geändert!");
+            document.getElementById('password-change-form').style.display = 'none';
+            document.getElementById('current-admin-pwd').value = '';
+            document.getElementById('new-admin-pwd').value = '';
+            document.getElementById('confirm-admin-pwd').value = '';
+        } catch (error) {
+            alert("Fehler beim Ändern des Passworts: " + error.message);
+        }
+    }
+});
+
+        
         function escapeHtml(str) {
             return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
