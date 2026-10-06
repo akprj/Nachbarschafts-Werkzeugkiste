@@ -895,7 +895,7 @@
 
         window.openSwitchUserIdModal = function() {
             openCustomModal("Konto-ID Laden", 
-                "Geben Sie eine andere Konto-ID ein:", 
+                "Geben Sie Ihr Konto-ID ein:", 
                 true, "z.B. ABCD1234", (inputVal) => {
                     const cleanId = (inputVal || '').trim().toUpperCase();
                     if (!cleanId || cleanId.length < 4) {
