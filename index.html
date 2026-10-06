@@ -1124,8 +1124,7 @@
                             const data = configSnap.data();
                             if (pwd.trim() === (Object.values(data)[0] || '').trim()) {
                                 isAdminLoggedIn = true;
-                                document.getElementById('admin-status-badge').classList.remove('hidden');
-                                document.getElementById('admin-settings-section').classList.remove('hidden');
+                                document.getElementById('admin-status-badge')?.classList.remove('hidden');
                                 document.getElementById('admin-auth-btn').innerText = "Admin ausloggen";
                                 closeModal(true);
                                 showInfoModal("Erfolg", "Admin-Modus aktiv!");
