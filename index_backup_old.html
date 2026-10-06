@@ -991,24 +991,7 @@
             }
         };
 
-        // --- Temporary ID Switch (Stored ONLY in sessionStorage) ---
-        window.openSwitchUserIdModal = function() {
-            openCustomModal("Konto-ID eingeben", 
-                "Geben Sie eine andere Konto-ID ein, um deren Einträge oder Ausleihen in dieser Tab-Sitzung einzusehen:", 
-                true, "z.B. ABCD1234", (inputVal) => {
-                    const cleanId = (inputVal || '').trim().toUpperCase();
-                    if (!cleanId || cleanId.length < 4) {
-                        showInfoModal("Fehler", "Bitte geben Sie eine gültige Konto-ID ein.");
-                        return;
-                    }
-                    activeUserId = cleanId;
-                    // Save ONLY to sessionStorage, NEVER to localStorage
-                    sessionStorage.setItem('nb_session_user_id', activeUserId);
-                    updateUserIdDisplays();
-                    renderAllViews();
-                    showInfoModal("ID Geladen", `Sie sind in dieser Sitzung temporär mit '${activeUserId}' verbunden. Wenn Sie einen neuen Tab öffnen oder den Browser neu starten, wird automatisch wieder Ihre ursprüngliche Geräte-Konto-ID geladen.`);
-                }, 'text', 'ID Laden');
-        };
+    
 
         // --- Email Linking & ID Recovery ---
         window.openLinkEmailModal = function() {
