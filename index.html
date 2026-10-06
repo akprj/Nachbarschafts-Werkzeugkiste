@@ -325,7 +325,6 @@
             return /^[A-Z]{4}[0-9]{4}$/.test(id);
         }
 
-        // Updated window.onload: Always generates a fresh ID on new tab / browser launch and pops up the welcome modal
         window.onload = async function() {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -338,12 +337,10 @@
                 console.error("Firebase auth error:", e);
             }
 
-            // Always generate a fresh temporary ID for this new tab/session session
             activeUserId = generateCompactUserId();
 
             initFirestoreListener();
 
-            // Always display the welcome modal immediately on every new tab or page launch
             showWelcomeModal();
         };
 
@@ -352,12 +349,12 @@
             const title = "Wichtiger Hinweis";
             const msgHtml = `
                 <div class="space-y-3 text-sm md:text-base text-slate-700 leading-relaxed">
-                    <p>Ihre temporäre Konto-ID für diese Sitzung lautet: <strong class="text-blue-900">${activeUserId}</strong></p>
-                    <p>Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können.</p>
+                    <p>Ihre Konto-ID lautet: <strong class="text-blue-900">${activeUserId}</strong></p>
+                    <p>Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können. Aus Sicherheitsgründen senden Sie bitte die oben angezeigte ID an Ihre E-Mail-Adresse und notieren bzw. speichern Sie diese gut für das nächste Mal.</p>
                 </div>
                 
                 <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-left my-4 mt-6">
-                    <p class="font-bold text-blue-900 text-sm mb-1">Neu hier? Konto-ID per E-Mail anfordern:</p>
+                    <p class="font-bold text-blue-900 text-sm mb-1">Konto-ID per E-Mail anfordern:</p>
                     <div class="flex flex-col sm:flex-row gap-2 mt-2">
                         <input type="email" id="welcome-email-input" placeholder="Ihre E-Mail-Adresse eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-900">
                         <button onclick="submitWelcomeEmailLink()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
@@ -367,7 +364,8 @@
                 </div>
 
                 <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-left my-4">
-                    <p class="font-bold text-slate-800 text-sm mb-1">Bereits registriert? ID-Laden:</p>
+                    <p class="font-bold text-slate-800 text-sm mb-1">ID-Laden:</p>
+                    <p class="text-xs text-slate-600 mb-2">Entweder geben Sie die oben angezeigte ID hier ein, um mit einem neuen Account zu starten, oder falls Sie bereits früher eine ID hatten und damit Einträge sowie Artikelanfragen vorgenommen haben, geben Sie genau diese ID hier ein, um Ihre Einträge und angefragten Artikel wiederzusehen und zu verwalten.</p>
                     <div class="flex flex-col sm:flex-row gap-2 mt-2">
                         <input type="text" id="welcome-id-input" placeholder="Ihre Konto-ID eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-slate-900 uppercase">
                         <button onclick="submitWelcomeIdLoad()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
@@ -865,7 +863,7 @@
                     }
                     activeUserId = cleanId;
                     renderAllViews();
-                    showInfoModal("ID Geladen", `Sie sind in dieser Sitzung temporär mit '${activeUserId}' verbunden.`);
+                    showInfoModal("ID Geladen", `Sie sind mit '${activeUserId}' verbunden.`);
                 }, 'text', 'ID Laden');
         };
 
@@ -898,7 +896,7 @@
                             await sendBrevoEmail(
                                 cleanEmail,
                                 "Ihre wiederhergestellte Konto-ID",
-                                `Hallo!\n\nIhre wiederhergestellte Konto-ID lautet: ${foundId}\n\nSie wurde in Ihrer aktuellen Browsersitzung geladen.`
+                                `Hallo!\n\nIhre wiederhergestellte Konto-ID lautet: ${foundId}\n\nSie wurde geladen.`
                             );
 
                             showInfoModal("Wiederhergestellt", `Ihre Konto-ID wurde gefunden, geladen und an Ihre E-Mail (${cleanEmail}) gesendet!`);
