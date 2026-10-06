@@ -718,13 +718,13 @@
                             ${isOwner && item.status === 'requested' ? `
                                 <div class="bg-amber-50 border border-amber-200 text-amber-900 text-xs p-3 rounded mb-3">
                                     <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Ihr Werkzeug angefragt!</p>
-                                    <p><span class="font-semibold">Entleiher Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
+                                    <p><span class="font-semibold">Entleiher:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
                                     <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-amber-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
                                 </div>
                             ` : ''}
                         </div>
                         <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
-                            <span class="text-slate-500 text-xs">Verleiher Kontakt:<br> ${escapeHtml(item.contact || 'Nachbar')}</span>
+                            <span class="text-slate-500 text-xs">Verleiher:<br> ${escapeHtml(item.contact || 'Nachbar')}</span>
                             ${actionUI}
                         </div>
                     </div>
@@ -842,7 +842,7 @@
                         <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
                     </div>
                     <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm gap-3">
-                        <span class="text-slate-500 text-xs">Verleiher Kontakt: ${escapeHtml(item.contact || 'Nachbar')}</span>
+                        <span class="text-slate-500 text-xs">Verleiher: ${escapeHtml(item.contact || 'Nachbar')}</span>
                         ${actionButton}
                     </div>
                 </div>
@@ -892,7 +892,7 @@
                         ${item.status === 'requested' ? `
                             <div class="${isGiveaway ? 'bg-purple-50 border-purple-200 text-purple-900' : 'bg-amber-50 border-amber-200 text-amber-900'} border text-xs p-3 rounded mb-3">
                                 <p class="font-bold mb-1.5">🔔 ${isGiveaway ? 'Interesse an Ihrem zu verschenkenden Artikel!' : 'Ausleih-Anfrage eingegangen!'}</p>
-                                <p><span class="font-semibold">Interessent/Entleiher Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
+                                <p><span class="font-semibold">Interessent/Entleiher:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
                                 <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:opacity-80">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
                             </div>
                         ` : ''}
