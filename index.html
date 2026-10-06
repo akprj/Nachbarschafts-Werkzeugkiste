@@ -48,21 +48,17 @@
                         <span class="font-semibold">👤 Ihre Konto-ID:</span>
                         <span id="global-user-id-display" class="font-mono bg-sky-200 px-3 py-1 rounded select-all font-bold text-lg text-blue-900">...</span>
                         <button onclick="copyUserId()" class="text-xs md:text-sm bg-sky-600 hover:bg-sky-700 text-white px-3 py-1.5 rounded transition-colors font-semibold">ID kopieren</button>
+                        <!-- Side-by-side Konto-ID verknüpfen button with 2-minute timer -->
+                        <button id="link-email-top-btn" onclick="openLinkEmailModal()" class="text-xs md:text-sm bg-blue-900 hover:bg-blue-800 text-white px-3 py-1.5 rounded transition-colors font-semibold">Konto-ID verknüpfen</button>
                     </div>
                     <p class="text-xs md:text-sm text-sky-800 font-medium">Mit dieser ID können Sie Ihre eingetragenen Artikel und geliehenen Werkzeuge auf einem neuen Gerät oder in einem anderen Browser wiederfinden.</p>
                 </div>
                 <div class="flex items-start gap-2.5 shrink-0 self-start md:self-center flex-wrap">
                     <div class="flex flex-col items-center">
                         <button onclick="openSwitchUserIdModal()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
-                            ID eingeben
+                            ID-Laden
                         </button>
-                        <span class="text-[10px] text-sky-800 mt-1 leading-tight font-medium">Andere ID laden</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <button onclick="openLinkEmailModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
-                            E-Mail verknüpfen
-                        </button>
-                        <span class="text-[10px] text-sky-800 mt-1 leading-tight font-medium">Sichert ID für Zukunft</span>
+                        <span class="text-[10px] text-sky-800 mt-1 leading-tight font-medium">Ihre Konto-ID eingeben</span>
                     </div>
                     <div class="flex flex-col items-center">
                         <button onclick="openRecoverIdModal()" class="bg-sky-700 hover:bg-sky-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
@@ -208,7 +204,7 @@
                     <p class="text-sm text-slate-500 mt-0.5">Übersicht aller Werkzeuge, die Sie derzeit angefragt oder geliehen haben. Verwaltet über Ihre Konto-ID.</p>
                 </div>
                 <button onclick="openSwitchUserIdModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition-colors shadow-sm shrink-0 whitespace-nowrap">
-                    ID laden
+                    ID-Laden
                 </button>
             </div>
             <div id="my-borrowed-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
@@ -224,7 +220,7 @@
                     <p id="section-eintraege-desc" class="text-sm text-slate-500 mt-0.5">Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre Konto-ID.</p>
                 </div>
                 <button onclick="openSwitchUserIdModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition-colors shadow-sm shrink-0 whitespace-nowrap">
-                    ID laden
+                    ID-Laden
                 </button>
             </div>
             <div id="my-items-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
@@ -241,9 +237,6 @@
                 <span id="admin-status-badge" class="hidden bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded text-xs">Admin-Modus aktiv</span>
             </div>
             <div class="flex items-center gap-3 flex-wrap justify-center">
-                <!--
-                <button onclick="openTermsModal()" class="text-slate-600 hover:text-blue-900 underline text-xs md:text-sm">Nutzungsbedingungen</button>
-                <button onclick="openPrivacyModal()" class="text-slate-600 hover:text-blue-900 underline text-xs md:text-sm">Datenschutz</button>   -->
                 <button onclick="openAdminContactModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
                     Admin Kontakt
                 </button>
@@ -292,6 +285,35 @@
             getDocs 
         } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
+        // Brevo Configuration
+        const BREVO_API_KEY = 'YOUR_BREVO_API_KEY'; // Insert your Brevo API key here
+        const BREVO_SENDER = { name: 'Nachbarschafts-Werkzeugkiste', email: 'noreply@werkzeugkiste.de' };
+
+        // Helper to send emails via Brevo REST API
+        async function sendBrevoEmail(toEmail, subject, htmlContent) {
+            try {
+                const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+                    method: 'POST',
+                    headers: {
+                        'accept': 'application/json',
+                        'api-key': BREVO_API_KEY,
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sender: BREVO_SENDER,
+                        to: [{ email: toEmail }],
+                        subject: subject,
+                        htmlContent: htmlContent
+                    })
+                });
+                const data = await response.json();
+                console.log("Brevo Email Result:", data);
+                return data;
+            } catch (err) {
+                console.error("Brevo Email Error:", err);
+            }
+        }
+
         // 2. Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDUs97-IvWqWCY5VktkzSUJ5j-xgx2sg40",
@@ -316,6 +338,7 @@
         let itemsCache = [];
         let unsubItems = null;
         let isAdminLoggedIn = false;
+        let timerInterval = null;
 
         // Expose to window scope
         window.db = db;
@@ -358,7 +381,7 @@
                 console.error("Firebase auth error:", e);
             }
 
-            // 1. Permanent Browser/Device ID (Saved ONLY in localStorage)
+            // Permanent Browser/Device ID
             let originalId = localStorage.getItem('nb_original_user_id');
             let isFirstTime = false;
 
@@ -375,8 +398,6 @@
             }
             localStorage.setItem('nb_original_user_id', originalId);
 
-            // 2. Active Session ID (Saved ONLY in sessionStorage for temporary overrides)
-            // On new tab or browser reopen, sessionStorage is empty, so it defaults back to originalId.
             let sessionSwitchedId = sessionStorage.getItem('nb_session_user_id');
             if (sessionSwitchedId && isValidNewFormat(sessionSwitchedId)) {
                 activeUserId = sessionSwitchedId;
@@ -386,6 +407,7 @@
 
             updateUserIdDisplays();
             initFirestoreListener();
+            startVerknuepfenTimer();
 
             if (isFirstTime) {
                 showWelcomeModal(activeUserId);
@@ -395,6 +417,45 @@
         function updateUserIdDisplays() {
             const el = document.getElementById('global-user-id-display');
             if (el) el.innerText = activeUserId;
+        }
+
+        // 2-Minute Countdown Timer for "Konto-ID verknüpfen" button
+        function startVerknuepfenTimer() {
+            const topBtn = document.getElementById('link-email-top-btn');
+            if (!topBtn) return;
+
+            const isLinked = localStorage.getItem('nb_email_linked_' + activeUserId);
+            if (isLinked === 'true') {
+                topBtn.classList.add('hidden');
+                return;
+            }
+
+            let startTime = localStorage.getItem('nb_timer_start_' + activeUserId);
+            if (!startTime) {
+                startTime = Date.now();
+                localStorage.setItem('nb_timer_start_' + activeUserId, startTime);
+            } else {
+                startTime = parseInt(startTime, 10);
+            }
+
+            const duration = 120 * 1000; // 2 Minutes (120 Seconds)
+
+            function updateTimer() {
+                const elapsed = Date.now() - startTime;
+                const remaining = Math.max(0, Math.ceil((duration - elapsed) / 1000));
+
+                if (remaining <= 0) {
+                    topBtn.classList.add('hidden');
+                    if (timerInterval) clearInterval(timerInterval);
+                } else {
+                    topBtn.classList.remove('hidden');
+                    topBtn.innerText = `Konto-ID verknüpfen (${remaining}s)`;
+                }
+            }
+
+            updateTimer();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
         }
 
         window.copyUserId = function() {
@@ -413,15 +474,96 @@
             }
         };
 
+        // Welcome Modal with integrated Email Linking
         function showWelcomeModal(id) {
             const title = "Wichtiger Hinweis zu Ihrer Konto-ID";
             const msgHtml = `
                 <p>Ihre zugewiesene Geräte-Konto-ID lautet:</p>
                 <div class="my-3"><span class="font-mono bg-blue-100 text-blue-900 font-bold px-3.5 py-2 rounded text-xl select-all inline-block">${id}</span></div>
-                <p>Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können.</p>
-                <p>Sie bleibt fest auf diesem Gerät gespeichert. Selbst wenn Sie vorübergehend eine andere ID laden, wird beim Öffnen eines neuen Tabs oder Neustarten des Browsers automatisch wieder diese Geräte-Konto-ID angezeigt.</p>
+                <p class="mb-3">Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können.</p>
+                
+                <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-left my-4">
+                    <p class="font-bold text-amber-900 text-sm mb-1">✉️ Konto-ID jetzt verknüpfen (Dringend empfohlen):</p>
+                    <p class="text-xs text-amber-800 mb-3">Geben Sie Ihre E-Mail-Adresse ein, um Ihre ID jetzt direkt zu sichern. Wir senden Ihnen Ihre ID umgehend per E-Mail für Ihre Unterlagen zu.</p>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="email" id="welcome-email-input" placeholder="Ihre E-Mail-Adresse eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-900">
+                        <button onclick="submitWelcomeEmailLink()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
+                            Konto-ID verknüpfen
+                        </button>
+                    </div>
+                </div>
             `;
             showHtmlModal(title, msgHtml);
+        }
+
+        window.submitWelcomeEmailLink = async function() {
+            const inputEl = document.getElementById('welcome-email-input');
+            const emailVal = inputEl ? inputEl.value.trim() : '';
+            if (!emailVal || !emailVal.includes('@')) {
+                alert("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+                return;
+            }
+
+            const success = await processAccountEmailLinking(emailVal);
+            if (success) {
+                closeModal();
+                showInfoModal("Erfolg", `Ihre Konto-ID (${activeUserId}) wurde erfolgreich verknüpft und per E-Mail via EmailJS an ${emailVal} gesendet!`);
+            }
+        };
+
+        // Internal helper for Email Binding via EmailJS
+        async function processAccountEmailLinking(emailInput) {
+            if (!emailInput || !emailInput.includes('@')) {
+                showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+                return false;
+            }
+            try {
+                if (db) {
+                    const emailsRef = collection(db, 'artifacts', appId, 'public', 'data', 'user_emails');
+                    const snap = await getDocs(emailsRef);
+                    let conflictId = null;
+                    snap.forEach(d => {
+                        const dat = d.data();
+                        if (dat.email && dat.email.toLowerCase() === emailInput.toLowerCase() && dat.userId !== activeUserId) {
+                            conflictId = dat.userId;
+                        }
+                    });
+                    if (conflictId) {
+                        showInfoModal("Hinweis", `Diese E-Mail-Adresse ist bereits unter einer anderen Konto-ID (${conflictId}) gespeichert!`);
+                        return false;
+                    }
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_emails', activeUserId), {
+                        userId: activeUserId,
+                        email: emailInput.toLowerCase(),
+                        updatedAt: Date.now()
+                    });
+                }
+                localStorage.setItem('nb_user_email_' + activeUserId, emailInput);
+                localStorage.setItem('nb_email_linked_' + activeUserId, 'true');
+
+                // Send EmailJS notification with Konto-ID
+                emailjs.send('service_83hht9o', 'template_9lyyyce', {
+                    to_email: emailInput,
+                    user_id: activeUserId,
+                    subject: 'Ihre Konto-ID Verknüpfung',
+                    message: `Hallo!\n\nIhre Konto-ID lautet: ${activeUserId}\n\nBewahren Sie diese ID gut auf, um Ihre Werkzeuge auf anderen Geräten wiederzufinden.`
+                }).then(() => {
+                    console.log("Konto-ID E-Mail erfolgreich via EmailJS gesendet.");
+                }).catch(err => {
+                    console.error("EmailJS Fehler:", err);
+                });
+
+                // Hide top button permanently and stop timer
+                const topBtn = document.getElementById('link-email-top-btn');
+                if (topBtn) topBtn.classList.add('hidden');
+                if (timerInterval) clearInterval(timerInterval);
+
+                return true;
+            } catch(err) {
+                console.error("Email linking error:", err);
+                showInfoModal("Fehler", "Verknüpfung fehlgeschlagen.");
+                return false;
+            }
         }
 
         window.toggleDurationField = function(typeVal) {
@@ -798,28 +940,23 @@
             }
         };
 
-        // EmailJS Dispatch Function
+        // Item Notification via Brevo API
         window.handleBorrowerRequest = function(itemTitle, ownerEmail, borrowerContact, borrowerEmail) {
-            if (!ownerEmail) {
-                showInfoModal("Fehler", "Für dieses Werkzeug ist keine E-Mail-Adresse des Verleihers hinterlegt.");
-                return;
-            }
+            if (!ownerEmail) return;
 
-            const templateParams = {
-                to_email: ownerEmail,
-                item_title: itemTitle,
-                borrower_contact: borrowerContact,
-                borrower_email: borrowerEmail,
-                message: `Ein Nachbar (${borrowerContact}, E-Mail: ${borrowerEmail}) hat eine Anfrage für Ihr Werkzeug/Ihren Gegenstand "${itemTitle}" gestartet.`
-            };
+            const subject = `Neue Anfrage für Ihr Werkzeug: ${itemTitle}`;
+            const htmlContent = `
+                <h2>Hallo!</h2>
+                <p>Ein Nachbar hat Interesse an Ihrem Gegenstand <strong>${escapeHtml(itemTitle)}</strong> bekundet.</p>
+                <p><strong>Kontaktdaten des Anfragenden:</strong></p>
+                <ul>
+                    <li><strong>Name / Adresse:</strong> ${escapeHtml(borrowerContact)}</li>
+                    <li><strong>E-Mail:</strong> ${escapeHtml(borrowerEmail)}</li>
+                </ul>
+                <p>Bitte setzen Sie sich direkt mit dem Nachbarn in Verbindung.</p>
+            `;
 
-            emailjs.send('service_83hht9o', 'template_9lyyyce', templateParams)
-                .then(() => {
-                    console.log('Email sent successfully via EmailJS!');
-                })
-                .catch((error) => {
-                    console.error('Failed to send email via EmailJS:', error);
-                });
+            sendBrevoEmail(ownerEmail, subject, htmlContent);
         };
 
         window.borrowItem = function(id) {
@@ -991,9 +1128,9 @@
             }
         };
 
-        // --- Temporary ID Switch (Stored ONLY in sessionStorage) ---
+        // ID-Laden Modal
         window.openSwitchUserIdModal = function() {
-            openCustomModal("Konto-ID eingeben", 
+            openCustomModal("Konto-ID Laden", 
                 "Geben Sie eine andere Konto-ID ein, um deren Einträge oder Ausleihen in dieser Tab-Sitzung einzusehen:", 
                 true, "z.B. ABCD1234", (inputVal) => {
                     const cleanId = (inputVal || '').trim().toUpperCase();
@@ -1002,7 +1139,6 @@
                         return;
                     }
                     activeUserId = cleanId;
-                    // Save ONLY to sessionStorage, NEVER to localStorage
                     sessionStorage.setItem('nb_session_user_id', activeUserId);
                     updateUserIdDisplays();
                     renderAllViews();
@@ -1010,48 +1146,22 @@
                 }, 'text', 'ID Laden');
         };
 
-        // --- Email Linking & ID Recovery ---
+        // Email Linking Modal (invoked from header)
         window.openLinkEmailModal = function() {
             openCustomModal("E-Mail verknüpfen", 
-                "Verknüpfen Sie Ihre aktuelle Geräte-Konto-ID (" + activeUserId + ") mit Ihrer E-Mail-Adresse, um Ihre ID in Zukunft jederzeit wiederherstellen zu können.", 
+                "Verknüpfen Sie Ihre aktuelle Geräte-Konto-ID (" + activeUserId + ") mit Ihrer E-Mail-Adresse. Ihre ID wird Ihnen zur Bestätigung per E-Mail zugesendet.", 
                 true, "Ihre E-Mail-Adresse eingeben...", async (emailInput) => {
-                    if (!emailInput || !emailInput.includes('@')) {
-                        showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
-                        return;
-                    }
-                    try {
-                        if (db) {
-                            const emailsRef = collection(db, 'artifacts', appId, 'public', 'data', 'user_emails');
-                            const snap = await getDocs(emailsRef);
-                            let conflictId = null;
-                            snap.forEach(d => {
-                                const dat = d.data();
-                                if (dat.email && dat.email.toLowerCase() === emailInput.toLowerCase() && dat.userId !== activeUserId) {
-                                    conflictId = dat.userId;
-                                }
-                            });
-                            if (conflictId) {
-                                showInfoModal("Hinweis", `Diese E-Mail-Adresse ist bereits unter einer anderen Konto-ID (${conflictId}) gespeichert!`);
-                                return;
-                            }
-                            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_emails', activeUserId), {
-                                userId: activeUserId,
-                                email: emailInput.toLowerCase(),
-                                updatedAt: Date.now()
-                            });
-                        }
-                        localStorage.setItem('nb_user_email_' + activeUserId, emailInput);
-                        showInfoModal("Erfolg", "Ihre E-Mail-Adresse wurde erfolgreich mit Ihrer Konto-ID verknüpft.");
-                    } catch(err) {
-                        console.error("Email link error:", err);
-                        showInfoModal("Fehler", "Verknüpfung fehlgeschlagen.");
+                    const success = await processAccountEmailLinking(emailInput);
+                    if (success) {
+                        showInfoModal("Erfolg", "Ihre E-Mail-Adresse wurde erfolgreich mit Ihrer Konto-ID verknüpft und Ihre ID wurde Ihnen per E-Mail gesendet!");
                     }
                 }, 'email', 'Verknüpfen');
         };
 
+        // ID Recovery via Brevo
         window.openRecoverIdModal = function() {
             openCustomModal("ID wiederherstellen", 
-                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein, um Ihre gespeicherte Konto-ID für diese Sitzung zu laden.", 
+                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein. Bei Erfolg wird Ihre Konto-ID geladen und Ihnen per E-Mail (via Brevo) gesendet:", 
                 true, "Ihre verknüpfte E-Mail-Adresse...", async (emailInput) => {
                     if (!emailInput || !emailInput.includes('@')) {
                         showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
@@ -1074,7 +1184,18 @@
                             sessionStorage.setItem('nb_session_user_id', activeUserId);
                             updateUserIdDisplays();
                             renderAllViews();
-                            showInfoModal("Wiederhergestellt", `Ihre Konto-ID wurde für diese Sitzung geladen: ${activeUserId}`);
+
+                            // Send notification via Brevo API
+                            const subject = "Ihre wiederhergestellte Konto-ID";
+                            const htmlContent = `
+                                <h2>Konto-ID Wiederherstellung</h2>
+                                <p>Hallo,</p>
+                                <p>Ihre verknüpfte Konto-ID lautet: <strong style="font-size: 18px; color: #1e3a8a;">${foundId}</strong></p>
+                                <p>Sie wurde für Ihre aktuelle Sitzung geladen.</p>
+                            `;
+                            sendBrevoEmail(emailInput, subject, htmlContent);
+
+                            showInfoModal("Wiederhergestellt", `Ihre Konto-ID wurde geladen: ${activeUserId}. Eine Bestätigungs-E-Mail wurde via Brevo an Sie versendet.`);
                         } else {
                             showInfoModal("Nicht gefunden", "Unter dieser E-Mail-Adresse wurde keine verknüpfte Konto-ID in der Datenbank gefunden.");
                         }
@@ -1085,7 +1206,7 @@
                 }, 'email', 'Wiederherstellen');
         };
 
-        // --- Admin Authentication & Password Management ---
+        // Admin Contact & Management
         window.openAdminContactModal = function() {
             showInfoModal(
                 "Admin Kontakt", 
@@ -1155,35 +1276,7 @@
                 }, 'password', 'Speichern');
         };
 
-        // --- Legal Terms & Privacy Modals ---
-        window.openTermsModal = function() {
-            const html = `
-                <div class="space-y-3 text-sm text-slate-700">
-                    <h4 class="font-bold text-slate-900 text-base">Nutzungsbedingungen</h4>
-                    <p><strong>1. Gegenstand der Plattform:</strong> Die Nachbarschafts-Werkzeugkiste ist eine kostenlose Nachbarschaftsplattform zur privaten Vermittlung von Werkzeugen und Gegenständen zur Ausleihe oder Schenkung.</p>
-                    <p><strong>2. Eigenverantwortung:</strong> Jeder Nutzer ist für den ordnungsgemäßen Zustand und die pflegliche Behandlung der geliehenen Werkzeuge selbst verantwortlich. Übergabe, Fristen und Zustand werden direkt zwischen den Nachbarn vereinbart.</p>
-                    <p><strong>3. Haftungsausschluss:</strong> Der Betreiber der Plattform übernimmt keine Haftung für Beschädigungen, Verluste oder Personenschäden, die durch geliehene Gegenstände entstehen. Es handelt sich rein um eine Vermittlungshilfe.</p>
-                    <p><strong>4. Missbrauch:</strong> Das Einstellen rechtswidriger oder gefährlicher Gegenstände ist untersagt. Der Administrator behält sich das Recht vor, unpassende Einträge zu entfernen.</p>
-                </div>
-            `;
-            showHtmlModal("Nutzungsbedingungen", html);
-        };
-
-        window.openPrivacyModal = function() {
-            const html = `
-                <div class="space-y-3 text-sm text-slate-700">
-                    <h4 class="font-bold text-slate-900 text-base">Datenschutzerklärung (DSGVO)</h4>
-                    <p><strong>1. Verantwortlicher:</strong> Nachbarschafts-Werkzeugkiste Administration (<a href="mailto:noumanahmad1987@gmail.com" class="underline text-blue-800">noumanahmad1987@gmail.com</a>).</p>
-                    <p><strong>2. Datenerhebung:</strong> Zur Nutzung der Anwendung wird eine zufällige anonyme Konto-ID generiert. E-Mail-Adressen werden ausschließlich verarbeitet, wenn Sie diese beim Anbieten eines Artikels, bei Ausleih-Anfragen oder zur ID-Wiederherstellung freiwillig angeben.</p>
-                    <p><strong>3. Verwendungszweck:</strong> E-Mail-Adressen dienen ausschließlich der Weiterleitung von Benachrichtigungen über Ausleih-Anfragen per EmailJS an den jeweiligen Gegenstandsbesitzer. E-Mail-Adressen werden niemals öffentlich im System angezeigt.</p>
-                    <p><strong>4. Speicherung & Drittanbieter:</strong> Daten werden sicher in Google Cloud Firestore gespeichert. Der E-Mail-Versand erfolgt über EmailJS. Es findet keine Weitergabe an kommerzielle Dritte statt.</p>
-                    <p><strong>5. Ihre Rechte:</strong> Sie haben jederzeit das Recht auf Auskunft, Berichtigung oder Löschung Ihrer gespeicherten Daten. Wenden Sie sich hierzu an die oben genannte Kontaktadresse.</p>
-                </div>
-            `;
-            showHtmlModal("Datenschutzerklärung", html);
-        };
-
-        // --- Modal Helpers ---
+        // Modal Helpers
         let modalCallback = null;
         function openCustomModal(title, message, showInput, placeholder, callback, inputType = 'text', confirmBtnText = 'Verstanden') {
             document.getElementById('modal-title').innerText = title;
