@@ -543,7 +543,7 @@
     }
 
     #modal-message {
-        color: #2b4b59 !important;
+          color: #fff !important;
     }
 
     #modal-input,
@@ -552,6 +552,10 @@
         border-radius: 12px !important;
         background: #fff !important;
         min-height: 46px;
+    }
+
+    #modal-message input {
+        color: #17303a !important;
     }
 
     #modal-input:focus,
@@ -1786,7 +1790,9 @@ header > nav.main-navigation {
             const title = "Wichtiger Hinweis";
             const msgHtml = `
                 <div class="space-y-3 text-sm md:text-base text-slate-700 leading-relaxed">
-<p style="color:rgb(72 148 255)">Ihre ID lautet: <strong class="text-blue-900" style="color:rgb(26 255 3)">${activeUserId}</strong></p>
+<p style="color:rgb(72 148 255)">Ihre ID lautet: <strong id="displayed-user-id" class="text-blue-900" style="color:rgb(26 255 3)">${activeUserId}</strong>
+    <button id="copy-user-id-btn" type="button" onclick="copyCurrentUserId()" class="ml-2 rounded-md border border-white/40 px-2 py-1 text-xs text-white hover:bg-white/10">ID kopieren</button>
+</p>
                     <p class="text-xs text-slate-600 mb-2" style="color:#ffffff">Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können. Aus Sicherheitsgründen ob verknüpfen Sie die oben angezeigte ID mit Ihre E-Mail-Adresse oder notieren bzw. speichern Sie diese gut für das nächste Mal.</p>
                 </div>
                 
@@ -1833,6 +1839,29 @@ header > nav.main-navigation {
             modalCallback = null;
             document.getElementById('modal').classList.remove('hidden');
         }
+
+        window.copyCurrentUserId = async function() {
+            const idEl = document.getElementById('displayed-user-id');
+            const button = document.getElementById('copy-user-id-btn');
+            const userId = idEl ? idEl.textContent.trim() : '';
+
+            if (!userId) {
+                alert("Es wurde keine ID zum Kopieren gefunden.");
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(userId);
+                if (button) {
+                    button.textContent = "Kopiert!";
+                    setTimeout(() => {
+                        button.textContent = "ID kopieren";
+                    }, 1500);
+                }
+            } catch (error) {
+                alert("Die ID konnte nicht kopiert werden. Bitte kopieren Sie sie manuell.");
+            }
+        };
 
         window.submitWelcomeEmailLink = async function() {
             const inputEl = document.getElementById('welcome-email-input');
