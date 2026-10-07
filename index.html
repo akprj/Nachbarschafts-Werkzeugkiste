@@ -934,307 +934,197 @@
 </style>
 
 <style>
-    /* Responsive navigation: same buttons/IDs, desktop row + mobile hamburger. */
-    header {
-        height: auto !important;
-        min-height: 0 !important;
-        padding: 0 !important;
+ /* Desktop: navigation is always visible in a horizontal row. */
+header > nav.main-navigation {
+    box-sizing: border-box;
+    position: relative;
+    display: block !important;
+    width: 100% !important;
+    max-width: 1320px;
+    min-height: 58px;
+    margin: 0 auto !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
+    background: rgba(12, 27, 39, 0.97) !important;
+}
+
+.main-navigation,
+.main-navigation * {
+    box-sizing: border-box;
+}
+
+.main-navigation .mobile-menu-toggle {
+    display: none;
+}
+
+.main-navigation .main-navigation-panel {
+    display: flex;
+    width: 100%;
+    min-height: 58px;
+    align-items: stretch;
+    justify-content: center;
+}
+
+.main-navigation .nav-tab {
+    position: relative;
+    flex: 1 1 0 !important;
+    min-width: 0;
+    min-height: 58px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.main-navigation button:focus-visible {
+    outline: 2px solid #7dd3fc;
+    outline-offset: -4px;
+}
+
+/* Mobile/tablet: hamburger with a collapsible vertical menu. */
+@media (max-width: 1050px) {
+    header > nav.main-navigation {
+        min-height: 56px;
     }
 
-    header > div:first-child {
-        padding: 0 !important;
-    }
-
-    header > div:first-child > div {
-        width: min(100%, 1320px) !important;
-        min-height: 76px;
-        padding: 10px 28px !important;
-    }
-
-    header > div:first-child h1 {
-        margin: 0 !important;
-        color: #f6fbfa !important;
-        line-height: 1.15 !important;
-        white-space: nowrap;
-    }
-
-    header > div:first-child .text-slate-500 {
-        color: #89a0aa !important;
-        margin-top: 5px;
-    }
-
-    header > div:first-child > div > div:last-child {
-        align-items: center;
-    }
-
-    header > div:nth-child(2) {
-        display: none !important;
-    }
-
-    header > nav {
-        width: min(100%, 1320px) !important;
-        min-height: 58px;
-        margin: 0 auto !important;
-        border-top: 1px solid rgba(255,255,255,.07) !important;
-        background: rgba(12,27,39,.97) !important;
-        display: flex !important;
-        align-items: stretch;
-    }
-
-    .mobile-nav {
-        display: block !important;
-        position: relative;
-        width: 100%;
-    }
-
-    .mobile-nav > summary {
-        display: none;
-    }
-
-    .mobile-nav .responsive-nav-panel {
-        width: 100%;
+    .main-navigation .mobile-menu-toggle {
         display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        width: 100%;
+        min-height: 56px;
+        padding: 0 20px;
+        border: 0;
+        background: transparent;
+        color: #f6fbfa;
+        cursor: pointer;
+    }
+
+    .hamburger-icon {
+        position: relative;
+        display: block;
+        width: 25px;
+        height: 20px;
+    }
+
+    .hamburger-icon > span {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        border-radius: 999px;
+        background: currentColor;
+        transition: transform 0.22s ease, opacity 0.22s ease;
+    }
+
+    .hamburger-icon > span:nth-child(1) {
+        top: 0;
+    }
+
+    .hamburger-icon > span:nth-child(2) {
+        top: 9px;
+    }
+
+    .hamburger-icon > span:nth-child(3) {
+        top: 18px;
+    }
+
+    /* Turn the hamburger into an X when open. */
+    .mobile-menu-toggle[aria-expanded="true"] {
+        background: rgba(255, 255, 255, 0.035);
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"]
+        .hamburger-icon > span:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"]
+        .hamburger-icon > span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"]
+        .hamburger-icon > span:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+
+    .main-navigation .main-navigation-panel {
+        display: none;
+        min-height: 0;
+        flex-direction: column;
         align-items: stretch;
-        justify-content: center;
+        justify-content: flex-start;
+        padding: 5px 0 10px;
+        background: rgba(8, 22, 32, 0.985);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 20px 38px rgba(0, 0, 0, 0.22);
+        max-height: 60vh;
+        overflow-y: auto;
     }
 
-    .mobile-nav .nav-tab {
-        flex: 1 1 0 !important;
-        min-width: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .main-navigation.is-open .main-navigation-panel {
+        display: flex;
     }
 
-    @media (max-width: 1050px) {
-        header > div:first-child > div {
-            min-height: 70px;
-            padding: 9px 20px !important;
-        }
-
-        header > nav {
-            min-height: 56px;
-            border-top: 1px solid rgba(255,255,255,.08) !important;
-            position: relative;
-        }
-
-        .mobile-nav > summary {
-            width: 100%;
-            min-height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            list-style: none;
-            cursor: pointer;
-            user-select: none;
-            color: #f6fbfa;
-            padding: 0 20px;
-            font-size: 0;
-        }
-
-        .mobile-nav > summary::-webkit-details-marker {
-            display: none;
-        }
-
-        .mobile-nav > summary::before,
-        .mobile-nav > summary::after,
-        .mobile-nav > summary .mobile-menu-label::before {
-            content: "";
-            width: 25px;
-            height: 2px;
-            border-radius: 999px;
-            background: #e7f0f1;
-            position: absolute;
-            right: 20px;
-            transition: transform .22s ease, opacity .22s ease, top .22s ease;
-        }
-
-        .mobile-nav > summary::before { top: 18px; }
-        .mobile-nav > summary .mobile-menu-label::before { top: 27px; }
-        .mobile-nav > summary::after { top: 36px; }
-
-        .mobile-nav[open] > summary::before {
-            transform: translateY(9px) rotate(45deg);
-        }
-
-        .mobile-nav[open] > summary .mobile-menu-label::before {
-            opacity: 0;
-        }
-
-        .mobile-nav[open] > summary::after {
-            transform: translateY(-9px) rotate(-45deg);
-        }
-
-        .mobile-nav[open] > summary {
-            background: rgba(255,255,255,.035);
-        }
-
-        .mobile-nav .responsive-nav-panel {
-            display: none;
-            flex-direction: column;
-            align-items: stretch;
-            justify-content: flex-start;
-            background: rgba(8,22,32,.985);
-            border-top: 1px solid rgba(255,255,255,.08);
-            box-shadow: 0 20px 38px rgba(0,0,0,.22);
-            padding: 5px 0 10px;
-        }
-
-        .mobile-nav[open] .responsive-nav-panel {
-            display: flex;
-        }
-
-        .mobile-nav .nav-tab {
-            flex: 0 0 auto !important;
-            width: 100%;
-            min-height: 52px;
-            padding: 0 20px !important;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            text-align: left;
-            white-space: normal;
-            overflow: visible;
-            text-overflow: clip;
-            border-bottom: 1px solid rgba(255,255,255,.055) !important;
-            background: transparent !important;
-        }
-
-        .mobile-nav .nav-tab:last-child {
-            border-bottom: 0 !important;
-        }
-
-        .mobile-nav .nav-tab::after {
-            left: auto;
-            right: 20px;
-            width: 3px;
-            height: 24px;
-            bottom: auto;
-            top: 50%;
-            transform: translateY(-50%) scaleY(0);
-            transform-origin: center;
-        }
-
-        .mobile-nav .nav-tab.active::after {
-            transform: translateY(-50%) scaleY(1);
-        }
-
-        header > div:first-child h1 {
-            font-size: 1.02rem !important;
-        }
+    .main-navigation .nav-tab {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex: 0 0 auto !important;
+        width: 100%;
+        min-height: 52px;
+        padding: 12px 20px !important;
+        text-align: left;
+        white-space: normal;
+        overflow: visible;
+        overflow-wrap: anywhere;
+        text-overflow: clip;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.055) !important;
+        background: transparent !important;
     }
 
-    @media (max-width: 640px) {
-        header > div:first-child > div {
-            min-height: 66px;
-            padding: 8px 14px !important;
-            gap: 12px !important;
-        }
-
-        header > div:first-child h1 {
-            font-size: .94rem !important;
-            white-space: normal;
-            line-height: 1.18 !important;
-        }
-
-        header > div:first-child .text-slate-500 {
-            display: none !important;
-        }
-
-        header > div:first-child > div > div:last-child {
-            gap: 6px !important;
-        }
-
-        header > div:first-child button {
-            padding: 7px 9px !important;
-            font-size: .67rem !important;
-        }
-
-        header > div:first-child span.text-\[10px\] {
-            font-size: 8px !important;
-            margin-top: 3px !important;
-        }
-
-        .mobile-nav > summary {
-            min-height: 52px;
-            padding-right: 14px;
-        }
-
-        .mobile-nav > summary::before,
-        .mobile-nav > summary::after,
-        .mobile-nav > summary .mobile-menu-label::before {
-            right: 14px;
-        }
-
-        .mobile-nav > summary::before { top: 16px; }
-        .mobile-nav > summary .mobile-menu-label::before { top: 25px; }
-        .mobile-nav > summary::after { top: 34px; }
-
-        .mobile-nav .nav-tab {
-            min-height: 50px;
-            padding-inline: 14px !important;
-            font-size: .88rem !important;
-        }
-
-        .mobile-nav .nav-tab::after {
-            right: 14px;
-        }
-    }
-</style>
-
-
-<style id="desktop-nav-visibility-fix">
-    /* Desktop: show the existing navigation buttons horizontally.
-       Tablet/mobile: hide them until the native hamburger <details> is opened. */
-    @media (min-width: 1051px) {
-        header > nav {
-            min-height: 58px !important;
-            display: flex !important;
-            align-items: stretch !important;
-        }
-
-        .mobile-nav {
-            display: block !important;
-            width: 100% !important;
-        }
-
-        .mobile-nav > summary {
-            display: none !important;
-        }
-
-        .mobile-nav .responsive-nav-panel {
-            display: flex !important;
-            width: 100% !important;
-            min-height: 58px !important;
-            align-items: stretch !important;
-            justify-content: center !important;
-            flex-direction: row !important;
-            background: transparent !important;
-            border: 0 !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-        }
-
-        .mobile-nav .nav-tab {
-            display: flex !important;
-            flex: 1 1 0 !important;
-            align-items: center !important;
-            justify-content: center !important;
-            min-width: 0 !important;
-            min-height: 58px !important;
-            white-space: nowrap !important;
-        }
+    .main-navigation .nav-tab:last-child {
+        border-bottom: 0 !important;
     }
 
-    @media (max-width: 1050px) {
-        .mobile-nav .responsive-nav-panel {
-            display: none;
-        }
-
-        .mobile-nav[open] .responsive-nav-panel {
-            display: flex;
-        }
+    .main-navigation .nav-tab::after {
+        left: auto;
+        right: 8px;
+        width: 3px;
+        height: 24px;
+        bottom: auto;
+        top: 50%;
+        transform: translateY(-50%) scaleY(0);
+        transform-origin: center;
     }
+
+    .main-navigation .nav-tab.active::after {
+        transform: translateY(-50%) scaleY(1);
+    }
+}
+
+@media (max-width: 640px) {
+    header > nav.main-navigation {
+        min-height: 52px;
+    }
+
+    .main-navigation .mobile-menu-toggle {
+        min-height: 52px;
+        padding-inline: 14px;
+    }
+
+    .main-navigation .nav-tab {
+        min-height: 50px;
+        padding-inline: 14px !important;
+        font-size: 0.88rem !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hamburger-icon > span {
+        transition: none;
+    }
+}
+
 </style>
 
 </head>
@@ -1267,28 +1157,68 @@
             </div>
         </div>
 
-        <nav class="max-w-4xl mx-auto flex flex-wrap border-t border-slate-200" aria-label="Hauptnavigation">
-            <details class="mobile-nav">
-                <summary aria-label="Menü öffnen"><span class="mobile-menu-label">Menü</span></summary>
-                <div class="responsive-nav-panel">
-                    <button id="tab-bibliothek" class="nav-tab active flex-1" onclick="switchTab('bibliothek')" aria-current="page">
-                        Verleih-Bibliothek
-                    </button>
-                    <button id="tab-anbieten" class="nav-tab flex-1" onclick="switchTab('anbieten')">
-                        Anbieten
-                    </button>
-                    <button id="tab-verschenken" class="nav-tab flex-1" onclick="switchTab('verschenken')">
-                        Zu Verschenken
-                    </button>
-                    <button id="tab-ausleihen" class="nav-tab flex-1" onclick="switchTab('ausleihen')">
-                        Meine Ausleih- & Schenkanfragen
-                    </button>
-                    <button id="tab-eintraege" class="nav-tab flex-1" onclick="switchTab('eintraege')">
-                        <span id="tab-eintraege-label">Artikelanfragen & Verwalten</span>
-                    </button>
-                </div>
-            </details>
-        </nav>
+        <nav class="main-navigation" aria-label="Hauptnavigation">
+    <button
+        id="mobile-menu-toggle"
+        class="mobile-menu-toggle"
+        type="button"
+        aria-label="Menü öffnen"
+        aria-controls="main-navigation-panel"
+        aria-expanded="false"
+    >
+        <span class="hamburger-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+        </span>
+    </button>
+
+    <div id="main-navigation-panel" class="main-navigation-panel">
+        <button
+            id="tab-bibliothek"
+            class="nav-tab active flex-1"
+            onclick="switchTab('bibliothek')"
+            aria-current="page"
+        >
+            Verleih-Bibliothek
+        </button>
+
+        <button
+            id="tab-anbieten"
+            class="nav-tab flex-1"
+            onclick="switchTab('anbieten')"
+        >
+            Anbieten
+        </button>
+
+        <button
+            id="tab-verschenken"
+            class="nav-tab flex-1"
+            onclick="switchTab('verschenken')"
+        >
+            Zu Verschenken
+        </button>
+
+        <button
+            id="tab-ausleihen"
+            class="nav-tab flex-1"
+            onclick="switchTab('ausleihen')"
+        >
+            Meine Ausleih- & Schenkanfragen
+        </button>
+
+        <button
+            id="tab-eintraege"
+            class="nav-tab flex-1"
+            onclick="switchTab('eintraege')"
+        >
+            <span id="tab-eintraege-label">
+                Artikelanfragen & Verwalten
+            </span>
+        </button>
+    </div>
+</nav>
+
     </header>
 
     <main class="flex-grow max-w-4xl mx-auto w-full p-4 md:p-6 pb-20">
