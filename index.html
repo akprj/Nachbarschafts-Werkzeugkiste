@@ -979,6 +979,12 @@ header > nav.main-navigation {
     outline-offset: -4px;
 }
 
+
+
+
+
+
+
 /* Mobile/tablet: hamburger with a collapsible vertical menu. */
 @media (max-width: 1050px) {
     header > nav.main-navigation {
@@ -1125,6 +1131,145 @@ header > nav.main-navigation {
     }
 }
 
+
+/* Shared navigation colors */
+.main-navigation {
+    --nav-gold: #dec474;
+    --nav-white: #f6fbfa;
+}
+
+.main-navigation .nav-tab {
+    color: var(--nav-white);
+    border-bottom: 0 !important;
+    text-decoration: none;
+    box-shadow: none !important;
+}
+
+.main-navigation .nav-tab.active {
+    color: var(--nav-gold) !important;
+}
+
+/* Desktop navigation */
+@media (min-width: 1051px) {
+    .main-navigation .main-navigation-panel {
+        justify-content: center;
+        align-items: stretch;
+        flex-wrap: wrap;
+        gap: 0;
+        padding-inline: 16px;
+    }
+
+    .main-navigation .nav-tab {
+        /* Each tab takes the width required by its text. */
+        flex: 0 0 auto !important;
+        width: auto !important;
+        max-width: 100%;
+        min-width: 0;
+        padding: 18px 14px !important;
+
+        white-space: normal;
+        overflow: visible;
+        overflow-wrap: anywhere;
+        text-overflow: clip;
+
+        background: transparent !important;
+    }
+
+    /* Underline aligned with the text, excluding button padding. */
+    .main-navigation .nav-tab::after {
+        content: "";
+        position: absolute;
+        display: block;
+        left: 14px;
+        right: 14px;
+        bottom: 10px;
+        top: auto;
+
+        width: auto;
+        height: 2px;
+        border-radius: 0;
+        background: var(--nav-white);
+
+        opacity: 0;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    /* White underline on unselected items when hovered/focused. */
+    .main-navigation .nav-tab:not(.active):hover,
+    .main-navigation .nav-tab:not(.active):focus-visible {
+        color: var(--nav-white) !important;
+    }
+
+    .main-navigation .nav-tab:not(.active):hover::after,
+    .main-navigation .nav-tab:not(.active):focus-visible::after {
+        background: var(--nav-white) !important;
+        opacity: 1;
+        transform: scaleX(1);
+    }
+
+    /* Selected item always keeps its gold underline. */
+    .main-navigation .nav-tab.active::after {
+        background: var(--nav-gold) !important;
+        opacity: 1;
+        transform: scaleX(1);
+    }
+}
+
+/* Mobile hamburger navigation */
+@media (max-width: 1050px) {
+    .main-navigation .nav-tab {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.055) !important;
+    }
+
+    .main-navigation .nav-tab:last-child {
+        border-bottom: 0 !important;
+    }
+
+    /* Move the active indicator from the right to the left. */
+    .main-navigation .nav-tab::after {
+        content: "";
+        position: absolute;
+        display: block;
+        left: 0;
+        right: auto;
+        top: 0;
+        bottom: 0;
+
+        width: 2px;
+        height: auto;
+        border-radius: 0;
+        background: var(--nav-gold) !important;
+
+        opacity: 0;
+        transform: none;
+        transition: opacity 0.2s ease;
+    }
+
+    .main-navigation .nav-tab.active {
+        color: var(--nav-gold) !important;
+        background: rgba(255, 255, 255, 0.07) !important;
+    }
+
+    .main-navigation .nav-tab.active::after {
+        opacity: 1;
+        transform: none;
+    }
+
+    .main-navigation .nav-tab:not(.active):hover {
+        background: rgba(255, 255, 255, 0.035) !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .main-navigation .nav-tab::after {
+        transition: none;
+    }
+}
+
+
+    
 </style>
 
 </head>
