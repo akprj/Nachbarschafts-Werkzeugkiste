@@ -457,6 +457,14 @@
         color: #78909b !important;
     }
 
+    footer .copyright-text {
+        color: #fff !important;
+    }
+
+    header .id-action-help {
+        color: #fff !important;
+    }
+
     footer button {
         border-radius: 999px !important;
         border: 1px solid rgba(255,255,255,.10) !important;
@@ -542,8 +550,17 @@
         letter-spacing: -.03em;
     }
 
-    #modal-message {
-          color: #fff !important;
+    #modal-message,
+    #modal-message :not(input):not(textarea):not(select) {
+        color: #fff !important;
+    }
+
+    #modal-message #welcome-id-label {
+        color: rgb(72 148 255) !important;
+    }
+
+    #modal-message #displayed-user-id {
+        color: rgb(26 255 3) !important;
     }
 
     #modal-input,
@@ -842,6 +859,9 @@
     }
     header > div:first-child button:hover { background: rgba(255,255,255,.14) !important; color: #fff !important; transform: none !important; }
     header > div:first-child span { color: #78909b !important; }
+    header > div:first-child span.id-action-help {
+        color: #f8f5ef !important;
+    }
 
     header > div:nth-child(2) {
         background: transparent !important;
@@ -1390,13 +1410,13 @@ header > nav.main-navigation {
                         <button onclick="openSwitchUserIdModal()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
                             ID-Laden
                         </button>
-                        <span class="text-[10px] text-sky-800 mt-1 leading-tight font-medium">Andere ID eingeben</span>
+                        <span class="id-action-help text-[10px] text-sky-800 mt-1 leading-tight font-medium">Andere ID eingeben</span>
                     </div>
                     <div class="flex flex-col items-center">
                         <button onclick="openRecoverIdModal()" class="bg-sky-700 hover:bg-sky-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
                             ID wiederherstellen
                         </button>
-                        <span class="text-[10px] text-sky-800 mt-1 leading-tight text-center font-medium">Ihre vergessene ID erhalten</span>
+                        <span class="id-action-help text-[10px] text-sky-800 mt-1 leading-tight text-center font-medium">Ihre vergessene ID erhalten</span>
                     </div>
                 </div>
             </div>
@@ -1598,7 +1618,7 @@ header > nav.main-navigation {
         
         <!-- Status / Copyright Area -->
         <div class="text-slate-500 flex items-center gap-2.5 flex-wrap text-center md:text-left">
-            <span>© 2026 Nachbarschafts-Werkzeugkiste. Miteinander teilen.</span>
+            <span class="copyright-text">© 2026 Nachbarschafts-Werkzeugkiste. Miteinander teilen.</span>
             <span id="admin-status-badge" class="hidden bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded text-xs">Admin-Modus aktiv</span>
         </div>
 
@@ -1790,7 +1810,7 @@ header > nav.main-navigation {
             const title = "Wichtiger Hinweis";
             const msgHtml = `
                 <div class="space-y-3 text-sm md:text-base text-slate-700 leading-relaxed">
-<p style="color:rgb(72 148 255)">Ihre ID lautet: <strong id="displayed-user-id" class="text-blue-900" style="color:rgb(26 255 3)">${activeUserId}</strong>
+<p id="welcome-id-label" style="color:rgb(72 148 255)">Ihre ID lautet: <strong id="displayed-user-id" class="text-blue-900" style="color:rgb(26 255 3)">${activeUserId}</strong>
     <button id="copy-user-id-btn" type="button" onclick="copyCurrentUserId()" class="ml-2 rounded-md border border-white/40 px-2 py-1 text-xs text-white hover:bg-white/10">ID kopieren</button>
 </p>
                     <p class="text-xs text-slate-600 mb-2" style="color:#ffffff">Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können. Aus Sicherheitsgründen ob verknüpfen Sie die oben angezeigte ID mit Ihre E-Mail-Adresse oder notieren bzw. speichern Sie diese gut für das nächste Mal.</p>
