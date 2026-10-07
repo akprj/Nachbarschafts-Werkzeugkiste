@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Keep emails strictly safe from all client side queries
+    match /public/user_emails/{document=**} { allow read, write: if false; }
+    match /user_emails/{document=**} { allow read, write: if false; }
+
+    // 2. Open up all other paths (items, verleih, zu verschenken, etc.)
+    match /{document=**} { allow read, write: if true; }
+  }
+}

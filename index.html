@@ -5,13 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nachbarschafts-Werkzeugkiste</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    
-    <script>
-      (function(){
-         emailjs.init("Jl3q1NmY-n_2hu2V6");
-      })();
-    </script>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -1924,10 +1917,6 @@ header > nav.main-navigation {
             getDocs 
         } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-        // Email configuration
-        const EMAILJS_SERVICE_ID = 'service_83hht9o';
-        const EMAILJS_TEMPLATE_ID = 'template_9lyyyce';
-
         // Resend + Brevo are called through Firebase Cloud Functions.
         // API keys are intentionally NOT stored in this browser file.
         const EMAIL_FUNCTION_BASE_URL =
@@ -3000,55 +2989,26 @@ header > nav.main-navigation {
                     return false;
                 }
 
+                const resendResult = await sendIdViaResend(cleanEmail, foundId);
+                if (!resendResult || resendResult.success !== true) {
+                    throw new Error("Resend ID recovery did not succeed.");
+                }
+
                 activeUserId = foundId;
                 sessionStorage.setItem('nb_session_user_id', activeUserId);
                 updateUserIdDisplays();
                 renderAllViews();
 
-                const recoveryMessage = [
-                    "Hallo!",
-                    "",
-                    `Ihre wiederhergestellte Konto-ID lautet: ${foundId}`,
-                    "",
-                    "Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge verwalten können.",
-                    "",
-                    "Viele Grüße",
-                    "Nachbarschafts-Werkzeugkiste"
-                ].join("\n");
-
-                try {
-                    await emailjs.send(
-                        EMAILJS_SERVICE_ID,
-                        EMAILJS_TEMPLATE_ID,
-                        {
-                            to_email: cleanEmail,
-                            user_id: foundId,
-                            subject: 'Ihre wiederhergestellte ID',
-                            message: recoveryMessage
-                        }
-                    );
-
-                    showInfoModal(
-                        "Wiederhergestellt",
-                        `Ihre ID wurde gefunden, geladen und erneut per E-Mail an ${cleanEmail} gesendet.`
-                    );
-                    return true;
-                } catch (emailJsError) {
-                    console.error(
-                        "EmailJS recovery send error:",
-                        emailJsError
-                    );
-                    showInfoModal(
-                        "Wiederhergestellt",
-                        "Ihre ID wurde gefunden und geladen, aber die E-Mail konnte über EmailJS nicht gesendet werden. Bitte prüfen Sie die EmailJS-Konfiguration."
-                    );
-                    return false;
-                }
+                showInfoModal(
+                    "Wiederhergestellt",
+                    `Ihre ID wurde gefunden, geladen und erneut per E-Mail an ${cleanEmail} gesendet.`
+                );
+                return true;
             } catch (err) {
                 console.error("Recovery error:", err);
                 showInfoModal(
                     "Fehler",
-                    "Wiederherstellung fehlgeschlagen. Bitte versuchen Sie es erneut."
+                    "Die ID konnte nicht wiederhergestellt oder per Resend versendet werden. Bitte versuchen Sie es erneut."
                 );
                 return false;
             }
@@ -3069,7 +3029,7 @@ header > nav.main-navigation {
         window.openRecoverIdModal = function() {
             openCustomModal(
                 "ID wiederherstellen",
-                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein. Ihre Konto-ID wird anschließend über EmailJS erneut an diese Adresse gesendet.",
+                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein. Ihre Konto-ID wird anschließend über Resend erneut an diese Adresse gesendet.",
                 true,
                 "Ihre verknüpfte E-Mail-Adresse...",
                 async (emailInput) => {
