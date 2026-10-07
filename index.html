@@ -1182,6 +1182,61 @@
     }
 </style>
 
+
+<style id="desktop-nav-visibility-fix">
+    /* Desktop: show the existing navigation buttons horizontally.
+       Tablet/mobile: hide them until the native hamburger <details> is opened. */
+    @media (min-width: 1051px) {
+        header > nav {
+            min-height: 58px !important;
+            display: flex !important;
+            align-items: stretch !important;
+        }
+
+        .mobile-nav {
+            display: block !important;
+            width: 100% !important;
+        }
+
+        .mobile-nav > summary {
+            display: none !important;
+        }
+
+        .mobile-nav .responsive-nav-panel {
+            display: flex !important;
+            width: 100% !important;
+            min-height: 58px !important;
+            align-items: stretch !important;
+            justify-content: center !important;
+            flex-direction: row !important;
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+
+        .mobile-nav .nav-tab {
+            display: flex !important;
+            flex: 1 1 0 !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-width: 0 !important;
+            min-height: 58px !important;
+            white-space: nowrap !important;
+        }
+    }
+
+    @media (max-width: 1050px) {
+        .mobile-nav .responsive-nav-panel {
+            display: none;
+        }
+
+        .mobile-nav[open] .responsive-nav-panel {
+            display: flex;
+        }
+    }
+</style>
+
 </head>
 
 <body class="bg-slate-50 min-h-screen flex flex-col text-slate-800">
