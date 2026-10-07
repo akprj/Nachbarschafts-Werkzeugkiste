@@ -1269,6 +1269,42 @@ header > nav.main-navigation {
 }
 
 
+
+@media (max-width: 640px) {
+    /* Stack the title and ID buttons instead of squeezing them together. */
+    header > div:first-child > div {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+        padding: 12px 14px !important;
+    }
+
+    /* Title container */
+    header > div:first-child > div > div:first-child {
+        width: 100%;
+        min-width: 0;
+    }
+
+    header > div:first-child h1 {
+        display: block !important;
+        max-width: 100%;
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+        font-size: 1rem !important;
+        line-height: 1.35 !important;
+    }
+
+    /* Buttons stay together below the title, wrapping if necessary. */
+    header > div:first-child > div > div:last-child {
+        width: 100%;
+        min-width: 0;
+        justify-content: flex-end !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+}
+
+
     
 </style>
 
