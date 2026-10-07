@@ -2843,5 +2843,52 @@ header > nav.main-navigation {
             return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
     </script>
+
+<script>
+    (() => {
+        const toggle = document.getElementById("mobile-menu-toggle");
+        const panel = document.getElementById("main-navigation-panel");
+        const navigation = toggle.closest(".main-navigation");
+        const mobileViewport = window.matchMedia("(max-width: 1050px)");
+
+        function setMenuOpen(open) {
+            navigation.classList.toggle("is-open", open);
+            toggle.setAttribute("aria-expanded", String(open));
+            toggle.setAttribute(
+                "aria-label",
+                open ? "Menü schließen" : "Menü öffnen"
+            );
+        }
+
+        toggle.addEventListener("click", () => {
+            setMenuOpen(toggle.getAttribute("aria-expanded") !== "true");
+        });
+
+        panel.addEventListener("click", (event) => {
+            if (mobileViewport.matches && event.target.closest(".nav-tab")) {
+                setMenuOpen(false);
+                toggle.focus();
+            }
+        });
+
+        navigation.addEventListener("keydown", (event) => {
+            if (
+                event.key === "Escape" &&
+                mobileViewport.matches &&
+                navigation.classList.contains("is-open")
+            ) {
+                setMenuOpen(false);
+                toggle.focus();
+            }
+        });
+
+        mobileViewport.addEventListener("change", () => {
+            setMenuOpen(false);
+        });
+    })();
+</script>
+
+
+    
 </body>
 </html>
