@@ -367,6 +367,10 @@
         transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
     }
 
+    #my-items-grid button.lend-confirm-button {
+        color: rgb(26 255 3) !important;
+    }
+
     #library-grid button.borrow-action-button {
         width: 7rem;
         flex: 0 0 7rem;
@@ -2372,7 +2376,7 @@ header > nav.main-navigation {
                             ` : ''}
 
                             ${item.status === 'requested' && !isGiveaway ? `
-                                <button onclick="lendItem('${item.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                <button onclick="lendItem('${item.id}')" class="lend-confirm-button bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
                                     Verleihen Bestätigen
                                 </button>
                             ` : ''}
