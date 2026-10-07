@@ -367,6 +367,13 @@
         transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
     }
 
+    #library-grid button.borrow-action-button {
+        width: 7rem;
+        flex: 0 0 7rem;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
     #library-grid button:hover,
     #giveaway-grid button:hover,
     #my-borrowed-grid button:hover,
@@ -2108,7 +2115,7 @@ header > nav.main-navigation {
 
                 if (item.status === 'available') {
                     actionUI =
-                        `<button onclick="borrowItem('${item.id}')" class="bg-blue-900 hover:bg-blue-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">Ausleihen</button>`;
+                        `<button onclick="borrowItem('${item.id}')" class="borrow-action-button bg-blue-900 hover:bg-blue-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">Ausleihen</button>`;
                 } else if (item.status === 'requested') {
                     if (isBorrower) {
                         actionUI =
@@ -2328,7 +2335,7 @@ header > nav.main-navigation {
                     <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
                         <span class="text-xs ${statusColor}">${statusLabel}</span>
 
-                        <div class="flex gap-2">
+                        <div class="flex flex-wrap justify-end gap-2">
                             ${item.status === 'requested' && isGiveaway ? `
                                 <button onclick="completeGiveaway('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
                                     Übergeben & Abschließen
@@ -2341,13 +2348,19 @@ header > nav.main-navigation {
                                 </button>
                             ` : ''}
 
+                            ${item.status === 'requested' ? `
+                                <button onclick="declineRequest('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                    Ablehnen
+                                </button>
+                            ` : ''}
+
                             ${item.status === 'return_pending' ? `
                                 <button onclick="confirmReturn('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm shadow transition-colors">
                                     Empfang Bestätigen
                                 </button>
                             ` : ''}
 
-                            ${item.status === 'available' ? `
+                            ${item.status === 'available' || isAdminLoggedIn ? `
                                 <button onclick="deleteMyItem('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
                                     Löschen
                                 </button>
@@ -2544,6 +2557,13 @@ header > nav.main-navigation {
             const item = itemsCache.find(i => i.id === id);
             if (!item) return;
             if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+            if (
+                isAdminLoggedIn &&
+                item.status !== 'available' &&
+                !confirm(`Möchten Sie „${item.title}“ trotz des aktuellen Status dauerhaft löschen?`)
+            ) {
+                return;
+            }
 
             try {
                 if (db) {
@@ -2551,10 +2571,45 @@ header > nav.main-navigation {
                 }
                 itemsCache = itemsCache.filter(i => i.id !== id);
                 renderAllViews();
-                showInfoModal("Gelöscht", "Ihr Artikel wurde aus der Datenbank entfernt.");
+                showInfoModal("Gelöscht", "Der Artikel wurde aus der Datenbank entfernt.");
             } catch (err) {
                 console.error("Error deleting item:", err);
                 showInfoModal("Fehler", "Der Artikel konnte nicht gelöscht werden.");
+            }
+        };
+
+        window.declineRequest = async function(id) {
+            const item = itemsCache.find(i => i.id === id);
+            if (!item || item.status !== 'requested') return;
+            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+
+            if (!confirm("Möchten Sie diese Anfrage ablehnen? Der Artikel wird danach wieder für andere Nachbarn verfügbar.")) {
+                return;
+            }
+
+            const resetRequest = {
+                status: 'available',
+                borrowerId: '',
+                borrowedAt: null,
+                lentAt: null,
+                borrowerContact: '',
+                borrowerEmail: ''
+            };
+
+            try {
+                if (db) {
+                    await updateDoc(
+                        doc(db, 'artifacts', appId, 'public', 'data', 'items', id),
+                        resetRequest
+                    );
+                }
+
+                Object.assign(item, resetRequest);
+                renderAllViews();
+                showInfoModal("Anfrage abgelehnt", "Die Anfrage wurde abgelehnt. Der Artikel ist nun wieder für andere Nachbarn verfügbar.");
+            } catch (err) {
+                console.error("Error declining request:", err);
+                showInfoModal("Fehler", "Die Anfrage konnte nicht abgelehnt werden.");
             }
         };
 
