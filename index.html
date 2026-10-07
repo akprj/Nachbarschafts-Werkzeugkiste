@@ -2189,7 +2189,8 @@ header > nav.main-navigation {
                             <p class="text-sm text-slate-600 mb-4 line-clamp-2">${escapeHtml(item.desc || '')}</p>
                             ${isOwner && item.status === 'requested' ? `
                                 <div class="bg-amber-50 border border-amber-200 text-amber-900 text-xs p-3 rounded mb-3">
-                                    <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Ihr Werkzeug angefragt!</p>
+                                    <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Ihr Werkzeug/Gegenstand angefragt!
+                                        Bitte gehen Sie zum Verwalten-Dashboard, um es/ihn zu bearbeiten</p>
                                     <p><span class="font-semibold">Entleiher:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
                                     <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-amber-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
                                 </div>
