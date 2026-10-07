@@ -95,12 +95,47 @@
         letter-spacing: -.035em;
     }
 
-    header h1 span {
-        filter: drop-shadow(0 7px 12px rgba(86,194,179,.18));
+    header .brand-lockup {
+        display: grid;
+        grid-template-columns: 2.5rem minmax(0, 1fr);
+        width: fit-content;
+        max-width: 100%;
     }
 
-    header .text-slate-500 {
-        color: # !important;
+    header .brand-lockup h1 {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        gap: .5rem !important;
+    }
+
+    header .brand-lockup h1 > span:first-child {
+        flex: 0 0 2.5rem;
+        text-align: center;
+    }
+
+    header .brand-title {
+        color: #ffd964 !important;
+        min-width: 0;
+    }
+
+    header .brand-subtitle {
+        grid-column: 2;
+        width: 100%;
+        color: #fff !important;
+        text-align: center !important;
+    }
+
+    header > div:first-child > div > div:first-child {
+        text-align: left;
+    }
+
+    header > div:first-child h1 {
+        justify-content: flex-start;
+    }
+
+    header h1 > span:first-child {
+        filter: drop-shadow(0 7px 12px rgba(86,194,179,.18));
     }
 
     header .text-sky-900,
@@ -462,12 +497,47 @@
     footer > div:first-child {
         color: #78909b !important;
         border-top: 1px solid rgba(255,255,255,.07) !important;
-        flex-direction: column;
-        justify-content: center;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        grid-template-rows: auto;
         align-items: center;
         gap: 12px;
         font-size: .72rem !important;
-        display: flex;
+        width: 100%;
+        max-width: none !important;
+    }
+
+    footer > div:first-child > div:first-child {
+        display: flex !important;
+        grid-column: 1 / -1;
+        grid-row: 1;
+        justify-content: space-between !important;
+        align-items: center;
+        width: 100%;
+    }
+
+    footer > div:first-child > div:nth-child(2) {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: center;
+        white-space: nowrap;
+    }
+
+    @media (min-width: 641px) {
+        footer {
+            padding-top: 10px !important;
+            padding-bottom: 10px !important;
+        }
+
+        footer > div:first-child {
+            gap: 8px;
+        }
+
+        footer > div:first-child button {
+            padding: 5px 10px;
+            font-size: .75rem;
+            line-height: 1.25;
+        }
     }
 
     footer .text-slate-500 {
@@ -668,6 +738,61 @@
             padding-bottom: .55rem !important;
         }
 
+        header > div:first-child > div {
+            position: relative;
+            display: block !important;
+            min-height: 116px;
+            padding-top: 62px;
+            padding-bottom: 0;
+        }
+
+        header > div:first-child > div > div:first-child {
+            width: 100%;
+            text-align: center;
+        }
+
+        header h1 {
+            justify-content: center;
+            gap: .35rem !important;
+            font-size: 1.3rem !important;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        header > div:first-child > div > div:last-child {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            width: 100%;
+            flex-wrap: nowrap !important;
+            justify-content: space-between !important;
+            gap: 0 !important;
+        }
+
+        header > div:first-child > div > div:last-child > div:first-child,
+        header > div:first-child > div > div:last-child > div:last-child {
+            flex: 0 1 48%;
+            min-width: 0;
+        }
+
+        header > div:first-child > div > div:last-child > div:first-child {
+            align-items: flex-start;
+        }
+
+        header > div:first-child > div > div:last-child > div:last-child {
+            align-items: flex-end;
+        }
+
+        header .id-action-help {
+            max-width: 100%;
+            white-space: normal;
+        }
+
+        header > div:first-child > div > div:last-child > div:last-child .id-action-help {
+            text-align: right;
+        }
+
         header > div:nth-child(2) {
             padding-top: .8rem !important;
             padding-bottom: .8rem !important;
@@ -676,15 +801,6 @@
         header > div:nth-child(2) > div {
             align-items: flex-start !important;
             gap: .7rem !important;
-        }
-
-        header h1 {
-            font-size: 1.08rem !important;
-            line-height: 1.25;
-        }
-
-        header > div:nth-child(2) .hidden.sm\:block {
-            display: none !important;
         }
 
         nav.max-w-4xl {
@@ -1356,18 +1472,105 @@ header > nav.main-navigation {
 
 
 @media (max-width: 640px) {
-    /* Center the title and subtitle. */
+    header > div:first-child {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    header .brand-lockup {
+        margin: 0 auto;
+    }
+
+    header .brand-subtitle {
+        display: block !important;
+        color: #fff !important;
+        text-align: center;
+    }
+
+    header > div:first-child > div {
+        position: relative !important;
+        display: block !important;
+        min-height: 145px;
+        padding: 78px 0 12px !important;
+    }
+
     header > div:first-child > div > div:first-child {
+        width: 100%;
+        min-width: 0;
         text-align: center !important;
     }
 
     header > div:first-child h1 {
+        display: flex !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: .4rem !important;
+        max-width: 100%;
+        margin: 0 auto;
+        overflow-wrap: normal;
+        white-space: normal !important;
+        font-size: 1.3rem !important;
+        line-height: 1.2 !important;
         text-align: center !important;
     }
 
-    /* Center the ID buttons together beneath the title. */
     header > div:first-child > div > div:last-child {
+        position: absolute !important;
+        top: 0;
+        right: 0;
+        left: 0;
+        width: auto;
+        justify-content: space-between !important;
+        flex-wrap: nowrap !important;
+        gap: 0 !important;
+    }
+
+    header > div:first-child > div > div:last-child > div:first-child,
+    header > div:first-child > div > div:last-child > div:last-child {
+        flex: 0 1 48%;
+        min-width: 0;
+    }
+
+    header > div:first-child > div > div:last-child > div:first-child {
+        align-items: flex-start;
+    }
+
+    header > div:first-child > div > div:last-child > div:last-child {
+        align-items: flex-end;
+    }
+
+    header .id-action-help {
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    header > div:first-child > div > div:last-child > div:last-child .id-action-help {
+        text-align: right;
+    }
+
+    footer > div:first-child {
+        display: flex !important;
+        flex-direction: column !important;
         justify-content: center !important;
+        gap: 12px;
+    }
+
+    footer > div:first-child > div:first-child {
+        display: flex;
+        order: 1;
+        justify-content: center;
+    }
+
+    footer > div:first-child > div:first-child button {
+        grid-column: auto;
+        justify-self: auto;
+    }
+
+    footer > div:first-child > div:nth-child(2) {
+        grid-column: auto;
+        order: 2;
+        white-space: normal;
+        text-align: center;
     }
 }
 
@@ -1425,10 +1628,12 @@ header > nav.main-navigation {
         <div class="bg-sky-50 border-b border-sky-100 px-4 py-3.5">
             <div class="max-w-4xl mx-auto flex items-center justify-between gap-5 text-sky-900 text-sm md:text-base">
                 <div class="min-w-0 flex-1 text-left">
-                    <h1 class="text-xl md:text-2xl font-bold text-blue-900 flex items-center gap-2">
-                        <span>🛠️</span> Nachbarschafts-Werkzeugkiste
-                    </h1>
-                    <div class="text-xs md:text-sm text-slate-500 hidden sm:block">Teilen, Ausleihen & Nachbarschaft stärken</div>
+                    <div class="brand-lockup">
+                        <h1 class="text-xl md:text-2xl font-bold text-blue-900 flex items-center gap-2">
+                            <span></span><span class="brand-title">🛠️Nachbarschafts-Werkzeugkiste</span>
+                        </h1>
+                        <div class="brand-subtitle text-xs md:text-sm text-slate-500 hidden sm:block">Teilen, Ausleihen & Nachbarschaft stärken</div>
+                    </div>
                 </div>
                 <div class="flex items-start gap-2.5 shrink-0 flex-wrap justify-end">
                     <div class="flex flex-col items-center">
