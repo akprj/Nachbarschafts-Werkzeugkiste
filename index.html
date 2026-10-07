@@ -1322,6 +1322,48 @@ header > nav.main-navigation {
 }
 
 
+
+@media (max-width: 1050px) {
+    /* Remove the oval frame around the navigation. */
+    header > nav.main-navigation {
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        overflow: visible;
+    }
+
+    /* Compact hamburger button, aligned to the left. */
+    .main-navigation .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center !important;
+
+        width: 48px !important;
+        height: 48px !important;
+        min-height: 48px !important;
+        padding: 0 !important;
+        margin: 8px auto 8px 14px !important;
+
+        border: 1px solid rgba(255, 255, 255, 0.35) !important;
+        border-radius: 8px !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: #f6fbfa;
+    }
+
+    .main-navigation .mobile-menu-toggle:hover,
+    .main-navigation .mobile-menu-toggle[aria-expanded="true"] {
+        background: rgba(255, 255, 255, 0.06) !important;
+    }
+
+    /* Keep the expanded menu full-width, without rounded edges. */
+    .main-navigation .main-navigation-panel {
+        border-radius: 0 !important;
+    }
+}
+
+
+
     
 </style>
 
