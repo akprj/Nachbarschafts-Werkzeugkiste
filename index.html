@@ -1788,17 +1788,46 @@ header > nav.main-navigation {
             );
         }
 
+        function secureRandomInt(max) {
+            const range = 0x100000000;
+            const limit = Math.floor(range / max) * max;
+            const randomValues = new Uint32Array(1);
+            let value;
+
+            do {
+                crypto.getRandomValues(randomValues);
+                value = randomValues[0];
+            } while (value >= limit);
+
+            return value % max;
+        }
+
         function generateCompactUserId() {
             const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             const digits = '0123456789';
-            let res = '';
-            for (let i = 0; i < 4; i++) res += letters.charAt(Math.floor(Math.random() * letters.length));
-            for (let i = 0; i < 4; i++) res += digits.charAt(Math.floor(Math.random() * digits.length));
-            return res;
+            const characters = [];
+
+            for (let i = 0; i < 6; i++) {
+                characters.push(letters.charAt(secureRandomInt(letters.length)));
+                characters.push(digits.charAt(secureRandomInt(digits.length)));
+            }
+
+            for (let i = characters.length - 1; i > 0; i--) {
+                const swapIndex = secureRandomInt(i + 1);
+                [characters[i], characters[swapIndex]] =
+                    [characters[swapIndex], characters[i]];
+            }
+
+            return characters.join('');
         }
 
         function isValidNewFormat(id) {
-            return /^[A-Z]{4}[0-9]{4}$/.test(id);
+            return /^(?=(?:.*[A-Z]){6})(?=(?:.*[0-9]){6})[A-Z0-9]{12}$/.test(id);
+        }
+
+        function normalizeUserId(value) {
+            const id = (value || '').trim();
+            return id.toUpperCase();
         }
 
         window.onload = async function() {
@@ -1917,7 +1946,7 @@ header > nav.main-navigation {
 
         window.submitWelcomeIdLoad = async function() {
             const inputEl = document.getElementById('welcome-id-input');
-            const idVal = inputEl ? inputEl.value.trim().toUpperCase() : '';
+            const idVal = inputEl ? normalizeUserId(inputEl.value) : '';
             
             if (!idVal || idVal.length < 4) {
                 alert("Bitte geben Sie eine gültige ID ein.");
@@ -2700,7 +2729,7 @@ header > nav.main-navigation {
             openCustomModal("ID Laden", 
                 "Geben Sie Ihr ID ein:", 
                 true, "z.B. ABCD1234", (inputVal) => {
-                    const cleanId = (inputVal || '').trim().toUpperCase();
+                    const cleanId = normalizeUserId(inputVal);
                     if (!cleanId || cleanId.length < 4) {
                         showInfoModal("Fehler", "Bitte geben Sie eine gültige ID ein.");
                         return;
