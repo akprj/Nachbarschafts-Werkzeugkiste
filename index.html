@@ -530,7 +530,7 @@
 
     #modal > div {
         /* background: #f9fbfa !important; */
-        background: #0c1b27f7 !important
+        background: #0c1b27f7 !important;
         border: 1px solid rgba(255,255,255,.30) !important;
         border-top: 3px solid var(--accent) !important;
         border-radius: 20px !important;
@@ -538,12 +538,12 @@
     }
 
     #modal-title {
-        color: var(--ink) !important;
+        color: #0fd5ff !important;
         letter-spacing: -.03em;
     }
 
     #modal-message {
-        color: #566a73 !important;
+        color: #2b4b59 !important;
     }
 
     #modal-input,
@@ -1786,9 +1786,8 @@ header > nav.main-navigation {
             const title = "Wichtiger Hinweis";
             const msgHtml = `
                 <div class="space-y-3 text-sm md:text-base text-slate-700 leading-relaxed">
-                    <p>Ihre ID lautet: <strong class="text-blue-900">${activeUserId}</strong></p>
-                    
-                    <p class="text-xs text-slate-600 mb-2">Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können. Aus Sicherheitsgründen ob verknüpfen Sie die oben angezeigte ID mit Ihre E-Mail-Adresse oder notieren bzw. speichern Sie diese gut für das nächste Mal.</p>
+<p style="color:rgb(72 148 255)">Ihre ID lautet: <strong class="text-blue-900" style="color:rgb(26 255 3)">${activeUserId}</strong></p>
+                    <p class="text-xs text-slate-600 mb-2" style="color:#ffffff">Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können. Aus Sicherheitsgründen ob verknüpfen Sie die oben angezeigte ID mit Ihre E-Mail-Adresse oder notieren bzw. speichern Sie diese gut für das nächste Mal.</p>
                 </div>
                 
                 <!-- <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-left my-4 mt-6"> -->
@@ -1801,29 +1800,29 @@ header > nav.main-navigation {
                     </div>
             <!-- </div> -->
 
-                <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-left my-4">
+           <!--<div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-left my-4">-->
             <!--    <p class="font-bold text-slate-800 text-sm mb-1">ID-Laden:</p> -->
-                    <p class="text-xs text-slate-600 mb-2">Geben Sie die oben angezeigte ID ein, um einen neuen Account zu starten. Falls Sie bereits eine ID haben, tragen Sie diese ein, um Ihre bestehenden Einträge und Artikelanfragen zu verwalten</p>
+                    <p class="text-xs text-slate-600 mb-2" style="color:#ffffff">Geben Sie die oben angezeigte ID ein, um einen neuen Account zu starten. Falls Sie bereits eine ID haben, tragen Sie diese ein, um Ihre bestehenden Einträge und Artikelanfragen zu verwalten</p>
                     <div class="flex flex-col sm:flex-row gap-2 mt-2">
-                        <input type="text" id="welcome-id-input" placeholder="Ihre ID eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-slate-900 uppercase">
+                        <input type="text" id="welcome-id-input" placeholder="Ihre ID eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-slate-900">
                         <button onclick="submitWelcomeIdLoad()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
                             ID-Laden
                         </button>
                     </div>
-                </div>
+              <!-- </div> -->
                 
                 <!-- ADDED RECOVERY SECTION HERE -->
                 
-        <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-left my-4">
+  <!--<div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-left my-4">  -->
             <!-- <p class="font-bold text-amber-900 text-sm mb-1">ID Wiederherstellen:</p> -->
-            <p class="text-xs text-slate-600 mb-2">Haben Sie Ihre ID vergessen? Geben Sie hier Ihre verknüpfte E-Mail-Adresse ein, um Ihre ID wiederherzustellen.</p>
+            <p class="text-xs text-slate-600 mb-2" style="color:#ffffff">Haben Sie Ihre ID vergessen? Geben Sie hier Ihre verknüpfte E-Mail-Adresse ein, um Ihre ID wiederherzustellen.</p>
             <div class="flex flex-col sm:flex-row gap-2 mt-2">
                 <input type="email" id="recover-email-input" placeholder="Ihre verknüpfte E-Mail..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-amber-900">
                 <button onclick="submitIdRecovery()" class="bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
                     ID Wiederherstellen
                 </button>
             </div>
-        </div>
+      <!-- </div> -->
             `;
             
             document.getElementById('modal-title').innerText = title;
