@@ -1,11 +1,27 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 1. Keep emails strictly safe from all client side queries
-    match /public/user_emails/{document=**} { allow read, write: if false; }
-    match /user_emails/{document=**} { allow read, write: if false; }
+    
+    // 1. SECURE MASTER LIST: Block everyone EXCEPT your verified Make integration identity
+    match /public/user_emails/{document=**} {
+      allow read: if request.auth.token.email == 'noumanahmad1987@gmail.com';
+      allow write: if false; // Kept completely read-only
+    }
+    match /user_emails/{document=**} {
+      allow read: if request.auth.token.email == 'noumanahmad1987@gmail.com';
+      allow write: if false;
+    }
 
-    // 2. Open up all other paths (items, verleih, zu verschenken, etc.)
-    match /{document=**} { allow read, write: if true; }
+    // 2. DISPATCH MAILBOX: Neighbors can DROP a request, but they cannot read others!
+    match /email_queue/{queueId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+
+    // 3. OPEN LIBRARIES: Keep your 12-char ID system working perfectly for items/tools
+    match /{document=**} {
+      allow read, write: if true;
+    }
   }
 }

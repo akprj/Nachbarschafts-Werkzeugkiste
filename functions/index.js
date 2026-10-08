@@ -1,32 +1,58 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+const { onRequest } = require("firebase-functions/v2/https");
+const admin = require("firebase-admin");
+const { Resend } = require("resend");
 
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+// Initialize the Firebase Admin SDK (Bypasses firestore.rules completely)
+admin.initializeApp();
+const db = admin.firestore();
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+// Initialize the Resend SDK with your API Key
+const resend = new Resend("YOUR_RESEND_API_KEY_HERE");
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+exports.recoverUserAccount = onRequest({ cors: true }, async (req, res) => {
+  try {
+    const { email } = req.body;
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+    if (!email) {
+      return res.status(400).json({ error: "Email address is required." });
+    }
+
+    // 1. Look up the 12-character ID from your protected collection mapping
+    // This matches your layout pattern: public/user_emails
+    const emailRef = db.collection("public").doc("user_emails");
+    const doc = await emailRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ error: "No email mappings found." });
+    }
+
+    const emailMappingData = doc.data();
+    
+    // Find the 12-char key where the value matches the requested email address
+    const userId = Object.keys(emailMappingData).find(key => emailMappingData[key] === email);
+
+    if (!userId) {
+      return res.status(404).json({ error: "This email is not bound to any ID." });
+    }
+
+    // 2. Send the ID to the user using Resend
+    const { data, error } = await resend.emails.send({
+      from: "Nachbarschafts-Werkzeugkiste <onboarding@resend.dev>", // Or your custom verified domain
+      to: [email],
+      subject: "Your Neighborhood Account Recovery",
+      html: `<p>Hello Neighbor,</p>
+             <p>You requested a recovery code for your account.</p>
+             <p>Your unique 12-character Access ID is: <strong>${userId}</strong></p>
+             <p>Use this ID to log back into the tool sharing portal.</p>`
+    });
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json({ success: true, message: "Recovery email sent successfully!" });
+
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
