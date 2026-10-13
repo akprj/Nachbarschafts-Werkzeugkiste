@@ -1787,6 +1787,98 @@ header > nav.main-navigation {
     }
 }
 
+/* Keep the wrapped final label consistent with its navigation button. */
+header > div:first-child > .header-layout > .main-navigation .nav-tab > span {
+    color: var(--nav-white) !important;
+    opacity: 1 !important;
+}
+
+header > div:first-child > .header-layout > .main-navigation .nav-tab.active > span {
+    color: var(--nav-gold) !important;
+}
+
+header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.active):hover > span,
+header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.active):focus-visible > span {
+    color: var(--nav-gold) !important;
+}
+
+.main-navigation .nav-tab.active {
+    color: var(--nav-gold) !important;
+}
+
+.main-navigation .nav-tab.active::after {
+    background: var(--nav-gold) !important;
+    opacity: 1 !important;
+}
+
+.main-navigation .nav-tab:not(.active):hover,
+.main-navigation .nav-tab:not(.active):focus-visible {
+    color: var(--nav-white) !important;
+}
+
+.main-navigation .mobile-menu-toggle:hover,
+.main-navigation .mobile-menu-toggle:focus-visible,
+.main-navigation .mobile-menu-toggle[aria-expanded="true"] {
+    color: var(--nav-gold) !important;
+    border-color: var(--nav-gold) !important;
+}
+
+@media (min-width: 1050.01px) {
+    .main-navigation .main-navigation-panel {
+        display: flex !important;
+        visibility: visible !important;
+    }
+
+    .main-navigation .nav-tab.active {
+        color: var(--nav-gold) !important;
+        background: transparent !important;
+    }
+}
+
+@media (max-width: 1050px) {
+    .main-navigation .nav-tab {
+        color: var(--nav-white) !important;
+    }
+
+    .main-navigation .nav-tab {
+        position: relative;
+        transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .main-navigation .nav-tab.active {
+        color: var(--nav-gold) !important;
+        background: rgba(255, 255, 255, 0.07) !important;
+    }
+
+    .main-navigation .nav-tab::after {
+        display: block !important;
+        left: 0;
+        right: auto;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        height: auto;
+        border-radius: 0;
+        background: var(--nav-gold) !important;
+        opacity: 0;
+        transform: none;
+    }
+
+    .main-navigation .nav-tab.active::after {
+        opacity: 1 !important;
+    }
+
+    .main-navigation .nav-tab:not(.active):hover,
+    .main-navigation .nav-tab:not(.active):focus-visible {
+        color: var(--nav-gold) !important;
+        background: rgba(255, 255, 255, 0.035) !important;
+    }
+
+    .main-navigation .nav-tab:not(.active):hover::after,
+    .main-navigation .nav-tab:not(.active):focus-visible::after {
+        opacity: 0.6 !important;
+    }
+}
 
 
     
