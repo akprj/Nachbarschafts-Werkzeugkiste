@@ -690,7 +690,7 @@
 
     /* Responsive */
     @media (max-width: 1040px) {
-        body { padding-top: 188px; }
+        body { padding-top: 195px; }
 
         main {
             width: min(100% - 34px, 960px) !important;
@@ -707,7 +707,7 @@
 
     @media (max-width: 720px) {
         body {
-            padding-top: 250px;
+            padding-top: 266px;
             font-size: .95rem !important;
         }
 
@@ -1448,6 +1448,8 @@ header > nav.main-navigation {
 
 
 @media (max-width: 640px) {
+    body { padding-top: 299px; }
+
     header > div:first-child {
         padding-left: 0 !important;
         padding-right: 0 !important;
@@ -1559,6 +1561,7 @@ header > nav.main-navigation {
         border-radius: 0 !important;
         box-shadow: none !important;
         overflow: visible;
+        padding-top: 10px !important;
     }
 
     /* Compact hamburger button, aligned to the Right. */
@@ -1585,9 +1588,12 @@ header > nav.main-navigation {
         background: rgba(255, 255, 255, 0.06) !important;
     }
 
-    /* Keep the expanded menu full-width, without rounded edges. */
+    /* Inset the expanded menu so it sits apart from the header and toggle. */
     .main-navigation .main-navigation-panel {
-        border-radius: 0 !important;
+        width: calc(100% - 28px);
+        margin: 14px 14px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px !important;
     }
 }
 
@@ -1604,13 +1610,13 @@ header > nav.main-navigation {
         <div class="bg-sky-50 border-b border-sky-100 px-4 py-3.5">
             <div class="max-w-4xl mx-auto flex items-center justify-between gap-5 text-sky-900 text-sm md:text-base">
                 <div class="min-w-0 flex-1 text-left">
-                    <div class="brand-lockup">
+                    <h1 class="brand-lockup">
                         <img
                             class="brand-logo"
                             src="images/Logo.jpeg"
                             alt="Nachbarschafts-Werkzeugkiste – kostenlos leihen"
                         >
-                    </div>
+                    </h1>
                 </div>
                 <div class="flex items-start gap-2.5 shrink-0 flex-wrap justify-end">
                     <div class="flex flex-col items-center">
