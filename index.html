@@ -49,7 +49,7 @@
         font-size: .97rem !important;
         line-height: 1.58 !important;
         min-width: 320px;
-        padding-top: 168px;
+        padding-top: 188px;
     }
 
     ::selection {
@@ -89,37 +89,18 @@
     }
 
     header .brand-lockup {
-        display: grid;
-        grid-template-columns: 2.5rem minmax(0, 1fr);
-        width: fit-content;
-        max-width: 100%;
-        transform: translateX(-8px);
-    }
-
-    header .brand-lockup h1 {
-        grid-column: 1 / -1;
         display: flex;
-        align-items: center;
-        gap: .5rem !important;
+        width: min(100%, 280px);
+        max-width: 100%;
+        transform: none;
     }
 
-    header .brand-lockup h1 > span:first-child {
-        flex: 0 0 2.5rem;
-        text-align: center;
-    }
-
-    header .brand-title {
-        color: #ffd964 !important;
-        min-width: 0;
-        position: relative;
-        left: -4px;
-    }
-
-    header .brand-subtitle {
-        grid-column: 2;
+    header .brand-logo {
+        display: block;
         width: 100%;
-        color: #fff !important;
-        text-align: center !important;
+        aspect-ratio: 1376 / 480;
+        object-fit: cover;
+        object-position: center;
     }
 
     header > div:first-child > div > div:first-child {
@@ -709,7 +690,7 @@
 
     /* Responsive */
     @media (max-width: 1040px) {
-        body { padding-top: 167px; }
+        body { padding-top: 188px; }
 
         main {
             width: min(100% - 34px, 960px) !important;
@@ -726,7 +707,7 @@
 
     @media (max-width: 720px) {
         body {
-            padding-top: 224px;
+            padding-top: 250px;
             font-size: .95rem !important;
         }
 
@@ -909,8 +890,6 @@
     }
 
     @media (max-width: 430px) {
-        body { padding-top: 238px; }
-
         header > div:first-child {
             padding-left: 9px !important;
             padding-right: 9px !important;
@@ -1626,10 +1605,11 @@ header > nav.main-navigation {
             <div class="max-w-4xl mx-auto flex items-center justify-between gap-5 text-sky-900 text-sm md:text-base">
                 <div class="min-w-0 flex-1 text-left">
                     <div class="brand-lockup">
-                        <h1 class="text-xl md:text-2xl font-bold text-blue-900 flex items-center gap-2">
-                            <span></span><span class="brand-title">🛠️Nachbarschafts-Werkzeugkiste</span>
-                        </h1>
-                        <div class="brand-subtitle text-xs md:text-sm text-slate-500 hidden sm:block">Teilen, Ausleihen & Nachbarschaft stärken</div>
+                        <img
+                            class="brand-logo"
+                            src="images/Logo.jpeg"
+                            alt="Nachbarschafts-Werkzeugkiste – kostenlos leihen"
+                        >
                     </div>
                 </div>
                 <div class="flex items-start gap-2.5 shrink-0 flex-wrap justify-end">

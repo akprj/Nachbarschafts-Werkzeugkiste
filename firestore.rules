@@ -20,7 +20,8 @@ service cloud.firestore {
     }
 
     // 3. OPEN LIBRARIES: Keep your 12-char ID system working perfectly for items/tools
-    match /{document=**} {
+    match /{document=**} {firebase deploy --only firestore:rules
+
       allow read, write: if true;
     }
   }
