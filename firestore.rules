@@ -2,27 +2,318 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // 1. SECURE MASTER LIST: Block everyone EXCEPT your verified Make integration identity
-    match /public/user_emails/{document=**} {
-      allow read: if request.auth.token.email == 'noumanahmad1987@gmail.com';
-      allow write: if false; // Kept completely read-only
-    }
-    match /user_emails/{document=**} {
-      allow read: if request.auth.token.email == 'noumanahmad1987@gmail.com';
-      allow write: if false;
+    function signedIn() {
+      return request.auth != null;
     }
 
-    // 2. DISPATCH MAILBOX: Neighbors can DROP a request, but they cannot read others!
-    match /email_queue/{queueId} {
-      allow create: if true;
-      allow read, update, delete: if false;
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
     }
 
-    // 3. OPEN LIBRARIES: Keep your 12-char ID system working perfectly for items/tools
-    match /{document=**} {firebase deploy --only firestore:rules
+    function owns(item) {
+      return signedIn() && item.ownerId == request.auth.uid;
+    }
 
-      allow read, write: if true;
+    function itemPath(appId, itemId) {
+      return /databases/$(database)/documents/artifacts/$(appId)/public/data/items/$(itemId);
+    }
+
+    function privateItemPath(appId, itemId) {
+      return /databases/$(database)/documents/artifacts/$(appId)/public/data/item_private/$(itemId);
+    }
+
+    function requestPath(appId, itemId, borrowerId) {
+      return /databases/$(database)/documents/artifacts/$(appId)/public/data/item_private/$(itemId)/requests/$(borrowerId);
+    }
+
+    function safePublicItem(item) {
+      return item.approved == true
+        && item.publiclyVisible == true;
+    }
+
+    function hasOnlyPublicFields(item) {
+      return item.keys().hasOnly([
+          'id', 'title', 'category', 'type', 'maxDays', 'desc',
+          'approved', 'publiclyVisible', 'moderationStatus', 'status',
+          'ownerId', 'borrowerId', 'borrowedAt', 'lentAt', 'createdAt',
+          'approvedAt', 'approvedBy', 'rejectedAt', 'rejectedBy'
+        ])
+        && !('contact' in item)
+        && !('email' in item)
+        && !('ownerEmail' in item)
+        && !('borrowerContact' in item)
+        && !('borrowerEmail' in item);
+    }
+
+    function isActiveBorrower(appId, itemId) {
+      let item = get(itemPath(appId, itemId)).data;
+      return signedIn()
+        && item.borrowerId == request.auth.uid
+        && item.status in ['requested', 'lent', 'return_pending'];
+    }
+
+    function validNewItem(appId, itemId) {
+      return signedIn()
+        && request.resource.data.keys().hasAll([
+          'id', 'title', 'category', 'type', 'maxDays', 'desc',
+          'approved', 'publiclyVisible', 'moderationStatus', 'status',
+          'ownerId', 'borrowerId', 'borrowedAt', 'lentAt', 'createdAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'id', 'title', 'category', 'type', 'maxDays', 'desc',
+          'approved', 'publiclyVisible', 'moderationStatus', 'status',
+          'ownerId', 'borrowerId', 'borrowedAt', 'lentAt', 'createdAt'
+        ])
+        && request.resource.data.id == itemId
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.category in ['Heimwerken', 'Garten', 'Haushalt', 'Freizeit']
+        && request.resource.data.type in ['Ausleihe', 'Verschenken']
+        && request.resource.data.maxDays is string
+        && (
+          (
+            request.resource.data.type == 'Verschenken'
+            && request.resource.data.maxDays == '0'
+          )
+          || (
+            request.resource.data.type == 'Ausleihe'
+            && request.resource.data.maxDays in ['3', '5', '7', '9', '11', '13']
+          )
+        )
+        && request.resource.data.desc is string
+        && request.resource.data.desc.size() <= 2000
+        && request.resource.data.approved == false
+        && request.resource.data.publiclyVisible == false
+        && request.resource.data.moderationStatus == 'pending'
+        && request.resource.data.status == 'available'
+        && request.resource.data.borrowerId == ''
+        && request.resource.data.borrowedAt == null
+        && request.resource.data.lentAt == null
+        && request.resource.data.createdAt is int
+        && getAfter(privateItemPath(appId, itemId)).data.ownerId == request.auth.uid;
+    }
+
+    function validApproval(appId, itemId) {
+      return isAdmin()
+        && resource.data.approved == false
+        && resource.data.status == 'available'
+        && resource.data.ownerId is string
+        && get(privateItemPath(appId, itemId)).data.ownerId == resource.data.ownerId
+        && request.resource.data.keys().hasAll([
+          'id', 'title', 'category', 'type', 'maxDays', 'desc',
+          'approved', 'publiclyVisible', 'moderationStatus', 'status',
+          'ownerId', 'borrowerId', 'borrowedAt', 'lentAt', 'createdAt',
+          'approvedAt', 'approvedBy'
+        ])
+        && request.resource.data.id == itemId
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.category in ['Heimwerken', 'Garten', 'Haushalt', 'Freizeit']
+        && request.resource.data.type in ['Ausleihe', 'Verschenken']
+        && request.resource.data.maxDays is string
+        && (
+          (
+            request.resource.data.type == 'Verschenken'
+            && request.resource.data.maxDays == '0'
+          )
+          || (
+            request.resource.data.type == 'Ausleihe'
+            && request.resource.data.maxDays in ['3', '5', '7', '9', '11', '13']
+          )
+        )
+        && request.resource.data.desc is string
+        && request.resource.data.desc.size() <= 2000
+        && request.resource.data.status == 'available'
+        && request.resource.data.borrowerId == ''
+        && request.resource.data.borrowedAt == null
+        && request.resource.data.lentAt == null
+        && request.resource.data.approved == true
+        && request.resource.data.publiclyVisible == true
+        && request.resource.data.moderationStatus == 'approved'
+        && request.resource.data.approvedBy == request.auth.uid
+        && request.resource.data.approvedAt is int
+        && safePublicItem(request.resource.data)
+        && hasOnlyPublicFields(request.resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'approved', 'publiclyVisible', 'moderationStatus', 'approvedAt', 'approvedBy'
+        ]);
+    }
+
+    function validRejection() {
+      return isAdmin()
+        && resource.data.approved == false
+        && request.resource.data.approved == false
+        && request.resource.data.publiclyVisible == false
+        && request.resource.data.moderationStatus == 'rejected'
+        && request.resource.data.rejectedBy == request.auth.uid
+        && request.resource.data.rejectedAt is int
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'publiclyVisible', 'moderationStatus', 'rejectedAt', 'rejectedBy'
+        ]);
+    }
+
+    function validBorrowRequest(appId, itemId) {
+      return signedIn()
+        && resource.data.publiclyVisible == true
+        && resource.data.approved == true
+        && resource.data.status == 'available'
+        && resource.data.ownerId != request.auth.uid
+        && request.resource.data.status == 'requested'
+        && request.resource.data.borrowerId == request.auth.uid
+        && request.resource.data.borrowedAt is int
+        && existsAfter(requestPath(appId, itemId, request.auth.uid))
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status', 'borrowerId', 'borrowedAt'
+        ]);
+    }
+
+    function validBorrowerReturn() {
+      return signedIn()
+        && resource.data.status == 'lent'
+        && resource.data.type == 'Ausleihe'
+        && resource.data.borrowerId == request.auth.uid
+        && request.resource.data.status == 'return_pending'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+    }
+
+    function validManagerTransition(appId, itemId) {
+      return signedIn()
+        && (isAdmin() || owns(resource.data))
+        && (
+          (
+            resource.data.status == 'requested'
+            && resource.data.type == 'Ausleihe'
+            && request.resource.data.status == 'lent'
+            && request.resource.data.lentAt is int
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'lentAt'])
+          )
+          ||
+          (
+            resource.data.status == 'requested'
+            && request.resource.data.status == 'available'
+            && request.resource.data.borrowerId == ''
+            && request.resource.data.borrowedAt == null
+            && request.resource.data.lentAt == null
+            && !existsAfter(requestPath(appId, itemId, resource.data.borrowerId))
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'status', 'borrowerId', 'borrowedAt', 'lentAt'
+            ])
+          )
+          ||
+          (
+            resource.data.status == 'return_pending'
+            && resource.data.type == 'Ausleihe'
+            && request.resource.data.status == 'available'
+            && request.resource.data.borrowerId == ''
+            && request.resource.data.borrowedAt == null
+            && request.resource.data.lentAt == null
+            && !existsAfter(requestPath(appId, itemId, resource.data.borrowerId))
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'status', 'borrowerId', 'borrowedAt', 'lentAt'
+            ])
+          )
+        );
+    }
+
+    match /artifacts/{appId}/public/data/items/{itemId} {
+      allow get, list: if signedIn()
+        && (
+          isAdmin()
+          || owns(resource.data)
+          || (
+            safePublicItem(resource.data)
+          )
+        );
+
+      allow create: if validNewItem(appId, itemId);
+      allow update: if validApproval(appId, itemId)
+        || validRejection()
+        || validBorrowRequest(appId, itemId)
+        || validBorrowerReturn()
+        || validManagerTransition(appId, itemId);
+      allow delete: if (isAdmin() || owns(resource.data))
+        && !existsAfter(privateItemPath(appId, itemId))
+        && (
+          !('borrowerId' in resource.data)
+          || resource.data.borrowerId == null
+          || resource.data.borrowerId == ''
+          || !existsAfter(requestPath(appId, itemId, resource.data.borrowerId))
+        )
+        && (
+          isAdmin()
+          || resource.data.status == 'available'
+          || (
+            resource.data.type == 'Verschenken'
+            && resource.data.status == 'requested'
+          )
+        );
+    }
+
+    match /artifacts/{appId}/public/data/item_private/{itemId} {
+      allow get: if signedIn()
+        && (
+          isAdmin()
+          || owns(resource.data)
+          || isActiveBorrower(appId, itemId)
+        );
+      allow list: if false;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['ownerId', 'ownerEmail', 'createdAt'])
+        && request.resource.data.keys().hasAll(['ownerId', 'ownerEmail', 'createdAt'])
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.ownerEmail == request.auth.token.email
+        && request.resource.data.createdAt is int
+        && getAfter(itemPath(appId, itemId)).data.ownerId == request.auth.uid;
+      allow update: if false;
+      allow delete: if (isAdmin() || owns(resource.data))
+        && !existsAfter(itemPath(appId, itemId));
+
+      match /requests/{borrowerId} {
+        allow get: if signedIn()
+          && (
+            isAdmin()
+            || borrowerId == request.auth.uid
+            || owns(get(itemPath(appId, itemId)).data)
+          );
+        allow list: if false;
+        allow create: if signedIn()
+          && borrowerId == request.auth.uid
+          && request.resource.data.keys().hasOnly([
+            'borrowerId', 'contact', 'email', 'createdAt'
+          ])
+          && request.resource.data.keys().hasAll([
+            'borrowerId', 'contact', 'email', 'createdAt'
+          ])
+          && request.resource.data.borrowerId == request.auth.uid
+          && request.resource.data.contact is string
+          && request.resource.data.contact.size() > 0
+          && request.resource.data.contact.size() <= 200
+          && request.resource.data.email == request.auth.token.email
+          && request.resource.data.createdAt is int
+          && get(itemPath(appId, itemId)).data.approved == true
+          && get(itemPath(appId, itemId)).data.publiclyVisible == true
+          && get(itemPath(appId, itemId)).data.status == 'available'
+          && get(itemPath(appId, itemId)).data.ownerId != request.auth.uid
+          && get(privateItemPath(appId, itemId)).data.ownerId
+            == get(itemPath(appId, itemId)).data.ownerId
+          && getAfter(itemPath(appId, itemId)).data.status == 'requested'
+          && getAfter(itemPath(appId, itemId)).data.borrowerId == request.auth.uid;
+        allow update: if false;
+        allow delete: if isAdmin()
+          || owns(get(itemPath(appId, itemId)).data)
+          || (
+            signedIn()
+            && borrowerId == request.auth.uid
+            && (
+              !existsAfter(itemPath(appId, itemId))
+              || getAfter(itemPath(appId, itemId)).data.borrowerId != borrowerId
+            )
+          );
+      }
     }
   }
 }

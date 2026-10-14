@@ -626,22 +626,6 @@
         color: #fff !important;
     }
 
-    #modal-message #welcome-id-label {
-        color: rgb(72 148 255) !important;
-    }
-
-    #modal-message #displayed-user-id {
-        color: rgb(26 255 3) !important;
-    }
-
-    #modal-message .admin-password-change-hint {
-        color: #f8f5ef !important;
-    }
-
-    #modal-message .admin-password-change-link {
-        color: #0fd5ff !important;
-    }
-
     #modal-input,
     #modal-message input {
         border-color: rgba(20,48,58,.14) !important;
@@ -2011,7 +1995,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                 <form id="offer-form" onsubmit="handleOfferSubmit(event)" class="space-y-4.5">
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Titel des Gegenstands *</label>
-                        <input type="text" id="offer-title" required class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="z.B. Bosch Akku-Schrauber">
+                        <input type="text" id="offer-title" maxlength="120" required class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="z.B. Bosch Akku-Schrauber">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
@@ -2046,18 +2030,10 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Beschreibung & Zustand</label>
-                        <textarea id="offer-desc" rows="3" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Zustand, Abholort oder Besonderheiten..."></textarea>
+                        <textarea id="offer-desc" rows="3" maxlength="2000" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Zustand, Abholort oder Besonderheiten..."></textarea>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ihr Name / Kontakt (optional)</label>
-                        <input type="text" id="offer-contact" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="z.B. Andreas (Straße, Haus Nr. 4)">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ihre E-Mail-Adresse (für Benachrichtigungen) *</label>
-                        <input type="email" id="offer-email" required class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Ihre E-Mail-Adresse eintragen">
-                    </div>
+                    <p class="text-xs text-slate-500">Ihre Kontaktdaten werden nur nach einer Anfrage mit dem jeweiligen Nachbarn geteilt.</p>
 
                     <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg text-base transition-colors shadow-sm">
                         Gegenstand einstellen
@@ -2087,10 +2063,6 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                     <h2 class="text-xl font-bold text-slate-800">Meine aktiven Ausleihen & Anfragen</h2>
                     <p class="text-sm text-slate-500 mt-0.5">Übersicht aller Werkzeuge, die Sie derzeit angefragt oder geliehen haben.</p>
                 </div>
-                <!--
-                <button onclick="openSwitchUserIdModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition-colors shadow-sm shrink-0 whitespace-nowrap">
-                    ID-Laden
-                </button> -->
             </div>
             <div id="my-borrowed-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
         </section>
@@ -2100,7 +2072,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h2 id="section-eintraege-title" class="text-xl font-bold text-slate-800">Artikelanfragen & Verwalten</h2>
-                    <p id="section-eintraege-desc" class="text-sm text-slate-500 mt-0.5">Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre ID.</p>
+                    <p id="section-eintraege-desc" class="text-sm text-slate-500 mt-0.5">Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihr Konto.</p>
                 </div>
                 <div id="admin-items-search-container" class="hidden w-full sm:w-auto">
                     <input
@@ -2112,10 +2084,6 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                         class="border border-slate-300 rounded-lg px-3.5 py-2 text-sm md:text-base w-full sm:w-[340px] focus:outline-none focus:ring-2 focus:ring-blue-900"
                     >
                 </div>
-                <!--
-                <button onclick="openSwitchUserIdModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition-colors shadow-sm shrink-0 whitespace-nowrap">
-                    ID-Laden
-                </button> -->
             </div>
             <div id="my-items-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
         </section>
@@ -2128,8 +2096,8 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             <button onclick="openAdminContactModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
                 Admin Kontakt
             </button>
-            <button id="admin-auth-btn" onclick="handleAdminAuthClick()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
-                Admin Einloggen
+            <button id="admin-auth-btn" onclick="handleAuthButtonClick()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
+                Abmelden
             </button>
         </div>
 
@@ -2141,27 +2109,6 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
     </div>
 
-    <!-- PASTE THE ADMIN PASSWORD CHANGE SECTION HERE (Outside the flex row so it expands full-width or nicely beneath) -->
-    <div id="admin-settings-section" class="max-w-4xl mx-auto mt-6 p-4 bg-slate-50 border border-slate-200 rounded-lg hidden">
-        <h3 class="font-semibold text-slate-700 mb-3">Admin-Einstellungen</h3>
-        <button id="toggle-password-form-btn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-1.5 px-3 rounded text-xs">Passwort ändern</button>
-        
-        <div id="password-change-form" style="display: none; margin-top: 15px;">
-            <div class="mb-3">
-                <label class="block text-xs font-medium text-slate-600 mb-1" for="current-admin-pwd">Aktuelles Passwort:</label>
-                <input class="w-full p-2 border border-slate-300 rounded text-sm" type="password" id="current-admin-pwd" required>
-            </div>
-            <div class="mb-3">
-                <label class="block text-xs font-medium text-slate-600 mb-1" for="new-admin-pwd">Neues Passwort:</label>
-                <input class="w-full p-2 border border-slate-300 rounded text-sm" type="password" id="new-admin-pwd" required>
-            </div>
-            <div class="mb-3">
-                <label class="block text-xs font-medium text-slate-600 mb-1" for="confirm-admin-pwd">Neues Passwort bestätigen:</label>
-                <input class="w-full p-2 border border-slate-300 rounded text-sm" type="password" id="confirm-admin-pwd" required>
-            </div>
-            <button id="save-new-password-btn" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-4 rounded text-xs">Passwort speichern</button>
-        </div>
-    </div>
 </footer>
 
     <!-- Universal Modal -->
@@ -2184,28 +2131,25 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+        import {
+            getAuth,
+            createUserWithEmailAndPassword,
+            onAuthStateChanged,
+            signInWithEmailAndPassword,
+            sendPasswordResetEmail,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
         import { 
             getFirestore, 
             collection, 
             doc, 
-            getDoc, 
-            setDoc, 
+            getDoc,
             updateDoc, 
-            deleteDoc,
-            deleteField,
+            writeBatch,
+            query,
+            where,
             onSnapshot, 
-            getDocs 
         } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-        // Resend + Brevo are called through Firebase Cloud Functions.
-        // API keys are intentionally NOT stored in this browser file.
-        const EMAIL_FUNCTION_BASE_URL =
-            'https://europe-west3-nachbarschafts-werkzeugkiste.cloudfunctions.net';
-        const RESEND_ID_FUNCTION =
-            `${EMAIL_FUNCTION_BASE_URL}/sendUserIdEmailViaResend`;
-        const BREVO_OWNER_FUNCTION =
-            `${EMAIL_FUNCTION_BASE_URL}/sendOwnerBorrowRequestEmail`;
 
         const firebaseConfig = {
             apiKey: "AIzaSyDUs97-IvWqWCY5VktkzSUJ5j-xgx2sg40",
@@ -2222,312 +2166,195 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'nachbarschafts-werkzeugkiste-default';
         let currentUser = null;
-        let activeUserId = '';
         let itemsCache = [];
-        let unsubItems = null;
+        let unsubItems = [];
         let isAdminLoggedIn = false;
 
-        async function callTransactionalEmailFunction(endpoint, payload) {
-            try {
-                if (!currentUser) {
-                    throw new Error("Firebase-Benutzer ist noch nicht angemeldet.");
+        window.onload = () => {
+            onAuthStateChanged(auth, async (user) => {
+                currentUser = user;
+                isAdminLoggedIn = false;
+
+                if (!user) {
+                    unsubItems.forEach(unsubscribe => unsubscribe());
+                    unsubItems = [];
+                    itemsCache = [];
+                    document.getElementById('admin-auth-btn').innerText = "Anmelden";
+                    document.getElementById('admin-status-badge').classList.add('hidden');
+                    updateAdminUIState();
+                    renderAllViews();
+                    showAuthModal();
+                    return;
                 }
 
-                const idToken = await currentUser.getIdToken(true);
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${idToken}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                let data = {};
                 try {
-                    data = await response.json();
-                } catch (_) {}
-
-                if (!response.ok) {
-                    throw new Error(
-                        data.error ||
-                        `E-Mail-Funktion antwortete mit HTTP ${response.status}.`
+                    const token = await user.getIdTokenResult();
+                    isAdminLoggedIn = token.claims.admin === true;
+                } catch (error) {
+                    console.error("Could not load Firebase authorization claims:", error);
+                    showInfoModal(
+                        "Berechtigungen konnten nicht geladen werden",
+                        "Bitte laden Sie die Seite neu. Ihre Anmeldung bleibt bestehen."
                     );
                 }
 
-                return data;
-            } catch (err) {
-                console.error("Transactional email function error:", err);
-                throw err;
-            }
-        }
-
-        async function sendIdViaResend(toEmail, userId) {
-            return callTransactionalEmailFunction(
-                RESEND_ID_FUNCTION,
-                { toEmail, userId }
-            );
-        }
-
-        async function sendOwnerBorrowRequestViaBrevo(itemId, borrowerId) {
-            return callTransactionalEmailFunction(
-                BREVO_OWNER_FUNCTION,
-                { itemId, borrowerId }
-            );
-        }
-
-        function secureRandomInt(max) {
-            const range = 0x100000000;
-            const limit = Math.floor(range / max) * max;
-            const randomValues = new Uint32Array(1);
-            let value;
-
-            do {
-                crypto.getRandomValues(randomValues);
-                value = randomValues[0];
-            } while (value >= limit);
-
-            return value % max;
-        }
-
-        function generateCompactUserId() {
-            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const digits = '0123456789';
-            const characters = [];
-
-            for (let i = 0; i < 6; i++) {
-                characters.push(letters.charAt(secureRandomInt(letters.length)));
-                characters.push(digits.charAt(secureRandomInt(digits.length)));
-            }
-
-            for (let i = characters.length - 1; i > 0; i--) {
-                const swapIndex = secureRandomInt(i + 1);
-                [characters[i], characters[swapIndex]] =
-                    [characters[swapIndex], characters[i]];
-            }
-
-            return characters.join('');
-        }
-
-        function isValidNewFormat(id) {
-            return /^(?=(?:.*[A-Z]){6})(?=(?:.*[0-9]){6})[A-Z0-9]{12}$/.test(id);
-        }
-
-        function normalizeUserId(value) {
-            const id = (value || '').trim();
-            return id.toUpperCase();
-        }
-
-        window.onload = async function() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                currentUser = auth.currentUser;
-            } catch (e) {
-                console.error("Firebase auth error:", e);
-            }
-
-            activeUserId = generateCompactUserId();
-
-            initFirestoreListener();
-
-            showWelcomeModal();
+                document.getElementById('modal').classList.add('hidden');
+                document.getElementById('admin-auth-btn').innerText = "Abmelden";
+                document.getElementById('admin-status-badge').classList.toggle(
+                    'hidden',
+                    !isAdminLoggedIn
+                );
+                updateAdminUIState();
+                initFirestoreListener();
+                renderAllViews();
+            });
         };
 
-        // Welcome Modal
-        function showWelcomeModal() {
-            const title = "Wichtiger Hinweis";
-            const msgHtml = `
-                <div class="space-y-3 text-sm md:text-base text-slate-700 leading-relaxed">
-<p id="welcome-id-label" style="color:rgb(72 148 255)">Ihre ID lautet: <strong id="displayed-user-id" class="text-blue-900" style="color:rgb(26 255 3)">${activeUserId}</strong>
-    <button id="copy-user-id-btn" type="button" onclick="copyCurrentUserId()" class="ml-2 rounded-md border border-white/40 px-2 py-1 text-xs text-white hover:bg-white/10">ID kopieren</button>
-</p>
-                    <p class="text-xs text-slate-600 mb-2" style="color:#ffffff">Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können. Aus Sicherheitsgründen ob verknüpfen Sie die oben angezeigte ID mit Ihre E-Mail-Adresse oder notieren bzw. speichern Sie diese gut für das nächste Mal.</p>
-                </div>
-                
-                <!-- <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-left my-4 mt-6"> -->
-                    <!-- <p class="font-bold text-blue-900 text-sm mb-1">Ihre ID per E-Mail anfordern:</p> -->
-                    <div class="flex flex-col sm:flex-row gap-2 mt-2">
-                        <input type="email" id="welcome-email-input" placeholder="Ihre E-Mail-Adresse eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-900">
-                        <button onclick="submitWelcomeEmailLink()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
-                            ID mit E-Mail verknüpfen
+        function showAuthModal(mode = 'signin', errorMessage = '') {
+            const isRegistration = mode === 'register';
+            document.getElementById('modal-title').innerText = isRegistration
+                ? "Konto erstellen"
+                : "Anmelden";
+            document.getElementById('modal-message').innerHTML = `
+                <form id="auth-form" class="space-y-4">
+                    <p class="text-sm text-slate-600">
+                        ${isRegistration
+                            ? 'Erstellen Sie ein Konto, um Werkzeuge anzubieten und Anfragen zu verwalten.'
+                            : 'Melden Sie sich an, um die Nachbarschafts-Werkzeugkiste zu nutzen.'}
+                    </p>
+                    <label class="block text-sm font-medium text-slate-700">
+                        E-Mail-Adresse
+                        <input id="auth-email" type="email" autocomplete="email" required
+                            class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
+                            placeholder="name@beispiel.de">
+                    </label>
+                    <label class="block text-sm font-medium text-slate-700">
+                        Passwort
+                        <input id="auth-password" type="password"
+                            autocomplete="${isRegistration ? 'new-password' : 'current-password'}"
+                            minlength="8" required
+                            class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
+                            placeholder="Mindestens 8 Zeichen">
+                    </label>
+                    ${isRegistration ? `
+                        <label class="block text-sm font-medium text-slate-700">
+                            Passwort wiederholen
+                            <input id="auth-password-confirm" type="password"
+                                autocomplete="new-password" minlength="8" required
+                                class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
+                                placeholder="Passwort erneut eingeben">
+                        </label>
+                    ` : ''}
+                    ${isRegistration ? '' : `
+                        <button type="button" onclick="sendPasswordReset()"
+                            class="block text-sm text-blue-800 underline">
+                            Passwort vergessen?
                         </button>
-                    </div>
-            <!-- </div> -->
-
-           <!--<div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-left my-4">-->
-            <!--    <p class="font-bold text-slate-800 text-sm mb-1">ID-Laden:</p> -->
-                    <p class="text-xs text-slate-600 mb-2" style="color:#ffffff">Geben Sie die oben angezeigte ID ein, um einen neuen Account zu starten. Falls Sie bereits eine ID haben, tragen Sie diese ein, um Ihre bestehenden Einträge und Artikelanfragen zu verwalten</p>
-                    <div class="flex flex-col sm:flex-row gap-2 mt-2">
-                        <input type="text" id="welcome-id-input" placeholder="Ihre ID eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-slate-900">
-                        <button onclick="submitWelcomeIdLoad()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
-                            ID-Laden
+                    `}
+                    <p id="auth-error" class="min-h-5 text-sm text-rose-700" role="alert">${escapeHtml(errorMessage)}</p>
+                    <button type="submit"
+                        class="w-full rounded-lg bg-blue-900 px-4 py-2.5 font-semibold text-white hover:bg-blue-800">
+                        ${isRegistration ? 'Konto erstellen' : 'Anmelden'}
+                    </button>
+                    <p class="text-center text-sm text-slate-600">
+                        ${isRegistration
+                            ? 'Bereits registriert?'
+                            : 'Noch kein Konto?'}
+                        <button type="button"
+                            onclick="showAuthModal('${isRegistration ? 'signin' : 'register'}')"
+                            class="font-semibold text-blue-800 underline">
+                            ${isRegistration ? 'Jetzt anmelden' : 'Konto erstellen'}
                         </button>
-                    </div>
-              <!-- </div> -->
-                
-                <!-- ADDED RECOVERY SECTION HERE -->
-                
-  <!--<div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-left my-4">  -->
-            <!-- <p class="font-bold text-amber-900 text-sm mb-1">ID Wiederherstellen:</p> -->
-            <p class="text-xs text-slate-600 mb-2" style="color:#ffffff">Haben Sie Ihre ID vergessen? Geben Sie hier Ihre verknüpfte E-Mail-Adresse ein, um Ihre ID wiederherzustellen.</p>
-            <div class="flex flex-col sm:flex-row gap-2 mt-2">
-                <input type="email" id="recover-email-input" placeholder="Ihre verknüpfte E-Mail..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-amber-900">
-                <button onclick="submitIdRecovery()" class="bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
-                    ID Wiederherstellen
-                </button>
-            </div>
-      <!-- </div> -->
-            `;
-            
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-message').innerHTML = msgHtml;
+                    </p>
+                </form>`;
             document.getElementById('modal-confirm-btn').classList.add('hidden');
             document.getElementById('modal-cancel-btn').classList.add('hidden');
             document.getElementById('modal-input-container').classList.add('hidden');
             modalCallback = null;
             document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('auth-form').addEventListener(
+                'submit',
+                event => handleAuthSubmit(event, mode)
+            );
         }
 
-        window.copyCurrentUserId = async function() {
-            const idEl = document.getElementById('displayed-user-id');
-            const button = document.getElementById('copy-user-id-btn');
-            const userId = idEl ? idEl.textContent.trim() : '';
+        window.showAuthModal = showAuthModal;
 
-            if (!userId) {
-                alert("Es wurde keine ID zum Kopieren gefunden.");
+        window.sendPasswordReset = async function() {
+            const email = document.getElementById('auth-email').value.trim().toLowerCase();
+            const errorElement = document.getElementById('auth-error');
+            if (!email) {
+                errorElement.textContent = "Bitte geben Sie zuerst Ihre E-Mail-Adresse ein.";
                 return;
             }
 
             try {
-                await navigator.clipboard.writeText(userId);
-                if (button) {
-                    button.textContent = "Kopiert!";
-                    setTimeout(() => {
-                        button.textContent = "ID kopieren";
-                    }, 1500);
+                await sendPasswordResetEmail(auth, email);
+                errorElement.textContent =
+                    "Falls ein Konto zu dieser Adresse besteht, erhalten Sie eine E-Mail zum Zurücksetzen des Passworts.";
+            } catch (error) {
+                console.error("Firebase password reset failed:", error);
+                errorElement.textContent = error.code === 'auth/invalid-email'
+                    ? "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+                    : "Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.";
+            }
+        };
+
+        async function handleAuthSubmit(event, mode) {
+            event.preventDefault();
+            const email =
+                document.getElementById('auth-email').value.trim().toLowerCase();
+            const password =
+                document.getElementById('auth-password').value;
+            const confirmPassword =
+                document.getElementById('auth-password-confirm')?.value;
+            const errorElement = document.getElementById('auth-error');
+
+            if (mode === 'register' && password !== confirmPassword) {
+                errorElement.textContent = "Die Passwörter stimmen nicht überein.";
+                return;
+            }
+
+            try {
+                if (mode === 'register') {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    showInfoModal(
+                        "Konto erstellt",
+                        "Sie sind jetzt angemeldet. Neue Einträge werden erst nach der Freigabe durch den Administrator veröffentlicht."
+                    );
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
                 }
             } catch (error) {
-                alert("Die ID konnte nicht kopiert werden. Bitte kopieren Sie sie manuell.");
+                console.error("Firebase authentication failed:", error);
+                const messages = {
+                    'auth/email-already-in-use': "Für diese E-Mail-Adresse besteht bereits ein Konto.",
+                    'auth/invalid-credential': "E-Mail-Adresse oder Passwort ist falsch.",
+                    'auth/invalid-email': "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+                    'auth/weak-password': "Das Passwort muss mindestens 8 Zeichen enthalten.",
+                    'auth/too-many-requests': "Zu viele Versuche. Bitte versuchen Sie es später erneut."
+                };
+                errorElement.textContent =
+                    messages[error.code] || "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.";
             }
-        };
+        }
 
-        window.submitWelcomeEmailLink = async function() {
-            const inputEl = document.getElementById('welcome-email-input');
-            const emailVal = inputEl ? inputEl.value.trim() : '';
-            if (!emailVal || !emailVal.includes('@')) {
-                alert("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+        window.handleAuthButtonClick = async function() {
+            if (!currentUser) {
+                showAuthModal();
                 return;
-            }
-
-            const success = await processAccountEmailLinking(emailVal);
-            if (success) {
-                document.getElementById('modal').classList.add('hidden');
-                document.getElementById('modal-confirm-btn').classList.remove('hidden');
-                showInfoModal("Erfolg", `Ihre ID wurde erfolgreich generiert und per E-Mail an ${emailVal} gesendet!`);
-                renderAllViews();
-            }
-        };
-
-        window.submitWelcomeIdLoad = async function() {
-            const inputEl = document.getElementById('welcome-id-input');
-            const idVal = inputEl ? normalizeUserId(inputEl.value) : '';
-            
-            if (!idVal || idVal.length < 4) {
-                alert("Bitte geben Sie eine gültige ID ein.");
-                return;
-            }
-            
-            activeUserId = idVal;
-            
-            document.getElementById('modal').classList.add('hidden');
-            document.getElementById('modal-confirm-btn').classList.remove('hidden');
-            showInfoModal("Willkommen zurück", `Ihre ID '${activeUserId}' wurde erfolgreich geladen.`);
-            renderAllViews();
-        };
-
-        async function processAccountEmailLinking(emailInput) {
-            const cleanEmail = emailInput.trim().toLowerCase();
-
-            if (!cleanEmail || !cleanEmail.includes('@')) {
-                showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
-                return false;
             }
 
             try {
-                if (db) {
-                    const emailsRef = collection(
-                        db,
-                        'artifacts',
-                        appId,
-                        'public',
-                        'data',
-                        'user_emails'
-                    );
-
-                    const snap = await getDocs(emailsRef);
-                    let conflictId = null;
-
-                    snap.forEach(d => {
-                        const dat = d.data();
-                        if (
-                            dat.email &&
-                            dat.email.toLowerCase() === cleanEmail &&
-                            dat.userId !== activeUserId
-                        ) {
-                            conflictId = dat.userId;
-                        }
-                    });
-
-                    if (conflictId) {
-                        alert(
-                            "Diese E-Mail-Adresse ist bereits mit einer ID verknüpft. " +
-                            "Bitte nutzen Sie Ihre bereits erhaltene ID oder geben Sie eine andere E-Mail-Adresse ein."
-                        );
-                        return false;
-                    }
-
-                    await setDoc(
-                        doc(
-                            db,
-                            'artifacts',
-                            appId,
-                            'public',
-                            'data',
-                            'user_emails',
-                            activeUserId
-                        ),
-                        {
-                            userId: activeUserId,
-                            email: cleanEmail,
-                            updatedAt: Date.now()
-                        }
-                    );
-                }
-
-                const resendResult = await sendIdViaResend(
-                    cleanEmail,
-                    activeUserId
-                );
-
-                if (!resendResult || resendResult.success !== true) {
-                    throw new Error("Die ID konnte über Resend nicht versendet werden.");
-                }
-
-                return true;
-            } catch (err) {
-                console.error("Email linking error:", err);
+                await signOut(auth);
+            } catch (error) {
+                console.error("Firebase sign-out failed:", error);
                 showInfoModal(
-                    "Fehler",
-                    "Die E-Mail-Adresse konnte nicht vollständig verknüpft werden. " +
-                    "Bitte prüfen Sie die Resend-/Firebase-Konfiguration und versuchen Sie es erneut."
+                    "Abmelden fehlgeschlagen",
+                    "Die Abmeldung konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut."
                 );
-                return false;
             }
-        }
+        };
 
         window.toggleDurationField = function(typeVal) {
             const container = document.getElementById('duration-container');
@@ -2541,21 +2368,63 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         };
 
         function initFirestoreListener() {
-            if (!db) return;
+            if (!db || !currentUser) return;
             const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
-            if (unsubItems) unsubItems();
-            unsubItems = onSnapshot(colRef, (snapshot) => {
-                const items = [];
-                snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    data.id = docSnap.id;
-                    items.push(data);
-                });
-                itemsCache = items;
+            unsubItems.forEach(unsubscribe => unsubscribe());
+            const publicItems = new Map();
+            const ownedItems = new Map();
+            const allItems = new Map();
+
+            const renderMergedItems = () => {
+                const merged = isAdminLoggedIn
+                    ? allItems
+                    : new Map([...publicItems, ...ownedItems]);
+                itemsCache = [...merged.values()];
                 renderAllViews();
-            }, (error) => {
-                console.error("Firestore snapshot error:", error);
-            });
+            };
+
+            const listenTo = (itemsQuery, itemMap) => onSnapshot(
+                itemsQuery,
+                snapshot => {
+                    snapshot.docChanges().forEach(change => {
+                        if (change.type === 'removed') {
+                            itemMap.delete(change.doc.id);
+                            return;
+                        }
+                        itemMap.set(change.doc.id, {
+                            ...change.doc.data(),
+                            id: change.doc.id
+                        });
+                    });
+                    renderMergedItems();
+                },
+                error => {
+                    console.error("Firestore item listener failed:", error);
+                    showInfoModal(
+                        "Datenbankfehler",
+                        "Die Einträge konnten nicht geladen werden. Bitte versuchen Sie es später erneut."
+                    );
+                }
+            );
+
+            if (isAdminLoggedIn) {
+                unsubItems = [listenTo(colRef, allItems)];
+            } else {
+                unsubItems = [
+                    listenTo(
+                        query(
+                            colRef,
+                            where('approved', '==', true),
+                            where('publiclyVisible', '==', true)
+                        ),
+                        publicItems
+                    ),
+                    listenTo(
+                        query(colRef, where('ownerId', '==', currentUser.uid)),
+                        ownedItems
+                    )
+                ];
+            }
         }
 
         window.switchTab = function(tabName) {
@@ -2600,7 +2469,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             } else {
                 if (labelEl) labelEl.innerText = "Artikelanfragen & Verwalten";
                 if (titleEl) titleEl.innerText = "Artikelanfragen & Verwalten";
-                if (descEl) descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre ID.";
+                if (descEl) descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihr Konto.";
                 if (searchContainer) searchContainer.classList.add('hidden');
                 if (searchInput) searchInput.value = '';
             }
@@ -2617,10 +2486,13 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
             const filtered = itemsCache.filter(item => {
                 const matchSearch =
-                    item.title.toLowerCase().includes(search) ||
+                    (item.title || '').toLowerCase().includes(search) ||
                     (item.desc || '').toLowerCase().includes(search);
                 const matchCat = !cat || item.category === cat;
-                const matchType = item.type === 'Ausleihe';
+                const matchType =
+                    item.type === 'Ausleihe' &&
+                    item.approved === true &&
+                    item.publiclyVisible === true;
                 return matchSearch && matchCat && matchType;
             });
 
@@ -2632,8 +2504,8 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
             grid.innerHTML = filtered.map(item => {
                 const maxDays = item.maxDays || '9';
-                const isOwner = item.ownerId === activeUserId;
-                const isBorrower = item.borrowerId === activeUserId;
+                const isOwner = item.ownerId === currentUser?.uid;
+                const isBorrower = item.borrowerId === currentUser?.uid;
 
                 let actionUI = '';
 
@@ -2673,18 +2545,17 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                             </div>
                             <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
                             <p class="text-sm text-slate-600 mb-4 line-clamp-2">${escapeHtml(item.desc || '')}</p>
-                            ${isOwner && item.status === 'requested' ? `
-                                <div class="bg-amber-50 border border-amber-200 text-amber-900 text-xs p-3 rounded mb-3">
-                                    <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Ihr Werkzeug/Gegenstand angefragt!
-                                        Bitte gehen Sie zum Verwalten-Bereich, um es/ihn zu bearbeiten</p>
-                                    <p><span class="font-semibold">Entleiher:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
-                                    <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-amber-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
-                                </div>
-                            ` : ''}
                         </div>
                         <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
-                            <span class="text-slate-500 text-xs">Verleiher:<br> ${escapeHtml(item.contact || 'Nachbar')}</span>
-                            ${actionUI}
+                            <span class="text-slate-500 text-xs">Verleiher:<br> Nachbar</span>
+                            <div class="flex items-center gap-2">
+                                ${isBorrower ? `
+                                    <button onclick="showOwnerContact('${item.id}')" class="text-blue-800 underline text-xs">
+                                        Anbieter-Kontakt
+                                    </button>
+                                ` : ''}
+                                ${actionUI}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -2698,6 +2569,8 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                 (document.getElementById('giveaway-search-input')?.value || '').toLowerCase().trim();
             const filtered = itemsCache.filter(item =>
                 item.type === 'Verschenken' &&
+                item.approved === true &&
+                item.publiclyVisible === true &&
                 (
                     (item.title || '').toLowerCase().includes(search) ||
                     (item.desc || '').toLowerCase().includes(search)
@@ -2710,26 +2583,21 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             }
 
             grid.innerHTML = filtered.map(item => {
-                const isOwner = item.ownerId === activeUserId;
+                const isOwner = item.ownerId === currentUser?.uid;
                 return `
                     <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
                         <div>
                             <span class="text-xs font-semibold bg-purple-50 text-purple-900 px-2.5 py-1 rounded mb-2.5 inline-block">${escapeHtml(item.category)}</span>
                             <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
                             <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
-                            ${isOwner && item.status === 'requested' ? `
-                                <div class="bg-purple-50 border border-purple-200 text-purple-900 text-xs p-3 rounded mb-3">
-                                    <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Interesse an Ihrem zu verschenkenden Artikel bekundet!</p>
-                                    <p><span class="font-semibold">Interessent Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
-                                    <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-purple-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
-                                </div>
-                            ` : ''}
                         </div>
                         <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
-                            <span class="text-slate-500 text-xs">${escapeHtml(item.contact || 'Nachbar')}</span>
-                            <button onclick="claimGiveaway('${item.id}')" class="bg-purple-800 hover:bg-purple-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
-                                Abholen / Anfragen
-                            </button>
+                            <span class="text-slate-500 text-xs">Nachbar</span>
+                            ${!isOwner ? `
+                                <button onclick="claimGiveaway('${item.id}')" class="bg-purple-800 hover:bg-purple-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                    Abholen / Anfragen
+                                </button>
+                            ` : '<span class="text-xs text-slate-500">Ihr Eintrag</span>'}
                         </div>
                     </div>
                 `;
@@ -2741,7 +2609,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             if (!grid) return;
 
             const filtered = itemsCache.filter(item =>
-                item.borrowerId === activeUserId &&
+                item.borrowerId === currentUser?.uid &&
                 ['requested', 'lent', 'return_pending'].includes(item.status)
             );
 
@@ -2809,9 +2677,12 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                         <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
                     </div>
                     <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm gap-3">
-                        <span class="text-slate-500 text-xs">Verleiher: ${escapeHtml(item.contact || 'Nachbar')}</span>
+                        <span class="text-slate-500 text-xs">Verleiher: Nachbar</span>
                         ${actionButton}
                     </div>
+                    <button onclick="showOwnerContact('${item.id}')" class="mt-3 text-left text-xs text-blue-800 underline">
+                        Anbieter-Kontakt anzeigen
+                    </button>
                 </div>
                 `;
             }).join('');
@@ -2826,15 +2697,13 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                     .trim()
                 : '';
             const filtered = itemsCache.filter(item => {
-                const canView = item.ownerId === activeUserId || isAdminLoggedIn;
+                const canView = item.ownerId === currentUser?.uid || isAdminLoggedIn;
                 const searchableText = [
                     item.title,
                     item.desc,
                     item.category,
                     item.type,
-                    item.contact,
-                    item.borrowerContact,
-                    item.borrowerEmail
+                    item.moderationStatus
                 ].filter(Boolean).join(' ').toLowerCase();
                 return canView && searchableText.includes(search);
             });
@@ -2844,7 +2713,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                     ? 'Keine Einträge gefunden.'
                     : isAdminLoggedIn
                         ? 'Es sind keine Einträge vorhanden.'
-                        : 'Sie haben noch keine Artikel unter Ihrer aktuellen ID eingetragen.';
+                        : 'Sie haben noch keine Artikel unter Ihrem Konto eingetragen.';
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 p-6">
                         <p class="text-slate-500 text-sm">${emptyMessage}</p>
@@ -2854,16 +2723,24 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
             grid.innerHTML = filtered.map(item => {
                 const isGiveaway = item.type === 'Verschenken';
-                let statusLabel = 'Verfügbar';
-                let statusColor = 'text-emerald-700 font-semibold';
+                let statusLabel = item.approved === true
+                    ? 'Verfügbar'
+                    : item.moderationStatus === 'rejected'
+                        ? 'Nicht freigegeben'
+                        : 'Wartet auf Admin-Freigabe';
+                let statusColor = item.approved === true
+                    ? 'text-emerald-700 font-semibold'
+                    : item.moderationStatus === 'rejected'
+                        ? 'text-rose-700 font-semibold'
+                        : 'text-amber-700 font-semibold';
 
-                if (item.status === 'requested') {
+                if (item.approved === true && item.status === 'requested') {
                     statusLabel = isGiveaway ? 'Interesse angefragt' : 'Ausleih-Anfrage eingegangen';
                     statusColor = 'text-amber-700 font-semibold';
-                } else if (item.status === 'lent') {
+                } else if (item.approved === true && item.status === 'lent') {
                     statusLabel = 'Verliehen';
                     statusColor = 'text-blue-800 font-semibold';
-                } else if (item.status === 'return_pending') {
+                } else if (item.approved === true && item.status === 'return_pending') {
                     statusLabel = 'Rückgabe wartet auf Bestätigung';
                     statusColor = 'text-purple-700 font-semibold';
                 }
@@ -2878,11 +2755,13 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                         <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
                         <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
 
-                        ${item.status === 'requested' ? `
+                        ${item.approved === true && ['requested', 'lent', 'return_pending'].includes(item.status) ? `
                             <div class="${isGiveaway ? 'bg-purple-50 border-purple-200 text-purple-900' : 'bg-amber-50 border-amber-200 text-amber-900'} border text-xs p-3 rounded mb-3">
-                                <p class="font-bold mb-1.5">🔔 ${isGiveaway ? 'Interesse an Ihrem zu verschenkenden Artikel!' : 'Ausleih-Anfrage eingegangen!'}</p>
-                                <p><span class="font-semibold">Entleiher:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
-                                <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:opacity-80">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
+                                <p class="font-bold">🔔 ${isGiveaway ? 'Interesse an Ihrem zu verschenkenden Artikel!' : item.status === 'requested' ? 'Ausleih-Anfrage eingegangen!' : 'Ausleihe aktiv'}</p>
+                                <p>Die Kontaktdaten des Interessenten sind geschützt gespeichert.</p>
+                                <button onclick="showRequestContact('${item.id}')" class="mt-2 underline font-semibold">
+                                    Kontaktdaten des Interessenten anzeigen
+                                </button>
                             </div>
                         ` : ''}
                     </div>
@@ -2891,31 +2770,42 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                         <span class="text-xs ${statusColor}">${statusLabel}</span>
 
                         <div class="flex flex-wrap justify-end gap-2">
-                            ${item.status === 'requested' && isGiveaway ? `
+                            ${isAdminLoggedIn && item.approved !== true ? `
+                                <button onclick="approveItem('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                    Freigeben
+                                </button>
+                                ${item.moderationStatus !== 'rejected' ? `
+                                    <button onclick="rejectItem('${item.id}')" class="bg-amber-700 hover:bg-amber-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                        Ablehnen
+                                    </button>
+                                ` : ''}
+                            ` : ''}
+
+                            ${item.approved === true && item.status === 'requested' && isGiveaway ? `
                                 <button onclick="completeGiveaway('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
                                     Übergeben & Abschließen
                                 </button>
                             ` : ''}
 
-                            ${item.status === 'requested' && !isGiveaway ? `
+                            ${item.approved === true && item.status === 'requested' && !isGiveaway ? `
                                 <button onclick="lendItem('${item.id}')" class="lend-confirm-button bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
                                     Verleihen Bestätigen
                                 </button>
                             ` : ''}
 
-                            ${item.status === 'requested' ? `
+                            ${item.approved === true && item.status === 'requested' ? `
                                 <button onclick="declineRequest('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
                                     Ablehnen
                                 </button>
                             ` : ''}
 
-                            ${item.status === 'return_pending' ? `
+                            ${item.approved === true && item.status === 'return_pending' ? `
                                 <button onclick="confirmReturn('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm shadow transition-colors">
                                     Empfang Bestätigen
                                 </button>
                             ` : ''}
 
-                            ${item.status === 'available' || isAdminLoggedIn ? `
+                            ${(item.status === 'available' && item.ownerId === currentUser?.uid) || isAdminLoggedIn ? `
                                 <button onclick="deleteMyItem('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
                                     Löschen
                                 </button>
@@ -2929,13 +2819,16 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
         window.handleOfferSubmit = async function(e) {
             e.preventDefault();
+            if (!currentUser) {
+                showAuthModal();
+                return;
+            }
+
             const title = document.getElementById('offer-title').value.trim();
             const category = document.getElementById('offer-category').value;
             const type = document.getElementById('offer-type').value;
             const maxDays = type === 'Ausleihe' ? document.getElementById('offer-max-days').value : '0';
             const desc = document.getElementById('offer-desc').value.trim();
-            const contact = document.getElementById('offer-contact').value.trim() || 'Nachbar';
-            const ownerEmail = document.getElementById('offer-email').value.trim();
 
             const newItem = {
                 title,
@@ -2943,13 +2836,12 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                 type,
                 maxDays,
                 desc,
-                contact,
-                ownerEmail,
+                approved: false,
+                publiclyVisible: false,
+                moderationStatus: 'pending',
                 status: 'available',
-                ownerId: activeUserId,
+                ownerId: currentUser.uid,
                 borrowerId: '',
-                borrowerContact: '',
-                borrowerEmail: '',
                 borrowedAt: null,
                 lentAt: null,
                 createdAt: Date.now()
@@ -2960,37 +2852,115 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                     const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
                     const newDocRef = doc(colRef);
                     newItem.id = newDocRef.id;
-                    await setDoc(newDocRef, newItem);
+                    const privateRef = doc(
+                        db,
+                        'artifacts',
+                        appId,
+                        'public',
+                        'data',
+                        'item_private',
+                        newDocRef.id
+                    );
+                    const batch = writeBatch(db);
+                    batch.set(newDocRef, newItem);
+                    batch.set(privateRef, {
+                        ownerId: currentUser.uid,
+                        ownerEmail: currentUser.email,
+                        createdAt: Date.now()
+                    });
+                    await batch.commit();
                 }
                 document.getElementById('offer-form').reset();
-                switchTab('bibliothek');
-                showInfoModal("Erfolg", "Ihr Gegenstand wurde erfolgreich eingetragen!");
+                switchTab('eintraege');
+                showInfoModal(
+                    "Zur Prüfung eingereicht",
+                    "Ihr Eintrag wird nach der Freigabe durch den Administrator in der Verleih-Bibliothek bzw. unter „Zu verschenken“ angezeigt."
+                );
             } catch (err) {
                 console.error("Error adding item:", err);
                 showInfoModal("Fehler", "Gegenstand konnte nicht gespeichert werden.");
             }
         };
 
-        // Benachrichtigung des Besitzers: Die Brevo-API wird serverseitig aufgerufen.
-        window.handleBorrowerRequest = async function(itemId, borrowerId) {
+        window.showRequestContact = async function(id) {
+            const item = itemsCache.find(candidate => candidate.id === id);
+            if (
+                !item ||
+                !['requested', 'lent', 'return_pending'].includes(item.status) ||
+                (!isAdminLoggedIn && item.ownerId !== currentUser?.uid)
+            ) return;
+
             try {
-                const result = await sendOwnerBorrowRequestViaBrevo(itemId, borrowerId);
-                return !!(result && result.success === true);
-            } catch (err) {
-                console.error("Brevo owner notification error:", err);
-                return false;
+                const requestSnapshot = await getDoc(doc(
+                    db,
+                    'artifacts', appId, 'public', 'data',
+                    'item_private', id, 'requests', item.borrowerId
+                ));
+                if (!requestSnapshot.exists()) {
+                    showInfoModal("Kontaktdaten nicht verfügbar", "Für diese Anfrage wurden keine geschützten Kontaktdaten gefunden.");
+                    return;
+                }
+
+                const request = requestSnapshot.data();
+                showInfoModal(
+                    "Kontaktdaten des Interessenten",
+                    `<p>${escapeHtml(request.contact || 'Keine Angabe')}</p>
+                    <p>E-Mail: <a class="underline" href="mailto:${escapeHtml(request.email || '')}">${escapeHtml(request.email || 'Keine Angabe')}</a></p>`
+                );
+            } catch (error) {
+                console.error("Could not load private request contact:", error);
+                showInfoModal("Fehler", "Die Kontaktdaten konnten nicht geladen werden.");
+            }
+        };
+
+        window.showOwnerContact = async function(id) {
+            const item = itemsCache.find(candidate => candidate.id === id);
+            if (
+                !item ||
+                item.borrowerId !== currentUser?.uid ||
+                !['requested', 'lent', 'return_pending'].includes(item.status)
+            ) return;
+
+            try {
+                const privateSnapshot = await getDoc(doc(
+                    db, 'artifacts', appId, 'public', 'data', 'item_private', id
+                ));
+                if (!privateSnapshot.exists()) {
+                    showInfoModal("Kontaktdaten nicht verfügbar", "Für diesen Eintrag wurden keine geschützten Anbieterdaten gefunden.");
+                    return;
+                }
+
+                const ownerEmail = privateSnapshot.data().ownerEmail;
+                showInfoModal(
+                    "Kontaktdaten des Anbieters",
+                    `<p>E-Mail: <a class="underline" href="mailto:${escapeHtml(ownerEmail || '')}">${escapeHtml(ownerEmail || 'Keine Angabe')}</a></p>`
+                );
+            } catch (error) {
+                console.error("Could not load private owner contact:", error);
+                showInfoModal("Fehler", "Die Anbieterdaten konnten nicht geladen werden.");
             }
         };
 
         window.borrowItem = function(id) {
             const item = itemsCache.find(i => i.id === id);
-            if (!item || item.status !== 'available') return;
+            if (!currentUser) {
+                showAuthModal();
+                return;
+            }
+            if (
+                !item ||
+                item.approved !== true ||
+                item.publiclyVisible !== true ||
+                item.status !== 'available' ||
+                item.ownerId === currentUser.uid
+            ) return;
 
-            openRequestModal("Werkzeug ausleihen", async (reqContact, reqEmail) => {
-                if (!reqContact || !reqEmail) {
+            openRequestModal("Werkzeug ausleihen", async reqContact => {
+                const contact = reqContact.trim();
+                if (!contact) {
                     showInfoModal(
                         "Fehler",
-                        "Bitte füllen Sie beide Felder aus (Name/Adresse & E-Mail)."
+                        "Bitte geben Sie Ihren Namen oder eine Kontaktmöglichkeit ein."
                     );
                     return;
                 }
@@ -2999,47 +2969,36 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
                 try {
                     if (db) {
-                        await updateDoc(
-                            doc(
-                                db,
-                                'artifacts',
-                                appId,
-                                'public',
-                                'data',
-                                'items',
-                                id
-                            ),
-                            {
-                                status: 'requested',
-                                borrowerId: activeUserId,
-                                borrowedAt: now,
-                                borrowerContact: reqContact,
-                                borrowerEmail: reqEmail
-                            }
+                        const itemRef = doc(
+                            db, 'artifacts', appId, 'public', 'data', 'items', id
                         );
+                        const privateRequestRef = doc(
+                            db, 'artifacts', appId, 'public', 'data',
+                            'item_private', id, 'requests', currentUser.uid
+                        );
+                        const batch = writeBatch(db);
+                        batch.update(itemRef, {
+                            status: 'requested',
+                            borrowerId: currentUser.uid,
+                            borrowedAt: now
+                        });
+                        batch.set(privateRequestRef, {
+                            borrowerId: currentUser.uid,
+                            contact,
+                            email: currentUser.email,
+                            createdAt: now
+                        });
+                        await batch.commit();
                     }
 
                     item.status = 'requested';
-                    item.borrowerId = activeUserId;
+                    item.borrowerId = currentUser.uid;
                     item.borrowedAt = now;
-                    item.borrowerContact = reqContact;
-                    item.borrowerEmail = reqEmail;
 
-                    // Send the owner notification immediately after "Anfragen" saves the request.
-                    const ownerNotified =
-                        await handleBorrowerRequest(item.id, activeUserId);
-
-                    if (ownerNotified) {
-                        showInfoModal(
-                            "Ausleih-Anfrage gesendet",
-                            "Ihre Anfrage wurde gespeichert. Der Besitzer wurde per Brevo an seine hinterlegte E-Mail-Adresse benachrichtigt. Der Gegenstand ist noch nicht geliehen."
-                        );
-                    } else {
-                        showInfoModal(
-                            "Anfrage gespeichert",
-                            "Ihre Anfrage wurde gespeichert, aber die Benachrichtigung an den Besitzer konnte nicht gesendet werden. Der Gegenstand ist noch nicht geliehen."
-                        );
-                    }
+                    showInfoModal(
+                        "Anfrage gespeichert",
+                        "Ihre Anfrage wurde gespeichert. Der Anbieter sieht die geschützten Kontaktdaten in seiner Eintragsverwaltung. Der Gegenstand ist noch nicht geliehen."
+                    );
 
                     renderAllViews();
                 } catch (err) {
@@ -3054,7 +3013,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
         window.returnItem = async function(id) {
             const item = itemsCache.find(i => i.id === id);
-            if (!item || item.borrowerId !== activeUserId || item.status !== 'lent') return;
+            if (!item || item.borrowerId !== currentUser?.uid || item.status !== 'lent') return;
 
             try {
                 if (db) {
@@ -3074,32 +3033,53 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
         window.claimGiveaway = function(id) {
             const item = itemsCache.find(i => i.id === id);
-            if (!item || item.type !== 'Verschenken' || item.status !== 'available') return;
+            if (!currentUser) {
+                showAuthModal();
+                return;
+            }
+            if (
+                !item ||
+                item.approved !== true ||
+                item.publiclyVisible !== true ||
+                item.type !== 'Verschenken' ||
+                item.status !== 'available'
+            ) return;
 
-            openRequestModal("Gegenstand abholen", async (reqContact, reqEmail) => {
-                if (!reqContact || !reqEmail) {
-                    showInfoModal("Fehler", "Bitte füllen Sie beide Felder aus (Name/Adresse & E-Mail).");
+            openRequestModal("Gegenstand abholen", async reqContact => {
+                const contact = reqContact.trim();
+                if (!contact) {
+                    showInfoModal("Fehler", "Bitte geben Sie Ihren Namen oder eine Kontaktmöglichkeit ein.");
                     return;
                 }
 
                 try {
                     if (db) {
-                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
+                        const itemRef = doc(
+                            db, 'artifacts', appId, 'public', 'data', 'items', id
+                        );
+                        const privateRequestRef = doc(
+                            db, 'artifacts', appId, 'public', 'data',
+                            'item_private', id, 'requests', currentUser.uid
+                        );
+                        const batch = writeBatch(db);
+                        batch.update(itemRef, {
                             status: 'requested',
-                            borrowerId: activeUserId,
-                            borrowerContact: reqContact,
-                            borrowerEmail: reqEmail
+                            borrowerId: currentUser.uid,
+                            borrowedAt: Date.now(),
                         });
+                        batch.set(privateRequestRef, {
+                            borrowerId: currentUser.uid,
+                            contact,
+                            email: currentUser.email,
+                            createdAt: Date.now()
+                        });
+                        await batch.commit();
                     }
 
                     item.status = 'requested';
-                    item.borrowerId = activeUserId;
-                    item.borrowerContact = reqContact;
-                    item.borrowerEmail = reqEmail;
+                    item.borrowerId = currentUser.uid;
 
-                    await handleBorrowerRequest(item.id, activeUserId);
-
-                    showInfoModal("Abholhinweis", "Der Besitzer wurde über Ihr Interesse informiert. Nach der Übergabe kann er den Artikel abschließen; dann wird er automatisch aus der Datenbank gelöscht.");
+                    showInfoModal("Abholhinweis", "Ihre Anfrage wurde gespeichert. Der Anbieter sieht die geschützten Kontaktdaten in seiner Eintragsverwaltung. Nach der Übergabe kann er den Artikel abschließen.");
                     renderAllViews();
                 } catch(e) {
                     console.error("Giveaway request error:", e);
@@ -3108,10 +3088,34 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             });
         };
 
+        async function deleteItemAndPrivateData(item) {
+            const privateRef = doc(
+                db, 'artifacts', appId, 'public', 'data', 'item_private', item.id
+            );
+            const privateSnapshot = await getDoc(privateRef);
+            let requestRef = null;
+            let requestSnapshot = null;
+
+            if (item.borrowerId) {
+                requestRef = doc(
+                    db,
+                    'artifacts', appId, 'public', 'data',
+                    'item_private', item.id, 'requests', item.borrowerId
+                );
+                requestSnapshot = await getDoc(requestRef);
+            }
+
+            const batch = writeBatch(db);
+            batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'items', item.id));
+            if (privateSnapshot.exists()) batch.delete(privateRef);
+            if (requestRef && requestSnapshot?.exists()) batch.delete(requestRef);
+            await batch.commit();
+        }
+
         window.deleteMyItem = async function(id) {
             const item = itemsCache.find(i => i.id === id);
             if (!item) return;
-            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+            if (item.ownerId !== currentUser?.uid && !isAdminLoggedIn) return;
             if (
                 isAdminLoggedIn &&
                 item.status !== 'available' &&
@@ -3121,9 +3125,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             }
 
             try {
-                if (db) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id));
-                }
+                await deleteItemAndPrivateData(item);
                 itemsCache = itemsCache.filter(i => i.id !== id);
                 renderAllViews();
                 showInfoModal("Gelöscht", "Der Artikel wurde aus der Datenbank entfernt.");
@@ -3133,33 +3135,107 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             }
         };
 
+        window.approveItem = async function(id) {
+            const item = itemsCache.find(candidate => candidate.id === id);
+            if (!isAdminLoggedIn || !item || item.approved === true) return;
+
+            try {
+                const ownerData = await getDoc(doc(
+                    db, 'artifacts', appId, 'public', 'data', 'item_private', id
+                ));
+                if (!item.ownerId || !ownerData.exists() || ownerData.data().ownerId !== item.ownerId) {
+                    showInfoModal(
+                        "Altbestand kann nicht freigegeben werden",
+                        "Dieser Eintrag stammt aus dem früheren ID-System und ist keinem Firebase-Konto sicher zugeordnet. Bitte löschen Sie ihn; der Eigentümer kann ihn nach der Anmeldung erneut einstellen."
+                    );
+                    return;
+                }
+
+                await updateDoc(
+                    doc(db, 'artifacts', appId, 'public', 'data', 'items', id),
+                    {
+                        approved: true,
+                        publiclyVisible: true,
+                        moderationStatus: 'approved',
+                        approvedAt: Date.now(),
+                        approvedBy: currentUser.uid
+                    }
+                );
+                showInfoModal(
+                    "Eintrag freigegeben",
+                    "Der Eintrag ist jetzt für angemeldete Nutzer sichtbar."
+                );
+            } catch (error) {
+                console.error("Could not approve item:", error);
+                showInfoModal(
+                    "Fehler",
+                    "Der Eintrag konnte nicht freigegeben werden."
+                );
+            }
+        };
+
+        window.rejectItem = async function(id) {
+            const item = itemsCache.find(candidate => candidate.id === id);
+            if (!isAdminLoggedIn || !item || item.approved === true) return;
+
+            try {
+                await updateDoc(
+                    doc(db, 'artifacts', appId, 'public', 'data', 'items', id),
+                    {
+                        publiclyVisible: false,
+                        moderationStatus: 'rejected',
+                        rejectedAt: Date.now(),
+                        rejectedBy: currentUser.uid
+                    }
+                );
+                showInfoModal(
+                    "Eintrag abgelehnt",
+                    "Der Eintrag bleibt für Nutzer verborgen. Er kann weiterhin gelöscht oder erneut geprüft werden."
+                );
+            } catch (error) {
+                console.error("Could not reject item:", error);
+                showInfoModal(
+                    "Fehler",
+                    "Der Eintrag konnte nicht abgelehnt werden."
+                );
+            }
+        };
+
         window.declineRequest = async function(id) {
             const item = itemsCache.find(i => i.id === id);
             if (!item || item.status !== 'requested') return;
-            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+            if (item.ownerId !== currentUser?.uid && !isAdminLoggedIn) return;
 
             if (!confirm("Möchten Sie diese Anfrage ablehnen? Der Artikel wird danach wieder für andere Nachbarn verfügbar.")) {
                 return;
             }
 
-            const resetRequest = {
-                status: 'available',
-                borrowerId: '',
-                borrowedAt: null,
-                lentAt: null,
-                borrowerContact: '',
-                borrowerEmail: ''
-            };
-
             try {
                 if (db) {
-                    await updateDoc(
+                    const batch = writeBatch(db);
+                    batch.update(
                         doc(db, 'artifacts', appId, 'public', 'data', 'items', id),
-                        resetRequest
+                        {
+                            status: 'available',
+                            borrowerId: '',
+                            borrowedAt: null,
+                            lentAt: null
+                        }
                     );
+                    batch.delete(doc(
+                        db,
+                        'artifacts', appId, 'public', 'data',
+                        'item_private', id, 'requests', item.borrowerId
+                    ));
+                    await batch.commit();
                 }
 
-                Object.assign(item, resetRequest);
+                Object.assign(item, {
+                    status: 'available',
+                    borrowerId: '',
+                    borrowedAt: null,
+                    lentAt: null
+                });
                 renderAllViews();
                 showInfoModal("Anfrage abgelehnt", "Die Anfrage wurde abgelehnt. Der Artikel ist nun wieder für andere Nachbarn verfügbar.");
             } catch (err) {
@@ -3172,7 +3248,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         window.completeGiveaway = async function(id) {
             const item = itemsCache.find(i => i.id === id);
             if (!item || item.type !== 'Verschenken') return;
-            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+            if (item.ownerId !== currentUser?.uid && !isAdminLoggedIn) return;
             if (item.status !== 'requested') return;
 
             if (!confirm("Möchten Sie diesen zu verschenkenden Artikel als übergeben abschließen? Danach wird er dauerhaft aus der Liste und Datenbank entfernt.")) {
@@ -3180,9 +3256,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             }
 
             try {
-                if (db) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id));
-                }
+                await deleteItemAndPrivateData(item);
                 itemsCache = itemsCache.filter(i => i.id !== id);
                 renderAllViews();
                 showInfoModal("Erfolgreich übergeben", "Der Artikel wurde als übergeben abgeschlossen und automatisch aus der Werkzeugkiste entfernt.");
@@ -3196,7 +3270,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         window.lendItem = async function(id) {
             const item = itemsCache.find(i => i.id === id);
             if (!item || item.type !== 'Ausleihe' || item.status !== 'requested') return;
-            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+            if (item.ownerId !== currentUser?.uid && !isAdminLoggedIn) return;
 
             const now = Date.now();
 
@@ -3222,26 +3296,32 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         window.confirmReturn = async function(id) {
             const item = itemsCache.find(i => i.id === id);
             if (!item || item.status !== 'return_pending') return;
-            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+            if (item.ownerId !== currentUser?.uid && !isAdminLoggedIn) return;
 
             try {
                 if (db) {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
-                        status: 'available',
-                        borrowerId: '',
-                        borrowedAt: null,
-                        lentAt: null,
-                        borrowerContact: '',
-                        borrowerEmail: ''
-                    });
+                    const batch = writeBatch(db);
+                    batch.update(
+                        doc(db, 'artifacts', appId, 'public', 'data', 'items', id),
+                        {
+                            status: 'available',
+                            borrowerId: '',
+                            borrowedAt: null,
+                            lentAt: null
+                        }
+                    );
+                    batch.delete(doc(
+                        db,
+                        'artifacts', appId, 'public', 'data',
+                        'item_private', id, 'requests', item.borrowerId
+                    ));
+                    await batch.commit();
                 }
 
                 item.status = 'available';
                 item.borrowerId = '';
                 item.borrowedAt = null;
                 item.lentAt = null;
-                item.borrowerContact = '';
-                item.borrowerEmail = '';
 
                 showInfoModal("Rückgabe bestätigt", "Das Werkzeug ist nun wieder in der Bibliothek verfügbar.");
                 renderAllViews();
@@ -3251,400 +3331,11 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             }
         };
 
-        window.openSwitchUserIdModal = function() {
-            openCustomModal("ID Laden", 
-                "Geben Sie Ihr ID ein:", 
-                true, "z.B. ABCD1234", (inputVal) => {
-                    const cleanId = normalizeUserId(inputVal);
-                    if (!cleanId || cleanId.length < 4) {
-                        showInfoModal("Fehler", "Bitte geben Sie eine gültige ID ein.");
-                        return;
-                    }
-                    activeUserId = cleanId;
-                    renderAllViews();
-                    showInfoModal("ID Geladen", `Sie sind mit '${activeUserId}' verbunden.`);
-                }, 'text', 'ID Laden');
-        };
-
-        async function recoverIdByEmail(emailInput) {
-            const cleanEmail = (emailInput || '').trim().toLowerCase();
-
-            if (!cleanEmail || !cleanEmail.includes('@')) {
-                showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
-                return false;
-            }
-
-            try {
-                let foundId = null;
-
-                if (db) {
-                    const emailsRef = collection(
-                        db,
-                        'artifacts',
-                        appId,
-                        'public',
-                        'data',
-                        'user_emails'
-                    );
-                    const snap = await getDocs(emailsRef);
-
-                    snap.forEach(d => {
-                        const dat = d.data();
-                        if (
-                            dat.email &&
-                            dat.email.toLowerCase() === cleanEmail
-                        ) {
-                            foundId = dat.userId;
-                        }
-                    });
-                }
-
-                if (!foundId) {
-                    showInfoModal(
-                        "Nicht gefunden",
-                        "Unter dieser E-Mail-Adresse wurde keine verknüpfte Konto-ID gefunden."
-                    );
-                    return false;
-                }
-
-                const resendResult = await sendIdViaResend(cleanEmail, foundId);
-                if (!resendResult || resendResult.success !== true) {
-                    throw new Error("Resend ID recovery did not succeed.");
-                }
-
-                activeUserId = foundId;
-                sessionStorage.setItem('nb_session_user_id', activeUserId);
-                updateUserIdDisplays();
-                renderAllViews();
-
-                showInfoModal(
-                    "Wiederhergestellt",
-                    `Ihre ID wurde gefunden, geladen und erneut per E-Mail an ${cleanEmail} gesendet.`
-                );
-                return true;
-            } catch (err) {
-                console.error("Recovery error:", err);
-                showInfoModal(
-                    "Fehler",
-                    "Die ID konnte nicht wiederhergestellt oder per Resend versendet werden. Bitte versuchen Sie es erneut."
-                );
-                return false;
-            }
-        }
-
-        window.submitIdRecovery = async function() {
-            const inputEl = document.getElementById('recover-email-input');
-            const cleanEmail = inputEl ? inputEl.value.trim().toLowerCase() : '';
-
-            if (!cleanEmail || !cleanEmail.includes('@')) {
-                alert("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
-                return;
-            }
-
-            await recoverIdByEmail(cleanEmail);
-        };
-
-        window.openRecoverIdModal = function() {
-            openCustomModal(
-                "ID wiederherstellen",
-                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein. Ihre Konto-ID wird anschließend über Resend erneut an diese Adresse gesendet.",
-                true,
-                "Ihre verknüpfte E-Mail-Adresse...",
-                async (emailInput) => {
-                    await recoverIdByEmail(emailInput);
-                },
-                'email',
-                'Wiederherstellen'
-            );
-        };
-
         window.openAdminContactModal = function() {
             showInfoModal(
                 "Admin Kontakt",
                 "E-Mail: <a href='mailto:noumanahmad1987@gmail.com' class='text-blue-600 underline'>noumanahmad1987@gmail.com</a>"
             );
-        };
-
-        async function hashAdminPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode((password || '').trim());
-            const buffer = await crypto.subtle.digest('SHA-256', data);
-
-            return Array.from(new Uint8Array(buffer))
-                .map(byte => byte.toString(16).padStart(2, '0'))
-                .join('');
-        }
-
-        function getLegacyAdminPasswordField(data) {
-            const preferred = Object.keys(data || {}).find(key =>
-                /password|passwort|pwd/i.test(key) &&
-                typeof data[key] === 'string'
-            );
-
-            if (preferred) return preferred;
-
-            return Object.keys(data || {}).find(key =>
-                typeof data[key] === 'string' &&
-                key !== 'adminPasswordHash'
-            ) || null;
-        }
-
-        async function verifyAndLoadAdminPassword(configRef, configData, enteredPassword) {
-            const entered = (enteredPassword || '').trim();
-
-            if (configData.adminPasswordHash) {
-                return (
-                    await hashAdminPassword(entered)
-                ) === String(configData.adminPasswordHash).trim();
-            }
-
-            const legacyField = getLegacyAdminPasswordField(configData);
-            const legacyPassword = legacyField
-                ? String(configData[legacyField] || '').trim()
-                : '';
-
-            if (entered && legacyPassword && entered === legacyPassword) {
-                // Migrate an older plaintext admin password to a SHA-256 hash.
-                try {
-                    const migrationUpdates = {
-                        adminPasswordHash: await hashAdminPassword(entered),
-                        passwordMigratedAt: Date.now()
-                    };
-
-                    if (legacyField) {
-                        migrationUpdates[legacyField] = deleteField();
-                    }
-
-                    await updateDoc(configRef, migrationUpdates);
-                } catch (migrationError) {
-                    console.warn(
-                        "Admin password migration could not be completed:",
-                        migrationError
-                    );
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        window.openAdminPasswordChangeModal = function() {
-            document.getElementById('modal').classList.add('hidden');
-
-            document.getElementById('modal-title').innerText =
-                "Admin-Passwort ändern";
-
-            document.getElementById('modal-message').innerHTML = `
-                <div class="space-y-3">
-                    <p class="text-sm text-slate-700">
-                        Geben Sie zuerst Ihr aktuelles Admin-Passwort ein und anschließend das neue Passwort.
-                    </p>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">
-                            Aktuelles Passwort
-                        </label>
-                        <input type="password" id="modal-admin-current-pwd"
-                               class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none"
-                               placeholder="Aktuelles Passwort">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">
-                            Neues Passwort
-                        </label>
-                        <input type="password" id="modal-admin-new-pwd"
-                               class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none"
-                               placeholder="Neues Passwort">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">
-                            Neues Passwort bestätigen
-                        </label>
-                        <input type="password" id="modal-admin-confirm-pwd"
-                               class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none"
-                               placeholder="Neues Passwort bestätigen">
-                    </div>
-
-                    <p class="text-xs text-slate-500">
-                        Das neue Passwort wird nach erfolgreicher Prüfung als Hash gespeichert.
-                    </p>
-                </div>
-            `;
-
-            document.getElementById('modal-confirm-btn').innerText =
-                "Passwort speichern";
-            document.getElementById('modal-confirm-btn').classList.remove('hidden');
-            document.getElementById('modal-cancel-btn').classList.remove('hidden');
-            document.getElementById('modal-input-container').classList.add('hidden');
-            document.getElementById('modal-eye-btn').classList.add('hidden');
-
-            modalCallback = async () => {
-                const currentPwd =
-                    document.getElementById('modal-admin-current-pwd')?.value.trim() || '';
-                const newPwd =
-                    document.getElementById('modal-admin-new-pwd')?.value.trim() || '';
-                const confirmPwd =
-                    document.getElementById('modal-admin-confirm-pwd')?.value.trim() || '';
-
-                if (!currentPwd || !newPwd || !confirmPwd) {
-                    showInfoModal("Fehler", "Bitte füllen Sie alle Passwortfelder aus.");
-                    return;
-                }
-
-                if (newPwd.length < 8) {
-                    showInfoModal(
-                        "Fehler",
-                        "Das neue Passwort muss mindestens 8 Zeichen lang sein."
-                    );
-                    return;
-                }
-
-                if (newPwd !== confirmPwd) {
-                    showInfoModal(
-                        "Fehler",
-                        "Die neuen Passwörter stimmen nicht überein."
-                    );
-                    return;
-                }
-
-                try {
-                    const configRef =
-                        doc(db, 'app_config', 'admin_settings');
-                    const configSnap = await getDoc(configRef);
-
-                    if (!configSnap.exists()) {
-                        showInfoModal(
-                            "Fehler",
-                            "Die Admin-Einstellungen wurden nicht gefunden."
-                        );
-                        return;
-                    }
-
-                    const configData = configSnap.data();
-
-                    const verified =
-                        await verifyAndLoadAdminPassword(
-                            configRef,
-                            configData,
-                            currentPwd
-                        );
-
-                    if (!verified) {
-                        showInfoModal(
-                            "Fehler",
-                            "Das aktuelle Admin-Passwort ist falsch."
-                        );
-                        return;
-                    }
-
-                    const updates = {
-                        adminPasswordHash: await hashAdminPassword(newPwd),
-                        passwordChangedAt: Date.now()
-                    };
-
-                    Object.keys(configData).forEach(key => {
-                        if (
-                            /password|passwort|pwd/i.test(key) &&
-                            key !== 'adminPasswordHash'
-                        ) {
-                            updates[key] = deleteField();
-                        }
-                    });
-
-                    await updateDoc(configRef, updates);
-
-                    showInfoModal(
-                        "Passwort geändert",
-                        "Das Admin-Passwort wurde erfolgreich geändert. Verwenden Sie beim nächsten Admin-Login das neue Passwort."
-                    );
-                } catch (err) {
-                    console.error("Admin password change error:", err);
-                    showInfoModal(
-                        "Fehler",
-                        "Das Admin-Passwort konnte nicht geändert werden."
-                    );
-                }
-            };
-
-            document.getElementById('modal').classList.remove('hidden');
-        };
-
-        window.handleAdminAuthClick = function() {
-            if (isAdminLoggedIn) {
-                isAdminLoggedIn = false;
-                document.getElementById('admin-status-badge').classList.add('hidden');
-                document.getElementById('admin-auth-btn').innerText =
-                    "Admin Einloggen";
-                showInfoModal(
-                    "Abgemeldet",
-                    "Sie haben den Admin-Modus verlassen."
-                );
-                renderAllViews();
-            } else {
-                openCustomModal(
-                    "Admin Einloggen",
-                    "Bitte geben Sie das Administrator-Passwort ein.<br>" +
-                    "<span class='admin-password-change-hint text-xs text-slate-500'>Sie können das Passwort hier auch ändern:</span><br>" +
-                    "<button type='button' onclick='openAdminPasswordChangeModal()' " +
-                    "class='admin-password-change-link mt-2 text-xs font-semibold text-blue-800 hover:text-blue-900 underline'>" +
-                    "Passwort ändern</button>",
-                    true,
-                    "Passwort eingeben...",
-                    async (pw) => {
-                        if (!pw) return;
-
-                        try {
-                            const configRef =
-                                doc(db, 'app_config', 'admin_settings');
-                            const configSnap = await getDoc(configRef);
-
-                            if (!configSnap.exists()) {
-                                showInfoModal(
-                                    "Fehler",
-                                    "Die Admin-Einstellungen wurden nicht gefunden."
-                                );
-                                return;
-                            }
-
-                            const data = configSnap.data();
-                            const verified =
-                                await verifyAndLoadAdminPassword(
-                                    configRef,
-                                    data,
-                                    pw
-                                );
-
-                            if (verified) {
-                                isAdminLoggedIn = true;
-                                document.getElementById('admin-status-badge').classList.remove('hidden');
-                                document.getElementById('admin-auth-btn').innerText =
-                                    "Admin ausloggen";
-                                showInfoModal(
-                                    "Erfolg",
-                                    "Admin-Modus aktiv!"
-                                );
-                                renderAllViews();
-                            } else {
-                                showInfoModal(
-                                    "Fehler",
-                                    "Falsches Passwort."
-                                );
-                            }
-                        } catch (err) {
-                            console.error("Admin login error:", err);
-                            showInfoModal(
-                                "Fehler",
-                                "Verbindungsfehler."
-                            );
-                        }
-                    },
-                    'password',
-                    'Einloggen'
-                );
-            }
         };
 
         let modalCallback = null;
@@ -3679,8 +3370,8 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-message').innerHTML = `
                 <p class="mb-3 text-slate-700 font-medium">Bitte geben Sie Ihre Kontaktdaten ein:</p>
-                <input type="text" id="req-contact" class="w-full border border-slate-300 rounded-lg p-3 mb-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Name & Adresse">
-                <input type="email" id="req-email" class="w-full border border-slate-300 rounded-lg p-3 mb-2 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Ihre E-Mail-Adresse">
+                <input type="text" id="req-contact" required maxlength="200" class="w-full border border-slate-300 rounded-lg p-3 mb-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Name oder Telefonnummer">
+                <p class="text-xs text-slate-500">Die E-Mail-Adresse Ihres Kontos wird vertraulich mit dem Anbieter geteilt.</p>
             `;
             document.getElementById('modal-confirm-btn').innerText = "Anfragen";
             document.getElementById('modal-confirm-btn').classList.remove('hidden');
@@ -3689,8 +3380,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             
             modalCallback = () => {
                 const reqContact = document.getElementById('req-contact') ? document.getElementById('req-contact').value : '';
-                const reqEmail = document.getElementById('req-email') ? document.getElementById('req-email').value : '';
-                callback(reqContact, reqEmail);
+                callback(reqContact);
             };
             
             document.getElementById('modal').classList.remove('hidden');

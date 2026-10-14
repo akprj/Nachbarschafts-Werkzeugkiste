@@ -1,0 +1,49 @@
+# Firebase account administration
+
+The app uses Firebase Authentication email/password accounts. Enable the
+Email/Password provider in Firebase Console before allowing users to register.
+
+## Grant or revoke administrator access
+
+Administrator access is a Firebase Authentication custom claim, never a
+password or role value stored in Firestore. Use trusted Google Application
+Default Credentials for the Firebase project; do not put service-account keys
+in the repository.
+
+From the `functions` directory, set `FIREBASE_PROJECT_ID` to the intended
+project and run:
+
+```powershell
+$env:FIREBASE_PROJECT_ID = "nachbarschafts-werkzeugkiste"
+npm run set-admin-claim -- <firebase-auth-uid> grant
+npm run set-admin-claim -- <firebase-auth-uid> revoke
+```
+
+The command preserves other custom claims. After a claim change, the user must
+sign out and sign back in so Firebase issues a token containing the new role.
+Only trusted project administrators should have access to the credentials used
+to run this command.
+For local Google credentials, sign in with `gcloud auth application-default login`
+before running the script.
+
+## Deploying access rules
+
+Deploy `firestore.rules` and the deny-all Realtime Database rules after
+reviewing them against the Firebase project:
+
+```powershell
+firebase deploy --only firestore,database
+```
+
+The legacy `recoverUserAccount` Cloud Function now returns HTTP 410 and no
+longer accesses ID mappings. Deploy the functions source to replace the
+previous implementation:
+
+```powershell
+firebase deploy --only functions
+```
+
+Legacy listings are not automatically assigned to new accounts or published.
+An administrator should review and delete old records; owners should recreate
+their listings while signed in so ownership and private contact data are
+properly associated with their Firebase UID.

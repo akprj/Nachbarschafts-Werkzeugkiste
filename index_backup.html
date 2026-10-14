@@ -5,693 +5,1962 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nachbarschafts-Werkzeugkiste</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     
-    <script>
-      (function(){
-         emailjs.init("Jl3q1NmY-n_2hu2V6");
-      })();
-    </script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --ink: #10233f;
-            --ink-soft: #52647c;
-            --brand: #155eef;
-            --brand-deep: #123a82;
-            --brand-soft: #eaf2ff;
-            --teal: #0f9f93;
-            --teal-soft: #e8fbf8;
-            --violet: #7c4dff;
-            --violet-soft: #f1ecff;
-            --amber: #d97706;
-            --amber-soft: #fff6df;
-            --surface: rgba(255,255,255,.88);
-            --surface-strong: #ffffff;
-            --line: rgba(148,163,184,.22);
-            --shadow-sm: 0 8px 24px rgba(15, 23, 42, .06);
-            --shadow-md: 0 16px 40px rgba(15, 23, 42, .09);
-            --shadow-lg: 0 24px 70px rgba(15, 23, 42, .14);
-            --radius-lg: 20px;
-            --radius-md: 14px;
+    :root {
+        --font-display: "Raleway", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-body: "Source Sans 3", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --ink: #17303a;
+        --ink-muted: #657982;
+        --paper: #eef2ef;
+        --paper-deep: #e7ece9;
+        --surface: #fbfcfb;
+        --surface-2: #f5f8f6;
+        --navy: #0c1b27;
+        --navy-2: #102633;
+        --line: rgba(20, 48, 58, .12);
+        --line-soft: rgba(255,255,255,.10);
+        --accent: #56c2b3;
+        --accent-deep: #2a8f83;
+        --accent-soft: #e4f3ef;
+        --shadow-1: 0 8px 24px rgba(12, 27, 39, .06);
+        --shadow-2: 0 16px 38px rgba(12, 27, 39, .10);
+        --shadow-3: 0 28px 70px rgba(12, 27, 39, .14);
+        --radius-xl: 22px;
+        --radius-lg: 17px;
+        --radius-md: 13px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        color: var(--ink) !important;
+        background:
+            radial-gradient(circle at 8% 0%, rgba(86,194,179,.09), transparent 28rem),
+            radial-gradient(circle at 92% 12%, rgba(55,116,145,.07), transparent 30rem),
+            linear-gradient(180deg, #f3f6f3 0%, var(--paper) 48%, var(--paper-deep) 100%) !important;
+        font-family: 'Inter', sans-serif !important;
+        font-synthesis: none;
+        margin: 0;
+        font-size: .97rem !important;
+        line-height: 1.58 !important;
+        min-width: 320px;
+        padding-top: 160px;
+    }
+
+    ::selection {
+        background: rgba(86,194,179,.22);
+        color: var(--navy);
+    }
+
+    /* Header — following the supplied fixed, dark, restrained design language */
+    header {
+        z-index: 30 !important;
+        color: #fff !important;
+        background: rgba(12,27,39,.97) !important;
+        border-bottom: 1px solid rgba(255,255,255,.12) !important;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed !important;
+        inset: 0 0 auto !important;
+        width: 100%;
+        min-height: 0;
+        box-shadow: 0 14px 36px rgba(7,18,27,.18) !important;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    header > div:first-child {
+        background: rgba(12,27,39,.82) !important;
+        border-bottom: 1px solid rgba(255,255,255,.07) !important;
+    }
+
+    header > div:nth-child(2) {
+        background: rgba(12,27,39,.96) !important;
+    }
+
+    header h1 {
+        color: #f6fbfa !important;
+        letter-spacing: -.035em;
+    }
+
+    header .brand-lockup {
+        display: flex;
+        width: min(100%, 280px);
+        max-width: 100%;
+        transform: none;
+    }
+
+    header .brand-logo {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1376 / 480;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    header > div:first-child > div > div:first-child {
+        text-align: left;
+    }
+
+    header > div:first-child h1 {
+        justify-content: flex-start;
+    }
+
+    header h1 > span:first-child {
+        filter: drop-shadow(0 7px 12px rgba(86,194,179,.18));
+    }
+
+    header .text-sky-900,
+    header .text-sky-800 {
+        color: #a9bec5 !important;
+    }
+
+    header button {
+        border-radius: 999px !important;
+        border: 1px solid rgba(255,255,255,.12) !important;
+        box-shadow: none !important;
+        transition: background-color .22s ease, color .22s ease, border-color .22s ease,
+                    transform .22s ease, box-shadow .22s ease !important;
+    }
+
+    header button:hover {
+        transform: translateY(-1px);
+        border-color: rgba(86,194,179,.35) !important;
+        box-shadow: 0 8px 20px rgba(0,0,0,.16) !important;
+    }
+
+    header button.bg-slate-700 {
+        background: #17313f !important;
+        color: #e8f1f2 !important;
+    }
+
+    header button.bg-slate-700:hover {
+        background: #214252 !important;
+    }
+
+    header button.bg-sky-700 {
+        background: #2f6f84 !important;
+        color: #fff !important;
+    }
+
+    header button.bg-sky-700:hover {
+        background: #3b8197 !important;
+    }
+
+    nav.max-w-4xl {
+        border-top-color: rgba(255,255,255,.07) !important;
+        background: rgba(12,27,39,.96) !important;
+    }
+
+    .nav-tab {
+        position: relative;
+        min-height: 55px;
+        padding: .8rem .92rem;
+        color: #91a6ae !important;
+        background: transparent !important;
+        border: 0 !important;
+        font-size: .88rem !important;
+        font-weight: 600 !important;
+        letter-spacing: .005em;
+        transition: color .22s ease, background-color .22s ease !important;
+    }
+
+    .nav-tab::after {
+        content: "";
+        position: absolute;
+        left: 18%;
+        right: 18%;
+        bottom: 0;
+        height: 2px;
+        border-radius: 999px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform .22s ease;
+    }
+
+    .nav-tab:hover {
+        color: #f5fbfa !important;
+        background: rgba(255,255,255,.035) !important;
+    }
+
+    .nav-tab.active {
+        color: #f5fbfa !important;
+        background: rgba(255,255,255,.045) !important;
+        box-shadow: none !important;
+    }
+
+    .nav-tab.active::after {
+        transform: scaleX(1);
+    }
+
+    /* Main / body rhythm */
+    main {
+        max-width: 1320px !important;
+        width: min(1320px, calc(100% - 56px)) !important;
+        padding: 34px 0 82px !important;
+    }
+
+    main h2 {
+        color: var(--ink) !important;
+        letter-spacing: -.035em;
+    }
+
+    main p.text-slate-500 {
+        color: var(--ink-muted) !important;
+    }
+
+    /* Section heading panels */
+    #section-bibliothek > div:first-child,
+    #section-anbieten > div:first-child,
+    #section-verschenken > div:first-child,
+    #section-ausleihen > div:first-child,
+    #section-eintraege > div:first-child {
+        position: relative;
+        overflow: hidden;
+        background: rgba(251,252,251,.91) !important;
+        border: 1px solid var(--line) !important;
+        border-radius: var(--radius-xl) !important;
+        box-shadow: var(--shadow-1) !important;
+    }
+
+    #section-bibliothek > div:first-child::before,
+    #section-anbieten > div:first-child::before,
+    #section-verschenken > div:first-child::before,
+    #section-ausleihen > div:first-child::before,
+    #section-eintraege > div:first-child::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #284b5a, var(--accent));
+        opacity: .95;
+    }
+
+    #section-anbieten > div:first-child::before { background: linear-gradient(90deg, #26766f, #67cfbf); }
+    #section-verschenken > div:first-child::before { background: linear-gradient(90deg, #6d4da2, #ad8af0); }
+    #section-ausleihen > div:first-child::before { background: linear-gradient(90deg, #2f6f84, #63b8c7); }
+    #section-eintraege > div:first-child::before { background: linear-gradient(90deg, #354955, #81929b); }
+
+    /* Search / select controls */
+    #search-input,
+    #giveaway-search-input,
+    #admin-items-search,
+    #filter-category {
+        min-height: 46px;
+        border: 1px solid rgba(20,48,58,.14) !important;
+        border-radius: 999px !important;
+        background: rgba(255,255,255,.82) !important;
+        color: #28414b !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 4px 12px rgba(12,27,39,.035);
+        transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+    }
+
+    #search-input:focus,
+    #giveaway-search-input:focus,
+    #admin-items-search:focus,
+    #filter-category:focus {
+        border-color: rgba(42,143,131,.42) !important;
+        background: #fff !important;
+        box-shadow: 0 0 0 4px rgba(86,194,179,.12), 0 8px 20px rgba(12,27,39,.06) !important;
+        outline: none !important;
+    }
+
+    /* Professional tile system */
+    #library-grid,
+    #giveaway-grid,
+    #my-borrowed-grid,
+    #my-items-grid {
+        align-items: stretch;
+    }
+
+    #library-grid > div:not(.col-span-full),
+    #giveaway-grid > div:not(.col-span-full),
+    #my-borrowed-grid > div:not(.col-span-full),
+    #my-items-grid > div:not(.col-span-full) {
+        position: relative;
+        min-width: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background:
+            linear-gradient(145deg, rgba(255,255,255,.97), rgba(246,249,247,.96)) !important;
+        border: 1px solid rgba(20,48,58,.10) !important;
+        border-radius: var(--radius-xl) !important;
+        box-shadow: var(--shadow-1) !important;
+        transition:
+            transform .25s cubic-bezier(.2,.7,.2,1),
+            box-shadow .25s ease,
+            border-color .25s ease;
+    }
+
+    #library-grid > div:not(.col-span-full)::before,
+    #giveaway-grid > div:not(.col-span-full)::before,
+    #my-borrowed-grid > div:not(.col-span-full)::before,
+    #my-items-grid > div:not(.col-span-full)::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #2f5868, #63bdb0);
+    }
+
+    #giveaway-grid > div:not(.col-span-full)::before {
+        background: linear-gradient(90deg, #69499b, #b090ee);
+    }
+
+    #my-borrowed-grid > div:not(.col-span-full)::before {
+        background: linear-gradient(90deg, #2f6f84, #5ec1b1);
+    }
+
+    #my-items-grid > div:not(.col-span-full)::before {
+        background: linear-gradient(90deg, #48606b, #93a5ac);
+    }
+
+    #library-grid > div:not(.col-span-full):hover,
+    #giveaway-grid > div:not(.col-span-full):hover,
+    #my-borrowed-grid > div:not(.col-span-full):hover,
+    #my-items-grid > div:not(.col-span-full):hover {
+        transform: translateY(-4px);
+        border-color: rgba(42,143,131,.22) !important;
+        box-shadow: var(--shadow-2) !important;
+    }
+
+    #giveaway-grid > div:not(.col-span-full):hover {
+        border-color: rgba(105,73,155,.22) !important;
+    }
+
+    #library-grid h3,
+    #giveaway-grid h3,
+    #my-borrowed-grid h3,
+    #my-items-grid h3 {
+        color: #17303a !important;
+        letter-spacing: -.025em;
+        font-weight: 700 !important;
+    }
+
+    #library-grid p,
+    #giveaway-grid p,
+    #my-borrowed-grid p,
+    #my-items-grid p {
+        color: #64777f !important;
+    }
+
+    #library-grid .border-t,
+    #giveaway-grid .border-t,
+    #my-borrowed-grid .border-t,
+    #my-items-grid .border-t {
+        border-color: rgba(20,48,58,.09) !important;
+    }
+
+    /* Status tags */
+    #library-grid span,
+    #giveaway-grid span,
+    #my-borrowed-grid span,
+    #my-items-grid span {
+        border-radius: 999px;
+    }
+
+    /* Buttons in tiles */
+    #library-grid button,
+    #giveaway-grid button,
+    #my-borrowed-grid button,
+    #my-items-grid button {
+        min-height: 40px;
+        border-radius: 999px !important;
+        font-weight: 700 !important;
+        box-shadow: 0 8px 18px rgba(12,27,39,.10);
+        transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+
+    #my-items-grid button.lend-confirm-button {
+        color: #fff !important;
+        background-color: rgb(26 255 3) !important;
+    }
+
+    #my-items-grid button.lend-confirm-button:hover {
+        background-color: rgb(22 220 0) !important;
+    }
+
+    #library-grid button.borrow-action-button {
+        width: 7rem;
+        flex: 0 0 7rem;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    #library-grid button:hover,
+    #giveaway-grid button:hover,
+    #my-borrowed-grid button:hover,
+    #my-items-grid button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 24px rgba(12,27,39,.14);
+        filter: saturate(1.04);
+    }
+
+    /* Info/status panels inside tiles */
+    #library-grid .bg-amber-50,
+    #my-items-grid .bg-amber-50 {
+        background: linear-gradient(145deg, #fff9ea, #fff4d8) !important;
+        border-color: rgba(217,119,6,.17) !important;
+        border-radius: 14px !important;
+    }
+
+    #giveaway-grid .bg-purple-50 {
+        background: linear-gradient(145deg, #f7f2ff, #efe8fb) !important;
+        border-color: rgba(105,73,155,.16) !important;
+        border-radius: 14px !important;
+    }
+
+    /* Offer form */
+    #section-anbieten > div:first-child {
+        max-width: 700px !important;
+        box-shadow: var(--shadow-2) !important;
+    }
+
+    #offer-form label {
+        color: #3d5660 !important;
+    }
+
+    #offer-form input,
+    #offer-form select,
+    #offer-form textarea {
+        border: 1px solid rgba(20,48,58,.14) !important;
+        border-radius: 13px !important;
+        background: rgba(255,255,255,.90) !important;
+        color: #203640 !important;
+        box-shadow: inset 0 1px 2px rgba(12,27,39,.03);
+        transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+    }
+
+    #offer-form input:focus,
+    #offer-form select:focus,
+    #offer-form textarea:focus {
+        border-color: rgba(42,143,131,.40) !important;
+        background: #fff !important;
+        box-shadow: 0 0 0 4px rgba(86,194,179,.11), 0 8px 18px rgba(12,27,39,.05) !important;
+        outline: none !important;
+    }
+
+    #offer-form button[type="submit"] {
+        min-height: 50px;
+        margin-top: 12px !important;
+        border-radius: 999px !important;
+        background: linear-gradient(135deg, #173b49, #226978) !important;
+        box-shadow: 0 14px 30px rgba(31,83,98,.22) !important;
+    }
+
+    #offer-form button[type="submit"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 34px rgba(31,83,98,.27) !important;
+    }
+
+    /* Footer — following the supplied quiet dark footer-bottom treatment */
+    footer {
+        color: #78909b !important;
+        background: #0c1b27 !important;
+        border-top: 1px solid rgba(255,255,255,.10) !important;
+        box-shadow: none !important;
+        margin-top: auto;
+        position: relative;
+        height: auto;
+    }
+
+    footer > div:first-child {
+        color: #78909b !important;
+        border-top: 1px solid rgba(255,255,255,.07) !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        grid-template-rows: auto;
+        align-items: center;
+        gap: 12px;
+        font-size: .72rem !important;
+        width: 100%;
+        max-width: none !important;
+    }
+
+    footer > div:first-child > div:first-child {
+        display: flex !important;
+        grid-column: 1 / -1;
+        grid-row: 1;
+        justify-content: space-between !important;
+        align-items: center;
+        width: 100%;
+    }
+
+    footer > div:first-child > div:nth-child(2) {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: center;
+        white-space: nowrap;
+    }
+
+    @media (min-width: 641px) {
+        footer {
+            padding-top: 10px !important;
+            padding-bottom: 10px !important;
         }
 
-        * { box-sizing: border-box; }
-
-        html {
-            scroll-behavior: smooth;
-            -webkit-text-size-adjust: 100%;
+        footer > div:first-child {
+            gap: 8px;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            font-size: 1.05rem;
-            color: var(--ink);
-            background:
-                radial-gradient(circle at 12% 0%, rgba(21,94,239,.10), transparent 28rem),
-                radial-gradient(circle at 92% 16%, rgba(15,159,147,.08), transparent 24rem),
-                linear-gradient(180deg, #f7faff 0%, #f3f6fb 46%, #eef3f8 100%) !important;
+        footer > div:first-child button {
+            padding: 5px 10px;
+            font-size: .75rem;
+            line-height: 1.25;
         }
+    }
 
-        ::selection { background: rgba(21,94,239,.16); color: var(--ink); }
+    footer .text-slate-500 {
+        color: #78909b !important;
+    }
 
-        .nav-tab {
-            position: relative;
-            padding: 1rem 1rem;
-            min-height: 58px;
-            font-size: .98rem;
-            font-weight: 700;
-            text-align: center;
-            cursor: pointer;
-            transition: color .25s ease, background-color .25s ease, transform .25s ease, box-shadow .25s ease;
-            border-bottom: 0;
-            color: #607089;
-            background: rgba(255,255,255,.42);
-            letter-spacing: -.01em;
-        }
+    footer .copyright-text {
+        color: #fff !important;
+    }
 
-        .nav-tab:hover {
-            color: var(--brand-deep);
-            background: rgba(239,246,255,.92);
-        }
+    header .id-action-help {
+        color: #fff !important;
+    }
 
-        .nav-tab.active {
-            color: var(--brand-deep);
-            background: linear-gradient(180deg, #f5f9ff 0%, #e9f2ff 100%);
-            box-shadow: inset 0 -3px 0 var(--brand);
-        }
+    footer button {
+        border-radius: 999px !important;
+        border: 1px solid rgba(255,255,255,.10) !important;
+        box-shadow: none !important;
+        transition: color .2s ease, background-color .2s ease, border-color .2s ease,
+                    transform .2s ease !important;
+    }
 
-        header {
-            background: rgba(255,255,255,.92) !important;
-            border-color: rgba(148,163,184,.18) !important;
-            box-shadow: 0 12px 36px rgba(15,23,42,.07) !important;
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-        }
+    footer button.bg-slate-200 {
+        background: transparent !important;
+        color: #a7b8bf !important;
+    }
 
-        header > div:first-child {
-            background:
-                linear-gradient(100deg, rgba(232,240,255,.94), rgba(239,252,249,.95)) !important;
-            border-color: rgba(148,163,184,.16) !important;
-        }
+    footer button.bg-slate-200:hover {
+        background: rgba(255,255,255,.07) !important;
+        color: #eff6f5 !important;
+        border-color: rgba(86,194,179,.24) !important;
+    }
 
-        header h1 {
-            color: var(--ink) !important;
-            letter-spacing: -.035em;
-        }
+    footer button.bg-slate-800 {
+        background: #17313f !important;
+        color: #ecf5f4 !important;
+    }
 
-        header h1 span {
-            filter: drop-shadow(0 6px 10px rgba(21,94,239,.16));
-        }
+    footer button.bg-slate-800:hover {
+        background: #214252 !important;
+        border-color: rgba(86,194,179,.28) !important;
+    }
 
-        header .text-slate-500 {
-            color: #6b7a90 !important;
-        }
+    #admin-status-badge {
+        background: rgba(86,194,179,.13) !important;
+        color: #9fe0d6 !important;
+        border: 1px solid rgba(86,194,179,.18);
+    }
 
-        header button {
-            border-radius: 12px !important;
-            border: 1px solid rgba(255,255,255,.25);
-            box-shadow: 0 8px 18px rgba(15,23,42,.10) !important;
-            transition: transform .2s ease, box-shadow .2s ease, filter .2s ease !important;
-        }
+    #admin-settings-section {
+        color: #a8b8bf !important;
+        background: rgba(255,255,255,.045) !important;
+        border: 1px solid rgba(255,255,255,.08) !important;
+        border-radius: 16px !important;
+        box-shadow: none !important;
+    }
 
-        header button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 12px 24px rgba(15,23,42,.14) !important;
-            filter: saturate(1.05);
-        }
+    #admin-settings-section h3,
+    #admin-settings-section label {
+        color: #dce7e8 !important;
+    }
 
-        #admin-auth-btn {
-            border-radius: 12px !important;
-        }
+    #admin-settings-section input {
+        background: rgba(255,255,255,.07) !important;
+        color: #eef5f4 !important;
+        border-color: rgba(255,255,255,.12) !important;
+    }
 
-        nav {
-            border-top-color: rgba(148,163,184,.18) !important;
-        }
+    #admin-settings-section button.bg-slate-200 {
+        background: rgba(255,255,255,.06) !important;
+        color: #c2d0d4 !important;
+    }
+
+    #admin-settings-section button.bg-slate-800 {
+        background: #1d5661 !important;
+        color: #f4fbfa !important;
+    }
+
+    /* Modal */
+    #modal {
+        background: rgba(5,15,22,.68) !important;
+        backdrop-filter: blur(9px);
+        -webkit-backdrop-filter: blur(9px);
+    }
+
+    #modal > div {
+        /* background: #f9fbfa !important; */
+        background: #0c1b27f7 !important;
+        border: 1px solid rgba(255,255,255,.30) !important;
+        border-top: 3px solid var(--accent) !important;
+        border-radius: 20px !important;
+        box-shadow: var(--shadow-3) !important;
+    }
+
+    #modal-title {
+        color: #0fd5ff !important;
+        letter-spacing: -.03em;
+    }
+
+    #modal-message,
+    #modal-message :not(input):not(textarea):not(select) {
+        color: #fff !important;
+    }
+
+    #modal-input,
+    #modal-message input {
+        border-color: rgba(20,48,58,.14) !important;
+        border-radius: 12px !important;
+        background: #fff !important;
+        min-height: 46px;
+    }
+
+    #modal-message input {
+        color: #17303a !important;
+    }
+
+    #modal-input:focus,
+    #modal-message input:focus {
+        border-color: rgba(42,143,131,.40) !important;
+        box-shadow: 0 0 0 4px rgba(86,194,179,.10) !important;
+        outline: none !important;
+    }
+
+    #modal-confirm-btn {
+        border-radius: 999px !important;
+        background: #173b49 !important;
+        box-shadow: 0 10px 20px rgba(23,59,73,.17);
+    }
+
+    #modal-cancel-btn {
+        border-radius: 999px !important;
+    }
+
+    /* Empty states */
+    #library-grid > div.col-span-full,
+    #giveaway-grid > div.col-span-full,
+    #my-borrowed-grid > div.col-span-full,
+    #my-items-grid > div.col-span-full {
+        min-height: 170px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.54) !important;
+        border: 1px dashed rgba(20,48,58,.16) !important;
+        border-radius: var(--radius-xl) !important;
+        box-shadow: none !important;
+        color: #75858b !important;
+    }
+
+    #library-grid > div.col-span-full::before,
+    #giveaway-grid > div.col-span-full::before,
+    #my-borrowed-grid > div.col-span-full::before,
+    #my-items-grid > div.col-span-full::before {
+        display: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 1040px) {
+        body { padding-top: 195px; }
 
         main {
-            position: relative;
-            max-width: 76rem !important;
-            padding-top: clamp(1.25rem, 2vw, 2rem) !important;
+            width: min(100% - 34px, 960px) !important;
         }
 
-        main::before {
-            content: "";
-            position: absolute;
-            inset: 0 1rem auto;
-            height: 160px;
-            border-radius: 36px;
-            pointer-events: none;
-            background:
-                linear-gradient(135deg, rgba(21,94,239,.04), rgba(15,159,147,.035));
-            z-index: 0;
-        }
-
-        main > section {
-            position: relative;
-            z-index: 1;
-        }
-
-        main h2 {
-            color: var(--ink) !important;
-            letter-spacing: -.035em;
-        }
-
-        main p.text-slate-500 {
-            color: var(--ink-soft) !important;
-        }
-
-        /* Premium section/toolbar tiles */
-        #section-bibliothek > div:first-child,
-        #section-verschenken > div:first-child,
-        #section-ausleihen > div:first-child,
-        #section-eintraege > div:first-child,
-        #section-anbieten > div:first-child {
-            background:
-                linear-gradient(145deg, rgba(255,255,255,.97), rgba(248,251,255,.94)) !important;
-            border: 1px solid var(--line) !important;
-            border-radius: var(--radius-lg) !important;
-            box-shadow: var(--shadow-sm) !important;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #section-bibliothek > div:first-child::before,
-        #section-verschenken > div:first-child::before,
-        #section-ausleihen > div:first-child::before,
-        #section-eintraege > div:first-child::before,
-        #section-anbieten > div:first-child::before {
-            content: "";
-            position: absolute;
-            inset: 0 auto 0 0;
-            width: 4px;
-            background: linear-gradient(180deg, var(--brand), #4f9cff);
-            border-radius: 999px;
-        }
-
-        #section-verschenken > div:first-child::before { background: linear-gradient(180deg, #8b5cf6, #c084fc); }
-        #section-anbieten > div:first-child::before { background: linear-gradient(180deg, #0f9f93, #34d399); }
-        #section-ausleihen > div:first-child::before { background: linear-gradient(180deg, #0ea5e9, #38bdf8); }
-        #section-eintraege > div:first-child::before { background: linear-gradient(180deg, #334155, #64748b); }
-
-        /* Search/filter controls */
-        #search-input,
-        #filter-category {
-            border-color: rgba(148,163,184,.28) !important;
-            background: rgba(255,255,255,.92) !important;
-            color: #23344f !important;
-            border-radius: 12px !important;
-            min-height: 46px;
-            box-shadow: 0 4px 14px rgba(15,23,42,.035);
-            transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
-        }
-
-        #search-input:focus,
-        #filter-category:focus {
-            border-color: rgba(21,94,239,.45) !important;
-            box-shadow: 0 0 0 4px rgba(21,94,239,.09), 0 8px 22px rgba(15,23,42,.06) !important;
-            transform: translateY(-1px);
-        }
-
-        /* All generated item tiles */
         #library-grid,
         #giveaway-grid,
         #my-borrowed-grid,
         #my-items-grid {
-            align-items: stretch;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 16px !important;
+        }
+    }
+
+    @media (max-width: 720px) {
+        body {
+            padding-top: 266px;
+            font-size: .95rem !important;
         }
 
-        #library-grid > div,
-        #giveaway-grid > div,
-        #my-borrowed-grid > div,
-        #my-items-grid > div {
+        header > div:first-child {
+            padding-top: .55rem !important;
+            padding-bottom: .55rem !important;
+        }
+
+        header > div:first-child > div {
             position: relative;
-            min-width: 0;
-            border-radius: var(--radius-lg) !important;
-            border: 1px solid rgba(148,163,184,.20) !important;
-            background:
-                linear-gradient(160deg, rgba(255,255,255,.99), rgba(248,250,253,.98)) !important;
-            box-shadow: var(--shadow-sm) !important;
-            overflow: hidden;
-            transition:
-                transform .28s cubic-bezier(.2,.7,.2,1),
-                box-shadow .28s ease,
-                border-color .28s ease;
+            display: block !important;
+            min-height: 116px;
+            padding-top: 62px;
+            padding-bottom: 0;
         }
 
-        #library-grid > div::before,
-        #giveaway-grid > div::before,
-        #my-borrowed-grid > div::before,
-        #my-items-grid > div::before {
-            content: "";
+        header > div:first-child > div > div:first-child {
+            width: 100%;
+            text-align: center;
+        }
+
+        header h1 {
+            justify-content: center;
+            gap: .35rem !important;
+            font-size: 1.3rem !important;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        header > div:first-child > div > div:last-child {
             position: absolute;
-            inset: 0 0 auto;
-            height: 3px;
-            background: linear-gradient(90deg, #2774ff, #63b3ff);
-            opacity: .95;
+            top: 0;
+            right: 0;
+            left: 0;
+            width: 100%;
+            flex-wrap: nowrap !important;
+            justify-content: space-between !important;
+            gap: 0 !important;
         }
 
-        #giveaway-grid > div::before {
-            background: linear-gradient(90deg, #8b5cf6, #c084fc);
+        header > div:first-child > div > div:last-child > div:first-child,
+        header > div:first-child > div > div:last-child > div:last-child {
+            flex: 0 1 48%;
+            min-width: 0;
         }
 
-        #my-borrowed-grid > div::before {
-            background: linear-gradient(90deg, #0ea5e9, #2dd4bf);
+        header > div:first-child > div > div:last-child > div:first-child {
+            align-items: flex-start;
         }
 
-        #my-items-grid > div::before {
-            background: linear-gradient(90deg, #475569, #94a3b8);
+        header > div:first-child > div > div:last-child > div:last-child {
+            align-items: flex-end;
         }
 
-        #library-grid > div:hover,
-        #giveaway-grid > div:hover,
-        #my-borrowed-grid > div:hover,
-        #my-items-grid > div:hover {
-            transform: translateY(-5px);
-            border-color: rgba(21,94,239,.22) !important;
-            box-shadow: var(--shadow-md) !important;
+        header .id-action-help {
+            max-width: 100%;
+            white-space: normal;
         }
 
-        #giveaway-grid > div:hover { border-color: rgba(124,77,255,.23) !important; }
-
-        /* Tile typography and spacing */
-        #library-grid h3,
-        #giveaway-grid h3,
-        #my-borrowed-grid h3,
-        #my-items-grid h3 {
-            color: #15263f !important;
-            letter-spacing: -.025em;
+        header > div:first-child > div > div:last-child > div:last-child .id-action-help {
+            text-align: right;
         }
 
-        #library-grid p,
-        #giveaway-grid p,
-        #my-borrowed-grid p,
-        #my-items-grid p {
-            color: #5d6e84 !important;
+        header > div:nth-child(2) {
+            padding-top: .8rem !important;
+            padding-bottom: .8rem !important;
         }
 
-        #library-grid .border-t,
-        #giveaway-grid .border-t,
-        #my-borrowed-grid .border-t,
-        #my-items-grid .border-t {
-            border-color: rgba(148,163,184,.16) !important;
+        header > div:nth-child(2) > div {
+            align-items: flex-start !important;
+            gap: .7rem !important;
         }
 
-        /* Status chips */
-        #library-grid span,
-        #giveaway-grid span,
-        #my-borrowed-grid span,
-        #my-items-grid span {
-            border-radius: 999px;
+        nav.max-w-4xl {
+            overflow-x: auto;
+            flex-wrap: nowrap !important;
+            scrollbar-width: none;
         }
 
-        /* Keep status chips readable and add depth */
-        #library-grid .bg-blue-50,
-        #giveaway-grid .bg-purple-50,
-        #my-borrowed-grid .bg-sky-50,
-        #my-items-grid .bg-blue-50 {
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,.55), 0 4px 12px rgba(21,94,239,.05);
+        nav.max-w-4xl::-webkit-scrollbar {
+            display: none;
         }
 
-        #library-grid .bg-amber-100,
-        #my-items-grid .bg-amber-50 {
-            box-shadow: inset 0 0 0 1px rgba(251,191,36,.08);
+        .nav-tab {
+            flex: 0 0 auto !important;
+            min-width: max-content;
+            min-height: 51px;
+            padding: .72rem .78rem;
+            font-size: .80rem !important;
         }
 
-        /* Buttons across the tiles */
+        .nav-tab::after {
+            left: 16%;
+            right: 16%;
+        }
+
+        main {
+            width: calc(100% - 22px) !important;
+            padding: 19px 0 58px !important;
+        }
+
+        #section-bibliothek > div:first-child,
+        #section-anbieten > div:first-child,
+        #section-verschenken > div:first-child,
+        #section-ausleihen > div:first-child,
+        #section-eintraege > div:first-child {
+            border-radius: 17px !important;
+        }
+
+        #section-bibliothek > div:first-child {
+            gap: 12px !important;
+        }
+
+        #section-bibliothek > div:first-child > div:last-child {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #search-input,
+        #giveaway-search-input,
+        #admin-items-search,
+        #filter-category {
+            width: 100% !important;
+            min-height: 45px;
+        }
+
+        #section-verschenken > div:first-child {
+            gap: 12px !important;
+        }
+
+        #section-verschenken > div:first-child > div:last-child {
+            width: 100%;
+        }
+
+        #library-grid,
+        #giveaway-grid,
+        #my-borrowed-grid,
+        #my-items-grid {
+            grid-template-columns: 1fr !important;
+            gap: 13px !important;
+        }
+
+        #library-grid > div:not(.col-span-full),
+        #giveaway-grid > div:not(.col-span-full),
+        #my-borrowed-grid > div:not(.col-span-full),
+        #my-items-grid > div:not(.col-span-full) {
+            border-radius: 17px !important;
+        }
+
+        #library-grid > div > div:last-child,
+        #giveaway-grid > div > div:last-child,
+        #my-borrowed-grid > div > div:last-child,
+        #my-items-grid > div > div:last-child {
+            gap: 10px;
+        }
+
         #library-grid button,
         #giveaway-grid button,
         #my-borrowed-grid button,
         #my-items-grid button {
-            border-radius: 11px !important;
-            font-weight: 700 !important;
-            min-height: 40px;
-            padding-inline: 13px !important;
-            box-shadow: 0 8px 18px rgba(15,23,42,.10);
-            transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
-        }
-
-        #library-grid button:hover,
-        #giveaway-grid button:hover,
-        #my-borrowed-grid button:hover,
-        #my-items-grid button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 12px 22px rgba(15,23,42,.14);
-            filter: saturate(1.05);
-        }
-
-        /* Request/info panels inside tiles */
-        #library-grid .bg-amber-50,
-        #my-items-grid .bg-amber-50 {
-            background: linear-gradient(145deg, #fff8e9, #fff4d6) !important;
-            border-color: rgba(245,158,11,.20) !important;
-            border-radius: 14px !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
-        }
-
-        #giveaway-grid .bg-purple-50 {
-            background: linear-gradient(145deg, #f7f3ff, #f0eaff) !important;
-            border-color: rgba(139,92,246,.18) !important;
-            border-radius: 14px !important;
-        }
-
-        /* Offer form */
-        #section-anbieten > div:first-child {
-            box-shadow: var(--shadow-md) !important;
-        }
-
-        #offer-form label {
-            color: #33465f !important;
-            letter-spacing: -.01em;
+            width: 100%;
         }
 
         #offer-form input,
         #offer-form select,
         #offer-form textarea {
-            border-color: rgba(148,163,184,.28) !important;
-            background: rgba(255,255,255,.96) !important;
-            color: #20314a !important;
-            border-radius: 12px !important;
-            min-height: 46px;
-            box-shadow: inset 0 1px 2px rgba(15,23,42,.03);
-            transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+            width: 100%;
         }
 
-        #offer-form textarea { min-height: 104px; }
-
-        #offer-form input:focus,
-        #offer-form select:focus,
-        #offer-form textarea:focus {
-            background: #fff !important;
-            border-color: rgba(15,159,147,.44) !important;
-            box-shadow: 0 0 0 4px rgba(15,159,147,.09), 0 8px 20px rgba(15,23,42,.05) !important;
-            outline: none !important;
-        }
-
-        #offer-form button[type="submit"] {
-            border-radius: 13px !important;
-            background: linear-gradient(135deg, #1149aa, #1d6df2) !important;
-            box-shadow: 0 14px 28px rgba(21,94,239,.23) !important;
-            min-height: 50px;
-            transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
-        }
-
-        #offer-form button[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 18px 34px rgba(21,94,239,.28) !important;
-            filter: saturate(1.06);
-        }
-
-        /* Footer */
-        footer {
-            background:
-                linear-gradient(180deg, rgba(255,255,255,.94), rgba(247,250,253,.97)) !important;
-            border-color: rgba(148,163,184,.18) !important;
-            box-shadow: 0 -10px 30px rgba(15,23,42,.035);
+        footer > div:first-child {
+            min-height: 70px;
+            padding-top: 18px;
+            padding-bottom: 18px;
+            text-align: center;
+            justify-content: center !important;
         }
 
         #admin-settings-section {
-            background: linear-gradient(145deg, rgba(247,249,252,.98), rgba(240,244,249,.96)) !important;
-            border-color: rgba(148,163,184,.18) !important;
-            border-radius: 18px !important;
-            box-shadow: 0 10px 26px rgba(15,23,42,.05);
-        }
-
-        #admin-settings-section button,
-        footer button {
-            border-radius: 11px !important;
-        }
-
-        /* Universal modal */
-        #modal {
-            background: rgba(9,20,38,.56) !important;
-            backdrop-filter: blur(9px);
-            -webkit-backdrop-filter: blur(9px);
+            margin-top: 14px !important;
         }
 
         #modal > div {
-            border: 1px solid rgba(255,255,255,.55) !important;
-            border-top: 4px solid var(--brand) !important;
-            background: linear-gradient(145deg, rgba(255,255,255,.99), rgba(247,250,255,.98)) !important;
-            border-radius: 22px !important;
-            box-shadow: var(--shadow-lg) !important;
+            width: calc(100vw - 18px) !important;
+            max-height: calc(100vh - 22px);
+            overflow-y: auto;
+            border-radius: 18px !important;
+            padding: 18px !important;
+        }
+    }
+
+    @media (max-width: 430px) {
+        header > div:first-child {
+            padding-left: 9px !important;
+            padding-right: 9px !important;
         }
 
-        #modal-title { color: var(--ink) !important; letter-spacing: -.03em; }
-
-        #modal-input {
-            border-color: rgba(148,163,184,.28) !important;
-            border-radius: 12px !important;
-            min-height: 48px;
-            box-shadow: inset 0 1px 2px rgba(15,23,42,.03);
+        header > div:first-child > div {
+            justify-content: center !important;
         }
 
-        #modal-input:focus {
-            border-color: rgba(21,94,239,.42) !important;
-            box-shadow: 0 0 0 4px rgba(21,94,239,.09) !important;
-            outline: none !important;
+        header > div:first-child button {
+            padding-left: 11px !important;
+            padding-right: 11px !important;
         }
 
-        /* Make empty states look like proper tiles */
-        #library-grid > div.col-span-full,
-        #giveaway-grid > div.col-span-full,
-        #my-borrowed-grid > div.col-span-full,
-        #my-items-grid > div.col-span-full {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 180px;
-            background: rgba(255,255,255,.72) !important;
-            border: 1px dashed rgba(148,163,184,.36) !important;
-            box-shadow: none !important;
-            color: #718096 !important;
+        header > div:nth-child(2) {
+            padding-left: 12px !important;
+            padding-right: 12px !important;
         }
 
-        #library-grid > div.col-span-full::before,
-        #giveaway-grid > div.col-span-full::before,
-        #my-borrowed-grid > div.col-span-full::before,
-        #my-items-grid > div.col-span-full::before {
-            display: none;
+        header h1 {
+            font-size: 1rem !important;
         }
 
-        /* Responsive behavior */
-        @media (max-width: 900px) {
-            main { max-width: 100% !important; }
-            #library-grid,
-            #giveaway-grid,
-            #my-borrowed-grid,
-            #my-items-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-                gap: 1rem !important;
-            }
+        main {
+            width: calc(100% - 14px) !important;
+            padding-top: 14px !important;
         }
 
-        @media (max-width: 680px) {
-            body { font-size: 1rem; }
-
-            header > div:nth-child(2) {
-                padding-top: .9rem !important;
-                padding-bottom: .9rem !important;
-            }
-
-            header > div:nth-child(2) > div {
-                align-items: flex-start !important;
-                gap: .8rem !important;
-            }
-
-            header h1 {
-                font-size: 1.08rem !important;
-                line-height: 1.25 !important;
-            }
-
-            header nav {
-                overflow-x: auto;
-                flex-wrap: nowrap !important;
-                justify-content: flex-start;
-                scrollbar-width: none;
-            }
-
-            header nav::-webkit-scrollbar { display: none; }
-
-            .nav-tab {
-                flex: 0 0 auto !important;
-                min-width: max-content;
-                padding: .82rem .85rem;
-                font-size: .86rem;
-            }
-
-            main {
-                padding: 1rem .8rem 5rem !important;
-            }
-
-            main::before {
-                inset: 0 .65rem auto;
-                height: 125px;
-                border-radius: 24px;
-            }
-
-            #section-bibliothek > div:first-child,
-            #section-verschenken > div:first-child,
-            #section-ausleihen > div:first-child,
-            #section-eintraege > div:first-child,
-            #section-anbieten > div:first-child {
-                border-radius: 16px !important;
-                padding: 1rem !important;
-            }
-
-            #section-bibliothek > div:first-child > div:last-child {
-                width: 100%;
-                flex-direction: column;
-            }
-
-            #search-input,
-            #filter-category {
-                width: 100% !important;
-            }
-
-            #library-grid,
-            #giveaway-grid,
-            #my-borrowed-grid,
-            #my-items-grid {
-                grid-template-columns: 1fr !important;
-                gap: .9rem !important;
-            }
-
-            #library-grid > div,
-            #giveaway-grid > div,
-            #my-borrowed-grid > div,
-            #my-items-grid > div {
-                border-radius: 16px !important;
-            }
-
-            #library-grid > div > div:last-child,
-            #giveaway-grid > div > div:last-child,
-            #my-borrowed-grid > div > div:last-child,
-            #my-items-grid > div > div:last-child {
-                flex-wrap: wrap;
-                align-items: flex-start !important;
-            }
-
-            #library-grid button,
-            #giveaway-grid button,
-            #my-borrowed-grid button,
-            #my-items-grid button {
-                width: 100%;
-            }
-
-            #offer-form .grid {
-                grid-template-columns: 1fr !important;
-            }
-
-            #offer-form {
-                gap: 1rem;
-            }
-
-            #modal > div {
-                width: calc(100vw - 1rem) !important;
-                padding: 1.1rem !important;
-                border-radius: 18px !important;
-            }
-
-            footer {
-                padding-left: .85rem !important;
-                padding-right: .85rem !important;
-            }
+        #section-bibliothek > div:first-child,
+        #section-anbieten > div:first-child,
+        #section-verschenken > div:first-child,
+        #section-ausleihen > div:first-child,
+        #section-eintraege > div:first-child {
+            padding: 16px !important;
         }
 
-        @media (max-width: 420px) {
-            header > div:first-child {
-                padding-left: .65rem !important;
-                padding-right: .65rem !important;
-            }
-
-            header > div:first-child > div {
-                justify-content: center !important;
-            }
-
-            header > div:nth-child(2) {
-                padding-left: .75rem !important;
-                padding-right: .75rem !important;
-            }
-
-            header > div:nth-child(2) > div {
-                flex-direction: column;
-                align-items: flex-start !important;
-            }
-
-            .nav-tab {
-                font-size: .82rem;
-                padding-inline: .75rem;
-            }
-
-            main {
-                padding-inline: .65rem !important;
-            }
-
-            #section-anbieten > div:first-child {
-                padding: 1rem !important;
-            }
+        footer > div:first-child {
+            flex-direction: column !important;
+            gap: 10px !important;
         }
+    }
 
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                scroll-behavior: auto !important;
-                transition-duration: .01ms !important;
-                animation-duration: .01ms !important;
-            }
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            scroll-behavior: auto !important;
+            transition-duration: .01ms !important;
+            animation-duration: .01ms !important;
         }
-    </style>
+    }
+</style>
+
+<style id="moschee-nav-design-only">
+    /* Responsive navigation presentation only. Existing tab IDs, labels, handlers and logic are untouched. */
+    header {
+        position: fixed !important;
+        top: 0; left: 0; right: 0;
+        z-index: 40 !important;
+        color: #fff !important;
+        background: rgba(12, 27, 39, .97) !important;
+        border-bottom: 1px solid rgba(255,255,255,.12) !important;
+        box-shadow: 0 10px 30px rgba(2, 10, 18, .22) !important;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    header > div:first-child {
+        background: rgba(12,27,39,.72) !important;
+        border-bottom: 1px solid rgba(255,255,255,.06) !important;
+        min-height: 38px;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+    }
+    header > div:first-child > div { max-width: 1320px !important; width: 100%; }
+    header > div:first-child button {
+        color: #dce9f1 !important;
+        background: rgba(255,255,255,.08) !important;
+        border: 1px solid rgba(255,255,255,.10) !important;
+        box-shadow: none !important;
+        border-radius: 8px !important;
+        padding: 6px 10px !important;
+        font-size: 11px !important;
+    }
+    header > div:first-child button:hover { background: rgba(255,255,255,.14) !important; color: #fff !important; transform: none !important; }
+    header > div:first-child span:not(.brand-title) { color: #78909b !important; }
+    header > div:first-child span.id-action-help {
+        color: #f8f5ef !important;
+    }
+
+    header > div:nth-child(2) {
+        background: transparent !important;
+        min-height: 76px;
+        max-width: 1320px !important;
+        width: 100%;
+    }
+    header h1 { color: #ffd964 !important; font-weight: 700 !important; letter-spacing: -.035em; white-space: nowrap; }
+    header > div:nth-child(2) .text-slate-500 { color: #91a4b1 !important; }
+
+    header > nav {
+        max-width: none !important;
+        width: 100%;
+        margin: 0 !important;
+        padding: 0 max(28px, calc(50vw - 660px));
+        border-top: 1px solid rgba(255,255,255,.08) !important;
+        background: rgba(12,27,39,.96) !important;
+    }
+    header > nav > details { width: 100%; }
+    header > nav > details > summary { display: none; }
+    header > nav > details > nav {
+        width: 100%;
+        display: flex !important;
+        align-items: stretch;
+        justify-content: flex-end;
+        gap: 4px;
+    }
+
+    .nav-tab {
+        position: relative;
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-height: 50px;
+        padding: 0 15px;
+        color: #9db0bc !important;
+        background: transparent !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        font-size: .82rem;
+        font-weight: 650;
+        letter-spacing: .005em;
+        transition: color .2s ease, background .2s ease;
+    }
+    .nav-tab::after {
+        content: ""; position: absolute; left: 12px; right: 12px; bottom: 0; height: 2px;
+        border-radius: 999px; background: #fff; opacity: 0; transform: scaleX(.45);
+        transition: opacity .2s ease, transform .2s ease;
+    }
+    .nav-tab:hover { color: #fff !important; background: rgba(255,255,255,.045) !important; transform: none !important; }
+    .nav-tab.active { color: #fff !important; background: rgba(255,255,255,.035) !important; box-shadow: none !important; }
+    .nav-tab.active::after { opacity: 1; transform: scaleX(1); }
+
+    @media (max-width: 1050px) {
+        header > div:nth-child(2) { min-height: 70px; }
+        header > nav { position: relative; border-top: 0 !important; padding: 0 28px 12px; }
+        header > nav > details > summary {
+            list-style: none; cursor: pointer; min-height: 46px; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 14px; border: 1px solid rgba(255,255,255,.12); border-radius: 10px;
+            color: #fff; background: rgba(255,255,255,.055); font-size: .82rem; font-weight: 700;
+            letter-spacing: .01em; user-select: none;
+        }
+        header > nav > details > summary::-webkit-details-marker { display: none; }
+        header > nav > details > summary::after { content: "⌄"; color: #a9bbc6; font-size: 1rem; transition: transform .2s ease; }
+        header > nav > details:not([open]) > nav { display: none !important; }
+        header > nav > details[open] > summary::after { transform: rotate(180deg); }
+        header > nav > details > nav {
+            position: absolute; left: 28px; right: 28px; top: calc(100% + 6px); z-index: 80;
+            display: grid; grid-template-columns: 1fr; gap: 0; padding: 8px;
+            border: 1px solid rgba(255,255,255,.12); border-radius: 14px;
+            background: rgba(12,27,39,.985); box-shadow: 0 20px 46px rgba(2,10,18,.34);
+            backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+        }
+        .nav-tab {
+            width: 100% !important; min-height: 48px; padding: 0 14px; display: flex; align-items: center;
+            justify-content: flex-start; text-align: left; border-radius: 9px !important; color: #a9bbc6 !important;
+        }
+        .nav-tab:hover, .nav-tab.active { background: rgba(255,255,255,.07) !important; color: #fff !important; }
+        .nav-tab::after { left: 0; right: auto; top: 10px; bottom: 10px; width: 2px; height: auto; transform: scaleY(.35); background: #fff; }
+        .nav-tab.active::after { transform: scaleY(1); }
+    }
+
+    @media (max-width: 680px) {
+        header > div:first-child { min-height: 34px; padding-top: 4px !important; padding-bottom: 4px !important; }
+        header > div:first-child > div { justify-content: center !important; }
+        header > div:nth-child(2) { min-height: 64px; padding: 0 14px !important; }
+        header h1 { font-size: 1.05rem !important; line-height: 1.2 !important; }
+        header > div:nth-child(2) .text-slate-500 { display: none !important; }
+        header > nav { padding: 0 14px 10px; }
+        header > nav > details > nav { left: 14px; right: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .nav-tab::after, header > nav > details > summary::after { transition: none !important; }
+    }
+</style>
+
+<style>
+ /* Desktop: navigation is always visible in a horizontal row. */
+header > nav.main-navigation {
+    box-sizing: border-box;
+    position: relative;
+    display: block !important;
+    width: 100% !important;
+    max-width: 1320px;
+    min-height: 58px;
+    margin: 0 auto !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
+    background: rgba(12, 27, 39, 0.97) !important;
+}
+
+.main-navigation,
+.main-navigation * {
+    box-sizing: border-box;
+}
+
+.main-navigation .mobile-menu-toggle {
+    display: none;
+}
+
+.main-navigation .main-navigation-panel {
+    display: flex;
+    width: 100%;
+    min-height: 58px;
+    align-items: stretch;
+    justify-content: center;
+}
+
+.main-navigation .nav-tab {
+    position: relative;
+    flex: 1 1 0 !important;
+    min-width: 0;
+    min-height: 58px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.main-navigation button:focus-visible {
+    outline: 2px solid #7dd3fc;
+    outline-offset: -4px;
+}
+
+
+
+
+
+
+
+/* Mobile/tablet: hamburger with a collapsible vertical menu. */
+@media (max-width: 1050px) {
+    header > nav.main-navigation {
+        min-height: 56px;
+    }
+
+    .main-navigation .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        width: 100%;
+        min-height: 56px;
+        padding: 0 20px;
+        border: 0;
+        background: transparent;
+        color: #f6fbfa;
+        cursor: pointer;
+    }
+
+    .hamburger-icon {
+        position: relative;
+        display: block;
+        width: 25px;
+        height: 20px;
+    }
+
+    .hamburger-icon > span {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        border-radius: 999px;
+        background: currentColor;
+        transition: transform 0.22s ease, opacity 0.22s ease;
+    }
+
+    .hamburger-icon > span:nth-child(1) {
+        top: 0;
+    }
+
+    .hamburger-icon > span:nth-child(2) {
+        top: 9px;
+    }
+
+    .hamburger-icon > span:nth-child(3) {
+        top: 18px;
+    }
+
+    /* Turn the hamburger into an X when open. */
+    .mobile-menu-toggle[aria-expanded="true"] {
+        background: rgba(255, 255, 255, 0.035);
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"]
+        .hamburger-icon > span:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"]
+        .hamburger-icon > span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"]
+        .hamburger-icon > span:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+
+    .main-navigation .main-navigation-panel {
+        display: none;
+        min-height: 0;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        padding: 5px 0 10px;
+        background: rgba(8, 22, 32, 0.985);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 20px 38px rgba(0, 0, 0, 0.22);
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    .main-navigation.is-open .main-navigation-panel {
+        display: flex;
+    }
+
+    .main-navigation .nav-tab {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex: 0 0 auto !important;
+        width: 100%;
+        min-height: 52px;
+        padding: 12px 20px !important;
+        text-align: left;
+        white-space: normal;
+        overflow: visible;
+        overflow-wrap: anywhere;
+        text-overflow: clip;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.055) !important;
+        background: transparent !important;
+    }
+
+    .main-navigation .nav-tab:last-child {
+        border-bottom: 0 !important;
+    }
+
+    .main-navigation .nav-tab::after {
+        left: auto;
+        right: 8px;
+        width: 3px;
+        height: 24px;
+        bottom: auto;
+        top: 50%;
+        transform: translateY(-50%) scaleY(0);
+        transform-origin: center;
+    }
+
+    .main-navigation .nav-tab.active::after {
+        transform: translateY(-50%) scaleY(1);
+    }
+}
+
+@media (max-width: 640px) {
+    header > nav.main-navigation {
+        min-height: 52px;
+    }
+
+    .main-navigation .mobile-menu-toggle {
+        min-height: 52px;
+        padding-inline: 14px;
+    }
+
+    .main-navigation .nav-tab {
+        min-height: 50px;
+        padding-inline: 14px !important;
+        font-size: 0.88rem !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hamburger-icon > span {
+        transition: none;
+    }
+}
+
+
+/* Shared navigation colors */
+.main-navigation {
+    --nav-gold: #ffd964;
+    --nav-white: #f6fbfa;
+}
+
+.main-navigation .nav-tab {
+    color: var(--nav-white);
+    border-bottom: 0 !important;
+    text-decoration: none;
+    box-shadow: none !important;
+}
+
+.main-navigation .nav-tab.active {
+    color: var(--nav-gold) !important;
+}
+
+/* Desktop navigation */
+@media (min-width: 1050.01px) {
+    .main-navigation .main-navigation-panel {
+        justify-content: center;
+        align-items: stretch;
+        flex-wrap: wrap;
+        gap: 0;
+        padding-inline: 16px;
+    }
+
+    .main-navigation .nav-tab {
+        /* Each tab takes the width required by its text. */
+        flex: 0 0 auto !important;
+        width: auto !important;
+        max-width: 100%;
+        min-width: 0;
+        padding: 18px 14px !important;
+        font-size: 0.95rem !important;
+
+        white-space: normal;
+        overflow: visible;
+        overflow-wrap: anywhere;
+        text-overflow: clip;
+
+        background: transparent !important;
+    }
+
+    /* Underline aligned with the text, excluding button padding. */
+    .main-navigation .nav-tab::after {
+        content: "";
+        position: absolute;
+        display: block;
+        left: 14px;
+        right: 14px;
+        bottom: 10px;
+        top: auto;
+
+        width: auto;
+        height: 2px;
+        border-radius: 0;
+        background: var(--nav-white);
+
+        opacity: 0;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    /* White underline on unselected items when hovered/focused. */
+    .main-navigation .nav-tab:not(.active):hover,
+    .main-navigation .nav-tab:not(.active):focus-visible {
+        color: var(--nav-white) !important;
+    }
+
+    .main-navigation .nav-tab:not(.active):hover::after,
+    .main-navigation .nav-tab:not(.active):focus-visible::after {
+        background: var(--nav-white) !important;
+        opacity: 1;
+        transform: scaleX(1);
+    }
+
+    /* Selected item always keeps its gold underline. */
+    .main-navigation .nav-tab.active::after {
+        background: var(--nav-gold) !important;
+        opacity: 1;
+        transform: scaleX(1);
+    }
+}
+
+/* Mobile hamburger navigation */
+@media (max-width: 1050px) {
+    .main-navigation .nav-tab {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.055) !important;
+    }
+
+    .main-navigation .nav-tab:last-child {
+        border-bottom: 0 !important;
+    }
+
+    /* Move the active indicator from the right to the left. */
+    .main-navigation .nav-tab::after {
+        content: "";
+        position: absolute;
+        display: block;
+        left: 0;
+        right: auto;
+        top: 0;
+        bottom: 0;
+
+        width: 2px;
+        height: auto;
+        border-radius: 0;
+        background: var(--nav-gold) !important;
+
+        opacity: 0;
+        transform: none;
+        transition: opacity 0.2s ease;
+    }
+
+    .main-navigation .nav-tab.active {
+        color: var(--nav-gold) !important;
+        background: rgba(255, 255, 255, 0.07) !important;
+    }
+
+    .main-navigation .nav-tab.active::after {
+        opacity: 1;
+        transform: none;
+    }
+
+    .main-navigation .nav-tab:not(.active):hover {
+        background: rgba(255, 255, 255, 0.035) !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .main-navigation .nav-tab::after {
+        transition: none;
+    }
+}
+
+
+
+@media (max-width: 640px) {
+    /* Stack the title and ID buttons instead of squeezing them together. */
+    header > div:first-child > div {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+        padding: 12px 14px !important;
+    }
+
+    /* Title container */
+    header > div:first-child > div > div:first-child {
+        width: 100%;
+        min-width: 0;
+    }
+
+    header > div:first-child h1 {
+        display: block !important;
+        max-width: 100%;
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+        font-size: 1rem !important;
+        line-height: 1.35 !important;
+    }
+
+    /* Buttons stay together below the title, wrapping if necessary. */
+    header > div:first-child > div > div:last-child {
+        width: 100%;
+        min-width: 0;
+        justify-content: flex-end !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+}
+
+
+@media (max-width: 640px) {
+    body { padding-top: 299px; }
+
+    header > div:first-child {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    header .brand-lockup {
+        margin: 0 auto;
+    }
+
+    header .brand-subtitle {
+        display: block !important;
+        color: #fff !important;
+        text-align: center;
+    }
+
+    header > div:first-child > div {
+        position: relative !important;
+        display: block !important;
+        min-height: 145px;
+        padding: 78px 0 12px !important;
+    }
+
+    header > div:first-child > div > div:first-child {
+        width: 100%;
+        min-width: 0;
+        text-align: center !important;
+    }
+
+    header > div:first-child h1 {
+        display: flex !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: .4rem !important;
+        max-width: 100%;
+        margin: 0 auto;
+        overflow-wrap: normal;
+        white-space: normal !important;
+        font-size: 1.3rem !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+    }
+
+    header > div:first-child > div > div:last-child {
+        position: absolute !important;
+        top: 0;
+        right: 0;
+        left: 0;
+        width: auto;
+        justify-content: space-between !important;
+        flex-wrap: nowrap !important;
+        gap: 0 !important;
+    }
+
+    header > div:first-child > div > div:last-child > div:first-child,
+    header > div:first-child > div > div:last-child > div:last-child {
+        flex: 0 1 48%;
+        min-width: 0;
+    }
+
+    header > div:first-child > div > div:last-child > div:first-child {
+        align-items: flex-start;
+    }
+
+    header > div:first-child > div > div:last-child > div:last-child {
+        align-items: flex-end;
+    }
+
+    header .id-action-help {
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    header > div:first-child > div > div:last-child > div:last-child .id-action-help {
+        text-align: right;
+    }
+
+    footer > div:first-child {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        gap: 12px;
+    }
+
+    footer > div:first-child > div:first-child {
+        display: flex;
+        order: 1;
+        justify-content: center;
+    }
+
+    footer > div:first-child > div:first-child button {
+        grid-column: auto;
+        justify-self: auto;
+    }
+
+    footer > div:first-child > div:nth-child(2) {
+        grid-column: auto;
+        order: 2;
+        white-space: normal;
+        text-align: center;
+    }
+}
+
+
+
+@media (max-width: 1050px) {
+    /* Remove the oval frame around the navigation. */
+    header > nav.main-navigation {
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        overflow: visible;
+        padding-top: 10px !important;
+    }
+
+    /* Compact hamburger button, aligned to the Right. */
+    .main-navigation .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center !important;
+
+        width: 48px !important;
+        height: 48px !important;
+        min-height: 48px !important;
+        padding: 0 !important;
+        margin: 8px 4px 8px auto !important;
+
+        border: 1px solid rgba(255, 255, 255, 0.35) !important;
+        border-radius: 8px !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: #f6fbfa;
+    }
+
+    .main-navigation .mobile-menu-toggle:hover,
+    .main-navigation .mobile-menu-toggle[aria-expanded="true"] {
+        background: rgba(255, 255, 255, 0.06) !important;
+    }
+
+    /* Inset the expanded menu so it sits apart from the header and toggle. */
+    .main-navigation .main-navigation-panel {
+        width: 100%;
+        margin: 14px 0 16px;
+        padding: 0;
+        border: 0;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .main-navigation .nav-tab,
+    .main-navigation .nav-tab.active,
+    .main-navigation .nav-tab:not(.active):hover {
+        color: var(--nav-white) !important;
+        background: transparent !important;
+    }
+
+    .main-navigation .nav-tab {
+        min-height: 62px;
+        padding: 16px 18px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+        font-family: var(--font-display) !important;
+        font-weight: 400 !important;
+    }
+
+    .main-navigation .nav-tab:last-child {
+        border-bottom: 0 !important;
+    }
+
+    .main-navigation .nav-tab::after {
+        display: none;
+    }
+}
+
+@media (min-width: 1050.01px) {
+    header > div:first-child > .header-layout {
+        display: grid !important;
+        grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+        grid-template-rows: auto;
+        column-gap: 24px;
+        align-items: center;
+        padding: 12px 0;
+    }
+
+    header > div:first-child > .header-layout > div:first-child {
+        grid-column: 1;
+        grid-row: 1;
+        width: 100%;
+        min-height: 98px;
+    }
+
+    header > div:first-child > .header-layout > .main-navigation {
+        display: contents !important;
+    }
+
+    .main-navigation .mobile-menu-toggle {
+        display: none !important;
+    }
+
+    .main-navigation .main-navigation-panel {
+        display: flex !important;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: stretch;
+        grid-column: 2;
+        grid-row: 1;
+        width: 100%;
+        min-height: 58px;
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+    }
+
+    .main-navigation .nav-tab {
+        flex: 0 1 auto !important;
+        width: auto !important;
+        min-height: 58px;
+        padding: 18px 14px !important;
+        font-family: var(--font-display) !important;
+        font-weight: 600 !important;
+        white-space: normal;
+        background: transparent !important;
+    }
+
+}
+
+@media (max-width: 1050px) {
+    body {
+        padding-top: 160px !important;
+    }
+
+    header > div:first-child > .header-layout {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 56px;
+        grid-template-rows: auto auto;
+       align-items: center;
+        column-gap: 10px;
+        row-gap: 8px;
+        min-height: 0 !important;
+        padding: 12px 14px !important;
+    }
+
+    header > div:first-child > .header-layout > div:first-child {
+        grid-column: 1;
+        grid-row: 1;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        min-height: 98px;
+        min-width: 0;
+        text-align: left !important;
+    }
+
+    header > div:first-child > .header-layout > .main-navigation {
+        display: contents !important;
+    }
+
+    .main-navigation .mobile-menu-toggle {
+        display: flex !important;
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+        align-self: center;
+        margin: 0 !important;
+    }
+
+    .main-navigation .main-navigation-panel {
+        display: none !important;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        margin: 8px 0 12px;
+        padding: 0;
+        background: transparent !important;
+        border: 0;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .main-navigation.is-open .main-navigation-panel {
+        display: flex !important;
+    }
+
+    header > div:first-child > .header-layout .brand-lockup {
+        width: min(100%, 280px);
+        margin: 0 !important;
+    }
+
+    .main-navigation .nav-tab {
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        min-height: 62px;
+        padding: 16px 18px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+        color: var(--nav-white) !important;
+        font-family: var(--font-display) !important;
+        font-size: 1rem !important;
+        font-weight: 400 !important;
+        text-align: left;
+        white-space: normal;
+        background: transparent !important;
+    }
+
+    .main-navigation .nav-tab:last-child {
+        border-bottom: 0 !important;
+    }
+
+    .main-navigation .nav-tab::after {
+        display: none !important;
+    }
+}
+
+/* Keep the wrapped final label consistent with its navigation button. */
+header > div:first-child > .header-layout > .main-navigation .nav-tab > span {
+    color: var(--nav-white) !important;
+    opacity: 1 !important;
+}
+
+header > div:first-child > .header-layout > .main-navigation .nav-tab.active > span {
+    color: var(--nav-gold) !important;
+}
+
+header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.active):hover > span,
+header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.active):focus-visible > span {
+    color: var(--nav-white) !important;
+}
+
+.main-navigation .nav-tab.active {
+    color: var(--nav-gold) !important;
+}
+
+.main-navigation .nav-tab.active::after {
+    background: var(--nav-gold) !important;
+    opacity: 1 !important;
+}
+
+.main-navigation .nav-tab:not(.active):hover,
+.main-navigation .nav-tab:not(.active):focus-visible {
+    color: var(--nav-white) !important;
+}
+
+.main-navigation .mobile-menu-toggle:hover,
+.main-navigation .mobile-menu-toggle:focus-visible,
+.main-navigation .mobile-menu-toggle[aria-expanded="true"] {
+    color: var(--nav-gold) !important;
+    border-color: var(--nav-gold) !important;
+}
+
+@media (min-width: 1050.01px) {
+    .main-navigation .main-navigation-panel {
+        display: flex !important;
+        visibility: visible !important;
+    }
+
+    .main-navigation .nav-tab.active {
+        color: var(--nav-gold) !important;
+        background: transparent !important;
+    }
+}
+
+@media (max-width: 1050px) {
+    .main-navigation .main-navigation-panel,
+    .main-navigation.is-open .main-navigation-panel {
+        gap: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .main-navigation .nav-tab {
+        border: 0 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 0 !important;
+        color: var(--nav-white) !important;
+    }
+
+    .main-navigation .nav-tab:last-child {
+        border-bottom: 0 !important;
+    }
+
+    .main-navigation .nav-tab {
+        position: relative;
+        transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .main-navigation .nav-tab.active {
+        color: var(--nav-gold) !important;
+        background: rgba(255, 255, 255, 0.07) !important;
+    }
+
+    .main-navigation .nav-tab::after {
+        display: block !important;
+        left: 0;
+        right: auto;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        height: auto;
+        border-radius: 0;
+        background: var(--nav-gold) !important;
+        opacity: 0;
+        transform: none;
+    }
+
+    .main-navigation .nav-tab.active::after {
+        opacity: 1 !important;
+    }
+
+    .main-navigation .nav-tab:not(.active):hover,
+    .main-navigation .nav-tab:not(.active):focus-visible {
+        color: var(--nav-white) !important;
+        background: rgba(255, 255, 255, 0.035) !important;
+    }
+
+    .main-navigation .nav-tab:not(.active):hover::after,
+    .main-navigation .nav-tab:not(.active):focus-visible::after {
+        background: var(--nav-white) !important;
+        opacity: 0.6 !important;
+    }
+}
+
+
+    
+</style>
+
 </head>
 
 <body class="bg-slate-50 min-h-screen flex flex-col text-slate-800">
 
     <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
         <div class="bg-sky-50 border-b border-sky-100 px-4 py-3.5">
-            <div class="max-w-4xl mx-auto flex items-center justify-end gap-3 text-sky-900 text-sm md:text-base">
-                <div class="flex items-start gap-2.5 shrink-0 flex-wrap">
-                    <div class="flex flex-col items-center">
-                        <button onclick="openSwitchUserIdModal()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
-                            ID-Laden
-                        </button>
-                        <span class="text-[10px] text-sky-800 mt-1 leading-tight font-medium">Andere ID eingeben</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <button onclick="openRecoverIdModal()" class="bg-sky-700 hover:bg-sky-800 text-white font-bold py-2 px-3 rounded text-xs transition-colors shadow-sm whitespace-nowrap">
-                            ID wiederherstellen
-                        </button>
-                        <span class="text-[10px] text-sky-800 mt-1 leading-tight text-center font-medium">Ihre vergessene ID erhalten</span>
-                    </div>
+            <div class="header-layout max-w-4xl mx-auto flex items-center justify-between gap-5 text-sky-900 text-sm md:text-base">
+                <div class="min-w-0 flex-1 text-left">
+                    <h1 class="brand-lockup">
+                        <img
+                            class="brand-logo"
+                            src="images/Logo.jpeg"
+                            alt="Nachbarschafts-Werkzeugkiste – kostenlos leihen"
+                        >
+                    </h1>
                 </div>
+                <nav class="main-navigation" aria-label="Hauptnavigation">
+                    <button
+                        id="mobile-menu-toggle"
+                        class="mobile-menu-toggle"
+                        type="button"
+                        aria-label="Menü öffnen"
+                        aria-controls="main-navigation-panel"
+                        aria-expanded="false"
+                    >
+                        <span class="hamburger-icon" aria-hidden="true">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </button>
+
+                    <div id="main-navigation-panel" class="main-navigation-panel">
+                        <button
+                            id="tab-bibliothek"
+                            class="nav-tab active flex-1"
+                            onclick="switchTab('bibliothek')"
+                            aria-current="page"
+                        >
+                            Verleih-Bibliothek
+                        </button>
+
+                        <button
+                            id="tab-anbieten"
+                            class="nav-tab flex-1"
+                            onclick="switchTab('anbieten')"
+                        >
+                            Anbieten
+                        </button>
+
+                        <button
+                            id="tab-verschenken"
+                            class="nav-tab flex-1"
+                            onclick="switchTab('verschenken')"
+                        >
+                            Zu Verschenken
+                        </button>
+
+                        <button
+                            id="tab-ausleihen"
+                            class="nav-tab flex-1"
+                            onclick="switchTab('ausleihen')"
+                        >
+                            Meine Ausleih- & Schenkanfragen
+                        </button>
+
+                        <button
+                            id="tab-eintraege"
+                            class="nav-tab flex-1"
+                            onclick="switchTab('eintraege')"
+                        >
+                            <span id="tab-eintraege-label">
+                                Artikelanfragen & Verwalten
+                            </span>
+                        </button>
+                    </div>
+                </nav>
             </div>
         </div>
 
-        <div class="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between">
-            <h1 class="text-xl md:text-2xl font-bold text-blue-900 flex items-center gap-2">
-                <span>🛠️</span> Nachbarschafts-Werkzeugkiste
-            </h1>
-            <div class="text-xs md:text-sm text-slate-500 hidden sm:block">Teilen, Ausleihen & Nachbarschaft stärken</div>
-        </div>
-
-        <nav class="max-w-4xl mx-auto flex flex-wrap border-t border-slate-200" aria-label="Hauptnavigation">
-            <button id="tab-bibliothek" class="nav-tab active flex-1" onclick="switchTab('bibliothek')" aria-current="page">
-                Verleih-Bibliothek
-            </button>
-            <button id="tab-anbieten" class="nav-tab flex-1" onclick="switchTab('anbieten')">
-                Anbieten
-            </button>
-            <button id="tab-verschenken" class="nav-tab flex-1" onclick="switchTab('verschenken')">
-                Zu Verschenken
-            </button>
-            <button id="tab-ausleihen" class="nav-tab flex-1" onclick="switchTab('ausleihen')">
-                Meine Ausleih- & Schenkanfragen
-            </button>
-            <button id="tab-eintraege" class="nav-tab flex-1" onclick="switchTab('eintraege')">
-                <span id="tab-eintraege-label">Artikelanfragen & Verwalten</span>
-            </button>
-        </nav>
     </header>
 
     <main class="flex-grow max-w-4xl mx-auto w-full p-4 md:p-6 pb-20">
@@ -703,7 +1972,7 @@
                     <p class="text-sm text-slate-500 mt-0.5">Finden Sie Werkzeuge in Ihrer Nachbarschaft zum Ausleihen.</p>
                 </div>
                 <div class="flex items-center gap-2.5 w-full md:w-auto">
-                    <input type="text" id="search-input" oninput="renderLibrary()" placeholder="Werkzeug suchen..." class="border border-slate-300 rounded-lg px-3.5 py-2 text-sm md:text-base w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-900">
+                    <input type="text" id="search-input" oninput="renderLibrary()" placeholder="Werkzeug oder Gegenstand suchen..." class="border border-slate-300 rounded-lg px-3.5 py-2 text-sm md:text-base w-full md:w-[340px] md:flex-none focus:outline-none focus:ring-2 focus:ring-blue-900">
                     <select id="filter-category" onchange="renderLibrary()" class="border border-slate-300 rounded-lg px-3.5 py-2 text-sm md:text-base bg-white focus:outline-none focus:ring-2 focus:ring-blue-900">
                         <option value="">Alle Kategorien</option>
                         <option value="Heimwerken">Heimwerken</option>
@@ -726,7 +1995,7 @@
                 <form id="offer-form" onsubmit="handleOfferSubmit(event)" class="space-y-4.5">
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Titel des Gegenstands *</label>
-                        <input type="text" id="offer-title" required class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="z.B. Bosch Akku-Schrauber">
+                        <input type="text" id="offer-title" maxlength="120" required class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="z.B. Bosch Akku-Schrauber">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
@@ -761,18 +2030,10 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Beschreibung & Zustand</label>
-                        <textarea id="offer-desc" rows="3" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Zustand, Abholort oder Besonderheiten..."></textarea>
+                        <textarea id="offer-desc" rows="3" maxlength="2000" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Zustand, Abholort oder Besonderheiten..."></textarea>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ihr Name / Kontakt (optional)</label>
-                        <input type="text" id="offer-contact" class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="z.B. Andreas (Straße, Haus Nr. 4)">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Ihre E-Mail-Adresse (für Benachrichtigungen) *</label>
-                        <input type="email" id="offer-email" required class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Ihre E-Mail-Adresse eintragen">
-                    </div>
+                    <p class="text-xs text-slate-500">Ihre Kontaktdaten werden nur nach einer Anfrage mit dem jeweiligen Nachbarn geteilt.</p>
 
                     <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg text-base transition-colors shadow-sm">
                         Gegenstand einstellen
@@ -783,9 +2044,14 @@
 
         <!-- 3. Verschenken Tab -->
         <section id="section-verschenken" class="space-y-6 hidden">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold text-slate-800">Zu verschenken & Nachbarschaft stärken</h2>
-                <p class="text-sm text-slate-500 mt-0.5">Dinge, die Sie nicht mehr brauchen, aber zum Verschenken oder Weitergeben bestimmt sind.</p>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Zu verschenken & Nachbarschaft stärken</h2>
+                    <p class="text-sm text-slate-500 mt-0.5">Dinge, die Sie nicht mehr brauchen, aber zum Verschenken oder Weitergeben bestimmt sind.</p>
+                </div>
+                <div class="w-full md:w-auto">
+                    <input type="text" id="giveaway-search-input" oninput="renderGiveaways()" placeholder="Werkzeug oder Gegenstand suchen..." class="border border-slate-300 rounded-lg px-3.5 py-2 text-sm md:text-base w-full md:w-[340px] focus:outline-none focus:ring-2 focus:ring-blue-900">
+                </div>
             </div>
             <div id="giveaway-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
         </section>
@@ -797,10 +2063,6 @@
                     <h2 class="text-xl font-bold text-slate-800">Meine aktiven Ausleihen & Anfragen</h2>
                     <p class="text-sm text-slate-500 mt-0.5">Übersicht aller Werkzeuge, die Sie derzeit angefragt oder geliehen haben.</p>
                 </div>
-                <!--
-                <button onclick="openSwitchUserIdModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition-colors shadow-sm shrink-0 whitespace-nowrap">
-                    ID-Laden
-                </button> -->
             </div>
             <div id="my-borrowed-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
         </section>
@@ -810,12 +2072,18 @@
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h2 id="section-eintraege-title" class="text-xl font-bold text-slate-800">Artikelanfragen & Verwalten</h2>
-                    <p id="section-eintraege-desc" class="text-sm text-slate-500 mt-0.5">Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre ID.</p>
+                    <p id="section-eintraege-desc" class="text-sm text-slate-500 mt-0.5">Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihr Konto.</p>
                 </div>
-                <!--
-                <button onclick="openSwitchUserIdModal()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition-colors shadow-sm shrink-0 whitespace-nowrap">
-                    ID-Laden
-                </button> -->
+                <div id="admin-items-search-container" class="hidden w-full sm:w-auto">
+                    <input
+                        type="search"
+                        id="admin-items-search"
+                        oninput="renderMyItems()"
+                        placeholder="Alle Einträge suchen..."
+                        aria-label="Alle Einträge suchen"
+                        class="border border-slate-300 rounded-lg px-3.5 py-2 text-sm md:text-base w-full sm:w-[340px] focus:outline-none focus:ring-2 focus:ring-blue-900"
+                    >
+                </div>
             </div>
             <div id="my-items-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
         </section>
@@ -823,46 +2091,24 @@
 
 <footer class="bg-white border-t border-slate-200 py-6 px-4 mt-auto">
     <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
-        
-        <!-- Status / Copyright Area -->
-        <div class="text-slate-500 flex items-center gap-2.5 flex-wrap text-center md:text-left">
-            <span>© 2026 Nachbarschafts-Werkzeugkiste</span>
-            <span id="admin-status-badge" class="hidden bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded text-xs">Admin-Modus aktiv</span>
-        </div>
-
         <!-- Admin Action Buttons Area -->
         <div class="flex items-center gap-3 flex-wrap justify-center">
             <button onclick="openAdminContactModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
                 Admin Kontakt
             </button>
-            <button id="admin-auth-btn" onclick="handleAdminAuthClick()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
-                Admin Einloggen
+            <button id="admin-auth-btn" onclick="handleAuthButtonClick()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-xs md:text-sm">
+                Abmelden
             </button>
         </div>
 
+        <!-- Status / Copyright Area -->
+        <div class="text-slate-500 flex items-center gap-2.5 flex-wrap text-center md:text-left">
+            <span class="copyright-text">© 2026 Nachbarschafts-Werkzeugkiste</span>
+            <span id="admin-status-badge" class="hidden bg-amber-100 text-amber-800 font-semibold px-2.5 py-0.5 rounded text-xs">Admin-Modus aktiv</span>
+        </div>
+
     </div>
 
-    <!-- PASTE THE ADMIN PASSWORD CHANGE SECTION HERE (Outside the flex row so it expands full-width or nicely beneath) -->
-    <div id="admin-settings-section" class="max-w-4xl mx-auto mt-6 p-4 bg-slate-50 border border-slate-200 rounded-lg hidden">
-        <h3 class="font-semibold text-slate-700 mb-3">Admin-Einstellungen</h3>
-        <button id="toggle-password-form-btn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-1.5 px-3 rounded text-xs">Passwort ändern</button>
-        
-        <div id="password-change-form" style="display: none; margin-top: 15px;">
-            <div class="mb-3">
-                <label class="block text-xs font-medium text-slate-600 mb-1" for="current-admin-pwd">Aktuelles Passwort:</label>
-                <input class="w-full p-2 border border-slate-300 rounded text-sm" type="password" id="current-admin-pwd" required>
-            </div>
-            <div class="mb-3">
-                <label class="block text-xs font-medium text-slate-600 mb-1" for="new-admin-pwd">Neues Passwort:</label>
-                <input class="w-full p-2 border border-slate-300 rounded text-sm" type="password" id="new-admin-pwd" required>
-            </div>
-            <div class="mb-3">
-                <label class="block text-xs font-medium text-slate-600 mb-1" for="confirm-admin-pwd">Neues Passwort bestätigen:</label>
-                <input class="w-full p-2 border border-slate-300 rounded text-sm" type="password" id="confirm-admin-pwd" required>
-            </div>
-            <button id="save-new-password-btn" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-4 rounded text-xs">Passwort speichern</button>
-        </div>
-    </div>
 </footer>
 
     <!-- Universal Modal -->
@@ -885,32 +2131,25 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+        import {
+            getAuth,
+            createUserWithEmailAndPassword,
+            onAuthStateChanged,
+            signInWithEmailAndPassword,
+            sendPasswordResetEmail,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
         import { 
             getFirestore, 
             collection, 
             doc, 
-            getDoc, 
-            setDoc, 
+            getDoc,
             updateDoc, 
-            deleteDoc,
-            deleteField,
+            writeBatch,
+            query,
+            where,
             onSnapshot, 
-            getDocs 
         } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-        // Email configuration
-        const EMAILJS_SERVICE_ID = 'service_83hht9o';
-        const EMAILJS_TEMPLATE_ID = 'template_9lyyyce';
-
-        // Resend + Brevo are called through Firebase Cloud Functions.
-        // API keys are intentionally NOT stored in this browser file.
-        const EMAIL_FUNCTION_BASE_URL =
-            'https://europe-west3-nachbarschafts-werkzeugkiste.cloudfunctions.net';
-        const RESEND_ID_FUNCTION =
-            `${EMAIL_FUNCTION_BASE_URL}/sendUserIdEmailViaResend`;
-        const BREVO_OWNER_FUNCTION =
-            `${EMAIL_FUNCTION_BASE_URL}/sendOwnerBorrowRequestEmail`;
 
         const firebaseConfig = {
             apiKey: "AIzaSyDUs97-IvWqWCY5VktkzSUJ5j-xgx2sg40",
@@ -927,259 +2166,195 @@
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'nachbarschafts-werkzeugkiste-default';
         let currentUser = null;
-        let activeUserId = '';
         let itemsCache = [];
-        let unsubItems = null;
+        let unsubItems = [];
         let isAdminLoggedIn = false;
 
-        async function callTransactionalEmailFunction(endpoint, payload) {
-            try {
-                if (!currentUser) {
-                    throw new Error("Firebase-Benutzer ist noch nicht angemeldet.");
+        window.onload = () => {
+            onAuthStateChanged(auth, async (user) => {
+                currentUser = user;
+                isAdminLoggedIn = false;
+
+                if (!user) {
+                    unsubItems.forEach(unsubscribe => unsubscribe());
+                    unsubItems = [];
+                    itemsCache = [];
+                    document.getElementById('admin-auth-btn').innerText = "Anmelden";
+                    document.getElementById('admin-status-badge').classList.add('hidden');
+                    updateAdminUIState();
+                    renderAllViews();
+                    showAuthModal();
+                    return;
                 }
 
-                const idToken = await currentUser.getIdToken(true);
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${idToken}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                let data = {};
                 try {
-                    data = await response.json();
-                } catch (_) {}
-
-                if (!response.ok) {
-                    throw new Error(
-                        data.error ||
-                        `E-Mail-Funktion antwortete mit HTTP ${response.status}.`
+                    const token = await user.getIdTokenResult();
+                    isAdminLoggedIn = token.claims.admin === true;
+                } catch (error) {
+                    console.error("Could not load Firebase authorization claims:", error);
+                    showInfoModal(
+                        "Berechtigungen konnten nicht geladen werden",
+                        "Bitte laden Sie die Seite neu. Ihre Anmeldung bleibt bestehen."
                     );
                 }
 
-                return data;
-            } catch (err) {
-                console.error("Transactional email function error:", err);
-                throw err;
-            }
-        }
-
-        async function sendIdViaResend(toEmail, userId) {
-            return callTransactionalEmailFunction(
-                RESEND_ID_FUNCTION,
-                { toEmail, userId }
-            );
-        }
-
-        async function sendOwnerBorrowRequestViaBrevo(itemId, borrowerId) {
-            return callTransactionalEmailFunction(
-                BREVO_OWNER_FUNCTION,
-                { itemId, borrowerId }
-            );
-        }
-
-        function generateCompactUserId() {
-            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const digits = '0123456789';
-            let res = '';
-            for (let i = 0; i < 4; i++) res += letters.charAt(Math.floor(Math.random() * letters.length));
-            for (let i = 0; i < 4; i++) res += digits.charAt(Math.floor(Math.random() * digits.length));
-            return res;
-        }
-
-        function isValidNewFormat(id) {
-            return /^[A-Z]{4}[0-9]{4}$/.test(id);
-        }
-
-        window.onload = async function() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                currentUser = auth.currentUser;
-            } catch (e) {
-                console.error("Firebase auth error:", e);
-            }
-
-            activeUserId = generateCompactUserId();
-
-            initFirestoreListener();
-
-            showWelcomeModal();
+                document.getElementById('modal').classList.add('hidden');
+                document.getElementById('admin-auth-btn').innerText = "Abmelden";
+                document.getElementById('admin-status-badge').classList.toggle(
+                    'hidden',
+                    !isAdminLoggedIn
+                );
+                updateAdminUIState();
+                initFirestoreListener();
+                renderAllViews();
+            });
         };
 
-        // Welcome Modal
-        function showWelcomeModal() {
-            const title = "Wichtiger Hinweis";
-            const msgHtml = `
-                <div class="space-y-3 text-sm md:text-base text-slate-700 leading-relaxed">
-                    <p>Ihre ID lautet: <strong class="text-blue-900">${activeUserId}</strong></p>
-                    
-                    <p class="text-xs text-slate-600 mb-2">Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge einsehen und verwalten können. Aus Sicherheitsgründen ob verknüpfen Sie die oben angezeigte ID mit Ihre E-Mail-Adresse oder notieren bzw. speichern Sie diese gut für das nächste Mal.</p>
-                </div>
-                
-                <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-left my-4 mt-6">
-                    <!-- <p class="font-bold text-blue-900 text-sm mb-1">Ihre ID per E-Mail anfordern:</p> -->
-                    <div class="flex flex-col sm:flex-row gap-2 mt-2">
-                        <input type="email" id="welcome-email-input" placeholder="Ihre E-Mail-Adresse eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-900">
-                        <button onclick="submitWelcomeEmailLink()" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
-                            ID mit E-Mail verknüpfen
+        function showAuthModal(mode = 'signin', errorMessage = '') {
+            const isRegistration = mode === 'register';
+            document.getElementById('modal-title').innerText = isRegistration
+                ? "Konto erstellen"
+                : "Anmelden";
+            document.getElementById('modal-message').innerHTML = `
+                <form id="auth-form" class="space-y-4">
+                    <p class="text-sm text-slate-600">
+                        ${isRegistration
+                            ? 'Erstellen Sie ein Konto, um Werkzeuge anzubieten und Anfragen zu verwalten.'
+                            : 'Melden Sie sich an, um die Nachbarschafts-Werkzeugkiste zu nutzen.'}
+                    </p>
+                    <label class="block text-sm font-medium text-slate-700">
+                        E-Mail-Adresse
+                        <input id="auth-email" type="email" autocomplete="email" required
+                            class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
+                            placeholder="name@beispiel.de">
+                    </label>
+                    <label class="block text-sm font-medium text-slate-700">
+                        Passwort
+                        <input id="auth-password" type="password"
+                            autocomplete="${isRegistration ? 'new-password' : 'current-password'}"
+                            minlength="8" required
+                            class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
+                            placeholder="Mindestens 8 Zeichen">
+                    </label>
+                    ${isRegistration ? `
+                        <label class="block text-sm font-medium text-slate-700">
+                            Passwort wiederholen
+                            <input id="auth-password-confirm" type="password"
+                                autocomplete="new-password" minlength="8" required
+                                class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
+                                placeholder="Passwort erneut eingeben">
+                        </label>
+                    ` : ''}
+                    ${isRegistration ? '' : `
+                        <button type="button" onclick="sendPasswordReset()"
+                            class="block text-sm text-blue-800 underline">
+                            Passwort vergessen?
                         </button>
-                    </div>
-                </div>
-
-                <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-left my-4">
-            <!--    <p class="font-bold text-slate-800 text-sm mb-1">ID-Laden:</p> -->
-                    <p class="text-xs text-slate-600 mb-2">Geben Sie die oben angezeigte ID ein, um einen neuen Account zu starten. Falls Sie bereits eine ID haben, tragen Sie diese ein, um Ihre bestehenden Einträge und Artikelanfragen zu verwalten</p>
-                    <div class="flex flex-col sm:flex-row gap-2 mt-2">
-                        <input type="text" id="welcome-id-input" placeholder="Ihre ID eingeben..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-slate-900 uppercase">
-                        <button onclick="submitWelcomeIdLoad()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
-                            ID-Laden
+                    `}
+                    <p id="auth-error" class="min-h-5 text-sm text-rose-700" role="alert">${escapeHtml(errorMessage)}</p>
+                    <button type="submit"
+                        class="w-full rounded-lg bg-blue-900 px-4 py-2.5 font-semibold text-white hover:bg-blue-800">
+                        ${isRegistration ? 'Konto erstellen' : 'Anmelden'}
+                    </button>
+                    <p class="text-center text-sm text-slate-600">
+                        ${isRegistration
+                            ? 'Bereits registriert?'
+                            : 'Noch kein Konto?'}
+                        <button type="button"
+                            onclick="showAuthModal('${isRegistration ? 'signin' : 'register'}')"
+                            class="font-semibold text-blue-800 underline">
+                            ${isRegistration ? 'Jetzt anmelden' : 'Konto erstellen'}
                         </button>
-                    </div>
-                </div>
-                
-                <!-- ADDED RECOVERY SECTION HERE -->
-                
-        <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-left my-4">
-            <!-- <p class="font-bold text-amber-900 text-sm mb-1">ID Wiederherstellen:</p> -->
-            <p class="text-xs text-slate-600 mb-2">Haben Sie Ihre ID vergessen? Geben Sie hier Ihre verknüpfte E-Mail-Adresse ein, um Ihre ID wiederherzustellen.</p>
-            <div class="flex flex-col sm:flex-row gap-2 mt-2">
-                <input type="email" id="recover-email-input" placeholder="Ihre verknüpfte E-Mail..." class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-amber-900">
-                <button onclick="submitIdRecovery()" class="bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors shrink-0 whitespace-nowrap">
-                    ID Wiederherstellen
-                </button>
-            </div>
-        </div>
-            `;
-            
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-message').innerHTML = msgHtml;
+                    </p>
+                </form>`;
             document.getElementById('modal-confirm-btn').classList.add('hidden');
             document.getElementById('modal-cancel-btn').classList.add('hidden');
             document.getElementById('modal-input-container').classList.add('hidden');
             modalCallback = null;
             document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('auth-form').addEventListener(
+                'submit',
+                event => handleAuthSubmit(event, mode)
+            );
         }
 
-        window.submitWelcomeEmailLink = async function() {
-            const inputEl = document.getElementById('welcome-email-input');
-            const emailVal = inputEl ? inputEl.value.trim() : '';
-            if (!emailVal || !emailVal.includes('@')) {
-                alert("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+        window.showAuthModal = showAuthModal;
+
+        window.sendPasswordReset = async function() {
+            const email = document.getElementById('auth-email').value.trim().toLowerCase();
+            const errorElement = document.getElementById('auth-error');
+            if (!email) {
+                errorElement.textContent = "Bitte geben Sie zuerst Ihre E-Mail-Adresse ein.";
                 return;
-            }
-
-            const success = await processAccountEmailLinking(emailVal);
-            if (success) {
-                document.getElementById('modal').classList.add('hidden');
-                document.getElementById('modal-confirm-btn').classList.remove('hidden');
-                showInfoModal("Erfolg", `Ihre ID wurde erfolgreich generiert und per E-Mail an ${emailVal} gesendet!`);
-                renderAllViews();
-            }
-        };
-
-        window.submitWelcomeIdLoad = async function() {
-            const inputEl = document.getElementById('welcome-id-input');
-            const idVal = inputEl ? inputEl.value.trim().toUpperCase() : '';
-            
-            if (!idVal || idVal.length < 4) {
-                alert("Bitte geben Sie eine gültige ID ein.");
-                return;
-            }
-            
-            activeUserId = idVal;
-            
-            document.getElementById('modal').classList.add('hidden');
-            document.getElementById('modal-confirm-btn').classList.remove('hidden');
-            showInfoModal("Willkommen zurück", `Ihre ID '${activeUserId}' wurde erfolgreich geladen.`);
-            renderAllViews();
-        };
-
-        async function processAccountEmailLinking(emailInput) {
-            const cleanEmail = emailInput.trim().toLowerCase();
-
-            if (!cleanEmail || !cleanEmail.includes('@')) {
-                showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
-                return false;
             }
 
             try {
-                if (db) {
-                    const emailsRef = collection(
-                        db,
-                        'artifacts',
-                        appId,
-                        'public',
-                        'data',
-                        'user_emails'
+                await sendPasswordResetEmail(auth, email);
+                errorElement.textContent =
+                    "Falls ein Konto zu dieser Adresse besteht, erhalten Sie eine E-Mail zum Zurücksetzen des Passworts.";
+            } catch (error) {
+                console.error("Firebase password reset failed:", error);
+                errorElement.textContent = error.code === 'auth/invalid-email'
+                    ? "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+                    : "Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.";
+            }
+        };
+
+        async function handleAuthSubmit(event, mode) {
+            event.preventDefault();
+            const email =
+                document.getElementById('auth-email').value.trim().toLowerCase();
+            const password =
+                document.getElementById('auth-password').value;
+            const confirmPassword =
+                document.getElementById('auth-password-confirm')?.value;
+            const errorElement = document.getElementById('auth-error');
+
+            if (mode === 'register' && password !== confirmPassword) {
+                errorElement.textContent = "Die Passwörter stimmen nicht überein.";
+                return;
+            }
+
+            try {
+                if (mode === 'register') {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    showInfoModal(
+                        "Konto erstellt",
+                        "Sie sind jetzt angemeldet. Neue Einträge werden erst nach der Freigabe durch den Administrator veröffentlicht."
                     );
-
-                    const snap = await getDocs(emailsRef);
-                    let conflictId = null;
-
-                    snap.forEach(d => {
-                        const dat = d.data();
-                        if (
-                            dat.email &&
-                            dat.email.toLowerCase() === cleanEmail &&
-                            dat.userId !== activeUserId
-                        ) {
-                            conflictId = dat.userId;
-                        }
-                    });
-
-                    if (conflictId) {
-                        alert(
-                            "Diese E-Mail-Adresse ist bereits mit einer ID verknüpft. " +
-                            "Bitte nutzen Sie Ihre bereits erhaltene ID oder geben Sie eine andere E-Mail-Adresse ein."
-                        );
-                        return false;
-                    }
-
-                    await setDoc(
-                        doc(
-                            db,
-                            'artifacts',
-                            appId,
-                            'public',
-                            'data',
-                            'user_emails',
-                            activeUserId
-                        ),
-                        {
-                            userId: activeUserId,
-                            email: cleanEmail,
-                            updatedAt: Date.now()
-                        }
-                    );
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
                 }
-
-                const resendResult = await sendIdViaResend(
-                    cleanEmail,
-                    activeUserId
-                );
-
-                if (!resendResult || resendResult.success !== true) {
-                    throw new Error("Die ID konnte über Resend nicht versendet werden.");
-                }
-
-                return true;
-            } catch (err) {
-                console.error("Email linking error:", err);
-                showInfoModal(
-                    "Fehler",
-                    "Die E-Mail-Adresse konnte nicht vollständig verknüpft werden. " +
-                    "Bitte prüfen Sie die Resend-/Firebase-Konfiguration und versuchen Sie es erneut."
-                );
-                return false;
+            } catch (error) {
+                console.error("Firebase authentication failed:", error);
+                const messages = {
+                    'auth/email-already-in-use': "Für diese E-Mail-Adresse besteht bereits ein Konto.",
+                    'auth/invalid-credential': "E-Mail-Adresse oder Passwort ist falsch.",
+                    'auth/invalid-email': "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+                    'auth/weak-password': "Das Passwort muss mindestens 8 Zeichen enthalten.",
+                    'auth/too-many-requests': "Zu viele Versuche. Bitte versuchen Sie es später erneut."
+                };
+                errorElement.textContent =
+                    messages[error.code] || "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.";
             }
         }
+
+        window.handleAuthButtonClick = async function() {
+            if (!currentUser) {
+                showAuthModal();
+                return;
+            }
+
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("Firebase sign-out failed:", error);
+                showInfoModal(
+                    "Abmelden fehlgeschlagen",
+                    "Die Abmeldung konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut."
+                );
+            }
+        };
 
         window.toggleDurationField = function(typeVal) {
             const container = document.getElementById('duration-container');
@@ -1193,21 +2368,63 @@
         };
 
         function initFirestoreListener() {
-            if (!db) return;
+            if (!db || !currentUser) return;
             const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
-            if (unsubItems) unsubItems();
-            unsubItems = onSnapshot(colRef, (snapshot) => {
-                const items = [];
-                snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    data.id = docSnap.id;
-                    items.push(data);
-                });
-                itemsCache = items;
+            unsubItems.forEach(unsubscribe => unsubscribe());
+            const publicItems = new Map();
+            const ownedItems = new Map();
+            const allItems = new Map();
+
+            const renderMergedItems = () => {
+                const merged = isAdminLoggedIn
+                    ? allItems
+                    : new Map([...publicItems, ...ownedItems]);
+                itemsCache = [...merged.values()];
                 renderAllViews();
-            }, (error) => {
-                console.error("Firestore snapshot error:", error);
-            });
+            };
+
+            const listenTo = (itemsQuery, itemMap) => onSnapshot(
+                itemsQuery,
+                snapshot => {
+                    snapshot.docChanges().forEach(change => {
+                        if (change.type === 'removed') {
+                            itemMap.delete(change.doc.id);
+                            return;
+                        }
+                        itemMap.set(change.doc.id, {
+                            ...change.doc.data(),
+                            id: change.doc.id
+                        });
+                    });
+                    renderMergedItems();
+                },
+                error => {
+                    console.error("Firestore item listener failed:", error);
+                    showInfoModal(
+                        "Datenbankfehler",
+                        "Die Einträge konnten nicht geladen werden. Bitte versuchen Sie es später erneut."
+                    );
+                }
+            );
+
+            if (isAdminLoggedIn) {
+                unsubItems = [listenTo(colRef, allItems)];
+            } else {
+                unsubItems = [
+                    listenTo(
+                        query(
+                            colRef,
+                            where('approved', '==', true),
+                            where('publiclyVisible', '==', true)
+                        ),
+                        publicItems
+                    ),
+                    listenTo(
+                        query(colRef, where('ownerId', '==', currentUser.uid)),
+                        ownedItems
+                    )
+                ];
+            }
         }
 
         window.switchTab = function(tabName) {
@@ -1239,15 +2456,22 @@
             const labelEl = document.getElementById('tab-eintraege-label');
             const titleEl = document.getElementById('section-eintraege-title');
             const descEl = document.getElementById('section-eintraege-desc');
+            const searchContainer =
+                document.getElementById('admin-items-search-container');
+            const searchInput =
+                document.getElementById('admin-items-search');
 
             if (isAdminLoggedIn) {
                 if (labelEl) labelEl.innerText = "Alle Einträge";
                 if (titleEl) titleEl.innerText = "Alle eingetragenen Artikel & zu verschenkende Artikel";
                 if (descEl) descEl.innerText = "Übersicht aller im System registrierten Werkzeuge und Gegenstände (Admin-Ansicht).";
+                if (searchContainer) searchContainer.classList.remove('hidden');
             } else {
                 if (labelEl) labelEl.innerText = "Artikelanfragen & Verwalten";
                 if (titleEl) titleEl.innerText = "Artikelanfragen & Verwalten";
-                if (descEl) descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihre ID.";
+                if (descEl) descEl.innerText = "Von Ihnen inserierte Werkzeuge und Gegenstände, verwaltet über Ihr Konto.";
+                if (searchContainer) searchContainer.classList.add('hidden');
+                if (searchInput) searchInput.value = '';
             }
         }
 
@@ -1262,10 +2486,13 @@
 
             const filtered = itemsCache.filter(item => {
                 const matchSearch =
-                    item.title.toLowerCase().includes(search) ||
+                    (item.title || '').toLowerCase().includes(search) ||
                     (item.desc || '').toLowerCase().includes(search);
                 const matchCat = !cat || item.category === cat;
-                const matchType = item.type === 'Ausleihe';
+                const matchType =
+                    item.type === 'Ausleihe' &&
+                    item.approved === true &&
+                    item.publiclyVisible === true;
                 return matchSearch && matchCat && matchType;
             });
 
@@ -1277,14 +2504,14 @@
 
             grid.innerHTML = filtered.map(item => {
                 const maxDays = item.maxDays || '9';
-                const isOwner = item.ownerId === activeUserId;
-                const isBorrower = item.borrowerId === activeUserId;
+                const isOwner = item.ownerId === currentUser?.uid;
+                const isBorrower = item.borrowerId === currentUser?.uid;
 
                 let actionUI = '';
 
                 if (item.status === 'available') {
                     actionUI =
-                        `<button onclick="borrowItem('${item.id}')" class="bg-blue-900 hover:bg-blue-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">Ausleihen</button>`;
+                        `<button onclick="borrowItem('${item.id}')" class="borrow-action-button bg-blue-900 hover:bg-blue-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">Ausleihen</button>`;
                 } else if (item.status === 'requested') {
                     if (isBorrower) {
                         actionUI =
@@ -1318,17 +2545,17 @@
                             </div>
                             <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
                             <p class="text-sm text-slate-600 mb-4 line-clamp-2">${escapeHtml(item.desc || '')}</p>
-                            ${isOwner && item.status === 'requested' ? `
-                                <div class="bg-amber-50 border border-amber-200 text-amber-900 text-xs p-3 rounded mb-3">
-                                    <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Ihr Werkzeug angefragt!</p>
-                                    <p><span class="font-semibold">Entleiher:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
-                                    <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-amber-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
-                                </div>
-                            ` : ''}
                         </div>
                         <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
-                            <span class="text-slate-500 text-xs">Verleiher:<br> ${escapeHtml(item.contact || 'Nachbar')}</span>
-                            ${actionUI}
+                            <span class="text-slate-500 text-xs">Verleiher:<br> Nachbar</span>
+                            <div class="flex items-center gap-2">
+                                ${isBorrower ? `
+                                    <button onclick="showOwnerContact('${item.id}')" class="text-blue-800 underline text-xs">
+                                        Anbieter-Kontakt
+                                    </button>
+                                ` : ''}
+                                ${actionUI}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -1338,7 +2565,17 @@
         window.renderGiveaways = function() {
             const grid = document.getElementById('giveaway-grid');
             if (!grid) return;
-            const filtered = itemsCache.filter(item => item.type === 'Verschenken');
+            const search =
+                (document.getElementById('giveaway-search-input')?.value || '').toLowerCase().trim();
+            const filtered = itemsCache.filter(item =>
+                item.type === 'Verschenken' &&
+                item.approved === true &&
+                item.publiclyVisible === true &&
+                (
+                    (item.title || '').toLowerCase().includes(search) ||
+                    (item.desc || '').toLowerCase().includes(search)
+                )
+            );
 
             if (filtered.length === 0) {
                 grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">Derzeit keine zu verschenkenden Gegenstände.</div>`;
@@ -1346,26 +2583,21 @@
             }
 
             grid.innerHTML = filtered.map(item => {
-                const isOwner = item.ownerId === activeUserId;
+                const isOwner = item.ownerId === currentUser?.uid;
                 return `
                     <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
                         <div>
                             <span class="text-xs font-semibold bg-purple-50 text-purple-900 px-2.5 py-1 rounded mb-2.5 inline-block">${escapeHtml(item.category)}</span>
                             <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
                             <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
-                            ${isOwner && item.status === 'requested' ? `
-                                <div class="bg-purple-50 border border-purple-200 text-purple-900 text-xs p-3 rounded mb-3">
-                                    <p class="font-bold mb-1.5">🔔 Ein Nachbar hat Interesse an Ihrem zu verschenkenden Artikel bekundet!</p>
-                                    <p><span class="font-semibold">Interessent Kontakt:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
-                                    <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:text-purple-700">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
-                                </div>
-                            ` : ''}
                         </div>
                         <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
-                            <span class="text-slate-500 text-xs">${escapeHtml(item.contact || 'Nachbar')}</span>
-                            <button onclick="claimGiveaway('${item.id}')" class="bg-purple-800 hover:bg-purple-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
-                                Abholen / Anfragen
-                            </button>
+                            <span class="text-slate-500 text-xs">Nachbar</span>
+                            ${!isOwner ? `
+                                <button onclick="claimGiveaway('${item.id}')" class="bg-purple-800 hover:bg-purple-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                    Abholen / Anfragen
+                                </button>
+                            ` : '<span class="text-xs text-slate-500">Ihr Eintrag</span>'}
                         </div>
                     </div>
                 `;
@@ -1377,7 +2609,7 @@
             if (!grid) return;
 
             const filtered = itemsCache.filter(item =>
-                item.borrowerId === activeUserId &&
+                item.borrowerId === currentUser?.uid &&
                 ['requested', 'lent', 'return_pending'].includes(item.status)
             );
 
@@ -1445,9 +2677,12 @@
                         <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
                     </div>
                     <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm gap-3">
-                        <span class="text-slate-500 text-xs">Verleiher: ${escapeHtml(item.contact || 'Nachbar')}</span>
+                        <span class="text-slate-500 text-xs">Verleiher: Nachbar</span>
                         ${actionButton}
                     </div>
+                    <button onclick="showOwnerContact('${item.id}')" class="mt-3 text-left text-xs text-blue-800 underline">
+                        Anbieter-Kontakt anzeigen
+                    </button>
                 </div>
                 `;
             }).join('');
@@ -1456,28 +2691,56 @@
         window.renderMyItems = function() {
             const grid = document.getElementById('my-items-grid');
             if (!grid) return;
-            const filtered = itemsCache.filter(item => item.ownerId === activeUserId || isAdminLoggedIn);
+            const search = isAdminLoggedIn
+                ? (document.getElementById('admin-items-search')?.value || '')
+                    .toLowerCase()
+                    .trim()
+                : '';
+            const filtered = itemsCache.filter(item => {
+                const canView = item.ownerId === currentUser?.uid || isAdminLoggedIn;
+                const searchableText = [
+                    item.title,
+                    item.desc,
+                    item.category,
+                    item.type,
+                    item.moderationStatus
+                ].filter(Boolean).join(' ').toLowerCase();
+                return canView && searchableText.includes(search);
+            });
 
             if (filtered.length === 0) {
+                const emptyMessage = search
+                    ? 'Keine Einträge gefunden.'
+                    : isAdminLoggedIn
+                        ? 'Es sind keine Einträge vorhanden.'
+                        : 'Sie haben noch keine Artikel unter Ihrem Konto eingetragen.';
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 p-6">
-                        <p class="text-slate-500 text-sm">Sie haben noch keine Artikel unter Ihrer aktuellen ID eingetragen.</p>
+                        <p class="text-slate-500 text-sm">${emptyMessage}</p>
                     </div>`;
                 return;
             }
 
             grid.innerHTML = filtered.map(item => {
                 const isGiveaway = item.type === 'Verschenken';
-                let statusLabel = 'Verfügbar';
-                let statusColor = 'text-emerald-700 font-semibold';
+                let statusLabel = item.approved === true
+                    ? 'Verfügbar'
+                    : item.moderationStatus === 'rejected'
+                        ? 'Nicht freigegeben'
+                        : 'Wartet auf Admin-Freigabe';
+                let statusColor = item.approved === true
+                    ? 'text-emerald-700 font-semibold'
+                    : item.moderationStatus === 'rejected'
+                        ? 'text-rose-700 font-semibold'
+                        : 'text-amber-700 font-semibold';
 
-                if (item.status === 'requested') {
+                if (item.approved === true && item.status === 'requested') {
                     statusLabel = isGiveaway ? 'Interesse angefragt' : 'Ausleih-Anfrage eingegangen';
                     statusColor = 'text-amber-700 font-semibold';
-                } else if (item.status === 'lent') {
+                } else if (item.approved === true && item.status === 'lent') {
                     statusLabel = 'Verliehen';
                     statusColor = 'text-blue-800 font-semibold';
-                } else if (item.status === 'return_pending') {
+                } else if (item.approved === true && item.status === 'return_pending') {
                     statusLabel = 'Rückgabe wartet auf Bestätigung';
                     statusColor = 'text-purple-700 font-semibold';
                 }
@@ -1492,11 +2755,13 @@
                         <h3 class="font-bold text-slate-800 text-base mb-1.5">${escapeHtml(item.title)}</h3>
                         <p class="text-sm text-slate-600 mb-4">${escapeHtml(item.desc || '')}</p>
 
-                        ${item.status === 'requested' ? `
+                        ${item.approved === true && ['requested', 'lent', 'return_pending'].includes(item.status) ? `
                             <div class="${isGiveaway ? 'bg-purple-50 border-purple-200 text-purple-900' : 'bg-amber-50 border-amber-200 text-amber-900'} border text-xs p-3 rounded mb-3">
-                                <p class="font-bold mb-1.5">🔔 ${isGiveaway ? 'Interesse an Ihrem zu verschenkenden Artikel!' : 'Ausleih-Anfrage eingegangen!'}</p>
-                                <p><span class="font-semibold">Interessent/Entleiher:</span> ${escapeHtml(item.borrowerContact || 'Keine Angabe')}</p>
-                                <p><span class="font-semibold">E-Mail:</span> <a href="mailto:${escapeHtml(item.borrowerEmail || '')}" class="underline hover:opacity-80">${escapeHtml(item.borrowerEmail || 'Keine Angabe')}</a></p>
+                                <p class="font-bold">🔔 ${isGiveaway ? 'Interesse an Ihrem zu verschenkenden Artikel!' : item.status === 'requested' ? 'Ausleih-Anfrage eingegangen!' : 'Ausleihe aktiv'}</p>
+                                <p>Die Kontaktdaten des Interessenten sind geschützt gespeichert.</p>
+                                <button onclick="showRequestContact('${item.id}')" class="mt-2 underline font-semibold">
+                                    Kontaktdaten des Interessenten anzeigen
+                                </button>
                             </div>
                         ` : ''}
                     </div>
@@ -1504,26 +2769,43 @@
                     <div class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-sm">
                         <span class="text-xs ${statusColor}">${statusLabel}</span>
 
-                        <div class="flex gap-2">
-                            ${item.status === 'requested' && isGiveaway ? `
+                        <div class="flex flex-wrap justify-end gap-2">
+                            ${isAdminLoggedIn && item.approved !== true ? `
+                                <button onclick="approveItem('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                    Freigeben
+                                </button>
+                                ${item.moderationStatus !== 'rejected' ? `
+                                    <button onclick="rejectItem('${item.id}')" class="bg-amber-700 hover:bg-amber-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                        Ablehnen
+                                    </button>
+                                ` : ''}
+                            ` : ''}
+
+                            ${item.approved === true && item.status === 'requested' && isGiveaway ? `
                                 <button onclick="completeGiveaway('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
                                     Übergeben & Abschließen
                                 </button>
                             ` : ''}
 
-                            ${item.status === 'requested' && !isGiveaway ? `
-                                <button onclick="lendItem('${item.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                            ${item.approved === true && item.status === 'requested' && !isGiveaway ? `
+                                <button onclick="lendItem('${item.id}')" class="lend-confirm-button bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
                                     Verleihen Bestätigen
                                 </button>
                             ` : ''}
 
-                            ${item.status === 'return_pending' ? `
+                            ${item.approved === true && item.status === 'requested' ? `
+                                <button onclick="declineRequest('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
+                                    Ablehnen
+                                </button>
+                            ` : ''}
+
+                            ${item.approved === true && item.status === 'return_pending' ? `
                                 <button onclick="confirmReturn('${item.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-1.5 px-3.5 rounded text-sm shadow transition-colors">
                                     Empfang Bestätigen
                                 </button>
                             ` : ''}
 
-                            ${item.status === 'available' ? `
+                            ${(item.status === 'available' && item.ownerId === currentUser?.uid) || isAdminLoggedIn ? `
                                 <button onclick="deleteMyItem('${item.id}')" class="bg-rose-700 hover:bg-rose-800 text-white font-medium py-1.5 px-3.5 rounded text-sm transition-colors">
                                     Löschen
                                 </button>
@@ -1537,13 +2819,16 @@
 
         window.handleOfferSubmit = async function(e) {
             e.preventDefault();
+            if (!currentUser) {
+                showAuthModal();
+                return;
+            }
+
             const title = document.getElementById('offer-title').value.trim();
             const category = document.getElementById('offer-category').value;
             const type = document.getElementById('offer-type').value;
             const maxDays = type === 'Ausleihe' ? document.getElementById('offer-max-days').value : '0';
             const desc = document.getElementById('offer-desc').value.trim();
-            const contact = document.getElementById('offer-contact').value.trim() || 'Nachbar';
-            const ownerEmail = document.getElementById('offer-email').value.trim();
 
             const newItem = {
                 title,
@@ -1551,13 +2836,12 @@
                 type,
                 maxDays,
                 desc,
-                contact,
-                ownerEmail,
+                approved: false,
+                publiclyVisible: false,
+                moderationStatus: 'pending',
                 status: 'available',
-                ownerId: activeUserId,
+                ownerId: currentUser.uid,
                 borrowerId: '',
-                borrowerContact: '',
-                borrowerEmail: '',
                 borrowedAt: null,
                 lentAt: null,
                 createdAt: Date.now()
@@ -1568,37 +2852,115 @@
                     const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
                     const newDocRef = doc(colRef);
                     newItem.id = newDocRef.id;
-                    await setDoc(newDocRef, newItem);
+                    const privateRef = doc(
+                        db,
+                        'artifacts',
+                        appId,
+                        'public',
+                        'data',
+                        'item_private',
+                        newDocRef.id
+                    );
+                    const batch = writeBatch(db);
+                    batch.set(newDocRef, newItem);
+                    batch.set(privateRef, {
+                        ownerId: currentUser.uid,
+                        ownerEmail: currentUser.email,
+                        createdAt: Date.now()
+                    });
+                    await batch.commit();
                 }
                 document.getElementById('offer-form').reset();
-                switchTab('bibliothek');
-                showInfoModal("Erfolg", "Ihr Gegenstand wurde erfolgreich eingetragen!");
+                switchTab('eintraege');
+                showInfoModal(
+                    "Zur Prüfung eingereicht",
+                    "Ihr Eintrag wird nach der Freigabe durch den Administrator in der Verleih-Bibliothek bzw. unter „Zu verschenken“ angezeigt."
+                );
             } catch (err) {
                 console.error("Error adding item:", err);
                 showInfoModal("Fehler", "Gegenstand konnte nicht gespeichert werden.");
             }
         };
 
-        // Benachrichtigung des Besitzers: Die Brevo-API wird serverseitig aufgerufen.
-        window.handleBorrowerRequest = async function(itemId, borrowerId) {
+        window.showRequestContact = async function(id) {
+            const item = itemsCache.find(candidate => candidate.id === id);
+            if (
+                !item ||
+                !['requested', 'lent', 'return_pending'].includes(item.status) ||
+                (!isAdminLoggedIn && item.ownerId !== currentUser?.uid)
+            ) return;
+
             try {
-                const result = await sendOwnerBorrowRequestViaBrevo(itemId, borrowerId);
-                return !!(result && result.success === true);
-            } catch (err) {
-                console.error("Brevo owner notification error:", err);
-                return false;
+                const requestSnapshot = await getDoc(doc(
+                    db,
+                    'artifacts', appId, 'public', 'data',
+                    'item_private', id, 'requests', item.borrowerId
+                ));
+                if (!requestSnapshot.exists()) {
+                    showInfoModal("Kontaktdaten nicht verfügbar", "Für diese Anfrage wurden keine geschützten Kontaktdaten gefunden.");
+                    return;
+                }
+
+                const request = requestSnapshot.data();
+                showInfoModal(
+                    "Kontaktdaten des Interessenten",
+                    `<p>${escapeHtml(request.contact || 'Keine Angabe')}</p>
+                    <p>E-Mail: <a class="underline" href="mailto:${escapeHtml(request.email || '')}">${escapeHtml(request.email || 'Keine Angabe')}</a></p>`
+                );
+            } catch (error) {
+                console.error("Could not load private request contact:", error);
+                showInfoModal("Fehler", "Die Kontaktdaten konnten nicht geladen werden.");
+            }
+        };
+
+        window.showOwnerContact = async function(id) {
+            const item = itemsCache.find(candidate => candidate.id === id);
+            if (
+                !item ||
+                item.borrowerId !== currentUser?.uid ||
+                !['requested', 'lent', 'return_pending'].includes(item.status)
+            ) return;
+
+            try {
+                const privateSnapshot = await getDoc(doc(
+                    db, 'artifacts', appId, 'public', 'data', 'item_private', id
+                ));
+                if (!privateSnapshot.exists()) {
+                    showInfoModal("Kontaktdaten nicht verfügbar", "Für diesen Eintrag wurden keine geschützten Anbieterdaten gefunden.");
+                    return;
+                }
+
+                const ownerEmail = privateSnapshot.data().ownerEmail;
+                showInfoModal(
+                    "Kontaktdaten des Anbieters",
+                    `<p>E-Mail: <a class="underline" href="mailto:${escapeHtml(ownerEmail || '')}">${escapeHtml(ownerEmail || 'Keine Angabe')}</a></p>`
+                );
+            } catch (error) {
+                console.error("Could not load private owner contact:", error);
+                showInfoModal("Fehler", "Die Anbieterdaten konnten nicht geladen werden.");
             }
         };
 
         window.borrowItem = function(id) {
             const item = itemsCache.find(i => i.id === id);
-            if (!item || item.status !== 'available') return;
+            if (!currentUser) {
+                showAuthModal();
+                return;
+            }
+            if (
+                !item ||
+                item.approved !== true ||
+                item.publiclyVisible !== true ||
+                item.status !== 'available' ||
+                item.ownerId === currentUser.uid
+            ) return;
 
-            openRequestModal("Werkzeug ausleihen", async (reqContact, reqEmail) => {
-                if (!reqContact || !reqEmail) {
+            openRequestModal("Werkzeug ausleihen", async reqContact => {
+                const contact = reqContact.trim();
+                if (!contact) {
                     showInfoModal(
                         "Fehler",
-                        "Bitte füllen Sie beide Felder aus (Name/Adresse & E-Mail)."
+                        "Bitte geben Sie Ihren Namen oder eine Kontaktmöglichkeit ein."
                     );
                     return;
                 }
@@ -1607,47 +2969,36 @@
 
                 try {
                     if (db) {
-                        await updateDoc(
-                            doc(
-                                db,
-                                'artifacts',
-                                appId,
-                                'public',
-                                'data',
-                                'items',
-                                id
-                            ),
-                            {
-                                status: 'requested',
-                                borrowerId: activeUserId,
-                                borrowedAt: now,
-                                borrowerContact: reqContact,
-                                borrowerEmail: reqEmail
-                            }
+                        const itemRef = doc(
+                            db, 'artifacts', appId, 'public', 'data', 'items', id
                         );
+                        const privateRequestRef = doc(
+                            db, 'artifacts', appId, 'public', 'data',
+                            'item_private', id, 'requests', currentUser.uid
+                        );
+                        const batch = writeBatch(db);
+                        batch.update(itemRef, {
+                            status: 'requested',
+                            borrowerId: currentUser.uid,
+                            borrowedAt: now
+                        });
+                        batch.set(privateRequestRef, {
+                            borrowerId: currentUser.uid,
+                            contact,
+                            email: currentUser.email,
+                            createdAt: now
+                        });
+                        await batch.commit();
                     }
 
                     item.status = 'requested';
-                    item.borrowerId = activeUserId;
+                    item.borrowerId = currentUser.uid;
                     item.borrowedAt = now;
-                    item.borrowerContact = reqContact;
-                    item.borrowerEmail = reqEmail;
 
-                    // Send the owner notification immediately after "Anfragen" saves the request.
-                    const ownerNotified =
-                        await handleBorrowerRequest(item.id, activeUserId);
-
-                    if (ownerNotified) {
-                        showInfoModal(
-                            "Ausleih-Anfrage gesendet",
-                            "Ihre Anfrage wurde gespeichert. Der Besitzer wurde per Brevo an seine hinterlegte E-Mail-Adresse benachrichtigt. Der Gegenstand ist noch nicht geliehen."
-                        );
-                    } else {
-                        showInfoModal(
-                            "Anfrage gespeichert",
-                            "Ihre Anfrage wurde gespeichert, aber die Benachrichtigung an den Besitzer konnte nicht gesendet werden. Der Gegenstand ist noch nicht geliehen."
-                        );
-                    }
+                    showInfoModal(
+                        "Anfrage gespeichert",
+                        "Ihre Anfrage wurde gespeichert. Der Anbieter sieht die geschützten Kontaktdaten in seiner Eintragsverwaltung. Der Gegenstand ist noch nicht geliehen."
+                    );
 
                     renderAllViews();
                 } catch (err) {
@@ -1662,7 +3013,7 @@
 
         window.returnItem = async function(id) {
             const item = itemsCache.find(i => i.id === id);
-            if (!item || item.borrowerId !== activeUserId || item.status !== 'lent') return;
+            if (!item || item.borrowerId !== currentUser?.uid || item.status !== 'lent') return;
 
             try {
                 if (db) {
@@ -1682,32 +3033,53 @@
 
         window.claimGiveaway = function(id) {
             const item = itemsCache.find(i => i.id === id);
-            if (!item || item.type !== 'Verschenken' || item.status !== 'available') return;
+            if (!currentUser) {
+                showAuthModal();
+                return;
+            }
+            if (
+                !item ||
+                item.approved !== true ||
+                item.publiclyVisible !== true ||
+                item.type !== 'Verschenken' ||
+                item.status !== 'available'
+            ) return;
 
-            openRequestModal("Gegenstand abholen", async (reqContact, reqEmail) => {
-                if (!reqContact || !reqEmail) {
-                    showInfoModal("Fehler", "Bitte füllen Sie beide Felder aus (Name/Adresse & E-Mail).");
+            openRequestModal("Gegenstand abholen", async reqContact => {
+                const contact = reqContact.trim();
+                if (!contact) {
+                    showInfoModal("Fehler", "Bitte geben Sie Ihren Namen oder eine Kontaktmöglichkeit ein.");
                     return;
                 }
 
                 try {
                     if (db) {
-                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
+                        const itemRef = doc(
+                            db, 'artifacts', appId, 'public', 'data', 'items', id
+                        );
+                        const privateRequestRef = doc(
+                            db, 'artifacts', appId, 'public', 'data',
+                            'item_private', id, 'requests', currentUser.uid
+                        );
+                        const batch = writeBatch(db);
+                        batch.update(itemRef, {
                             status: 'requested',
-                            borrowerId: activeUserId,
-                            borrowerContact: reqContact,
-                            borrowerEmail: reqEmail
+                            borrowerId: currentUser.uid,
+                            borrowedAt: Date.now(),
                         });
+                        batch.set(privateRequestRef, {
+                            borrowerId: currentUser.uid,
+                            contact,
+                            email: currentUser.email,
+                            createdAt: Date.now()
+                        });
+                        await batch.commit();
                     }
 
                     item.status = 'requested';
-                    item.borrowerId = activeUserId;
-                    item.borrowerContact = reqContact;
-                    item.borrowerEmail = reqEmail;
+                    item.borrowerId = currentUser.uid;
 
-                    await handleBorrowerRequest(item.id, activeUserId);
-
-                    showInfoModal("Abholhinweis", "Der Besitzer wurde über Ihr Interesse informiert. Nach der Übergabe kann er den Artikel abschließen; dann wird er automatisch aus der Datenbank gelöscht.");
+                    showInfoModal("Abholhinweis", "Ihre Anfrage wurde gespeichert. Der Anbieter sieht die geschützten Kontaktdaten in seiner Eintragsverwaltung. Nach der Übergabe kann er den Artikel abschließen.");
                     renderAllViews();
                 } catch(e) {
                     console.error("Giveaway request error:", e);
@@ -1716,21 +3088,159 @@
             });
         };
 
+        async function deleteItemAndPrivateData(item) {
+            const privateRef = doc(
+                db, 'artifacts', appId, 'public', 'data', 'item_private', item.id
+            );
+            const privateSnapshot = await getDoc(privateRef);
+            let requestRef = null;
+            let requestSnapshot = null;
+
+            if (item.borrowerId) {
+                requestRef = doc(
+                    db,
+                    'artifacts', appId, 'public', 'data',
+                    'item_private', item.id, 'requests', item.borrowerId
+                );
+                requestSnapshot = await getDoc(requestRef);
+            }
+
+            const batch = writeBatch(db);
+            batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'items', item.id));
+            if (privateSnapshot.exists()) batch.delete(privateRef);
+            if (requestRef && requestSnapshot?.exists()) batch.delete(requestRef);
+            await batch.commit();
+        }
+
         window.deleteMyItem = async function(id) {
             const item = itemsCache.find(i => i.id === id);
             if (!item) return;
-            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+            if (item.ownerId !== currentUser?.uid && !isAdminLoggedIn) return;
+            if (
+                isAdminLoggedIn &&
+                item.status !== 'available' &&
+                !confirm(`Möchten Sie „${item.title}“ trotz des aktuellen Status dauerhaft löschen?`)
+            ) {
+                return;
+            }
 
             try {
-                if (db) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id));
-                }
+                await deleteItemAndPrivateData(item);
                 itemsCache = itemsCache.filter(i => i.id !== id);
                 renderAllViews();
-                showInfoModal("Gelöscht", "Ihr Artikel wurde aus der Datenbank entfernt.");
+                showInfoModal("Gelöscht", "Der Artikel wurde aus der Datenbank entfernt.");
             } catch (err) {
                 console.error("Error deleting item:", err);
                 showInfoModal("Fehler", "Der Artikel konnte nicht gelöscht werden.");
+            }
+        };
+
+        window.approveItem = async function(id) {
+            const item = itemsCache.find(candidate => candidate.id === id);
+            if (!isAdminLoggedIn || !item || item.approved === true) return;
+
+            try {
+                const ownerData = await getDoc(doc(
+                    db, 'artifacts', appId, 'public', 'data', 'item_private', id
+                ));
+                if (!item.ownerId || !ownerData.exists() || ownerData.data().ownerId !== item.ownerId) {
+                    showInfoModal(
+                        "Altbestand kann nicht freigegeben werden",
+                        "Dieser Eintrag stammt aus dem früheren ID-System und ist keinem Firebase-Konto sicher zugeordnet. Bitte löschen Sie ihn; der Eigentümer kann ihn nach der Anmeldung erneut einstellen."
+                    );
+                    return;
+                }
+
+                await updateDoc(
+                    doc(db, 'artifacts', appId, 'public', 'data', 'items', id),
+                    {
+                        approved: true,
+                        publiclyVisible: true,
+                        moderationStatus: 'approved',
+                        approvedAt: Date.now(),
+                        approvedBy: currentUser.uid
+                    }
+                );
+                showInfoModal(
+                    "Eintrag freigegeben",
+                    "Der Eintrag ist jetzt für angemeldete Nutzer sichtbar."
+                );
+            } catch (error) {
+                console.error("Could not approve item:", error);
+                showInfoModal(
+                    "Fehler",
+                    "Der Eintrag konnte nicht freigegeben werden."
+                );
+            }
+        };
+
+        window.rejectItem = async function(id) {
+            const item = itemsCache.find(candidate => candidate.id === id);
+            if (!isAdminLoggedIn || !item || item.approved === true) return;
+
+            try {
+                await updateDoc(
+                    doc(db, 'artifacts', appId, 'public', 'data', 'items', id),
+                    {
+                        publiclyVisible: false,
+                        moderationStatus: 'rejected',
+                        rejectedAt: Date.now(),
+                        rejectedBy: currentUser.uid
+                    }
+                );
+                showInfoModal(
+                    "Eintrag abgelehnt",
+                    "Der Eintrag bleibt für Nutzer verborgen. Er kann weiterhin gelöscht oder erneut geprüft werden."
+                );
+            } catch (error) {
+                console.error("Could not reject item:", error);
+                showInfoModal(
+                    "Fehler",
+                    "Der Eintrag konnte nicht abgelehnt werden."
+                );
+            }
+        };
+
+        window.declineRequest = async function(id) {
+            const item = itemsCache.find(i => i.id === id);
+            if (!item || item.status !== 'requested') return;
+            if (item.ownerId !== currentUser?.uid && !isAdminLoggedIn) return;
+
+            if (!confirm("Möchten Sie diese Anfrage ablehnen? Der Artikel wird danach wieder für andere Nachbarn verfügbar.")) {
+                return;
+            }
+
+            try {
+                if (db) {
+                    const batch = writeBatch(db);
+                    batch.update(
+                        doc(db, 'artifacts', appId, 'public', 'data', 'items', id),
+                        {
+                            status: 'available',
+                            borrowerId: '',
+                            borrowedAt: null,
+                            lentAt: null
+                        }
+                    );
+                    batch.delete(doc(
+                        db,
+                        'artifacts', appId, 'public', 'data',
+                        'item_private', id, 'requests', item.borrowerId
+                    ));
+                    await batch.commit();
+                }
+
+                Object.assign(item, {
+                    status: 'available',
+                    borrowerId: '',
+                    borrowedAt: null,
+                    lentAt: null
+                });
+                renderAllViews();
+                showInfoModal("Anfrage abgelehnt", "Die Anfrage wurde abgelehnt. Der Artikel ist nun wieder für andere Nachbarn verfügbar.");
+            } catch (err) {
+                console.error("Error declining request:", err);
+                showInfoModal("Fehler", "Die Anfrage konnte nicht abgelehnt werden.");
             }
         };
 
@@ -1738,7 +3248,7 @@
         window.completeGiveaway = async function(id) {
             const item = itemsCache.find(i => i.id === id);
             if (!item || item.type !== 'Verschenken') return;
-            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+            if (item.ownerId !== currentUser?.uid && !isAdminLoggedIn) return;
             if (item.status !== 'requested') return;
 
             if (!confirm("Möchten Sie diesen zu verschenkenden Artikel als übergeben abschließen? Danach wird er dauerhaft aus der Liste und Datenbank entfernt.")) {
@@ -1746,9 +3256,7 @@
             }
 
             try {
-                if (db) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id));
-                }
+                await deleteItemAndPrivateData(item);
                 itemsCache = itemsCache.filter(i => i.id !== id);
                 renderAllViews();
                 showInfoModal("Erfolgreich übergeben", "Der Artikel wurde als übergeben abgeschlossen und automatisch aus der Werkzeugkiste entfernt.");
@@ -1762,7 +3270,7 @@
         window.lendItem = async function(id) {
             const item = itemsCache.find(i => i.id === id);
             if (!item || item.type !== 'Ausleihe' || item.status !== 'requested') return;
-            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+            if (item.ownerId !== currentUser?.uid && !isAdminLoggedIn) return;
 
             const now = Date.now();
 
@@ -1788,26 +3296,32 @@
         window.confirmReturn = async function(id) {
             const item = itemsCache.find(i => i.id === id);
             if (!item || item.status !== 'return_pending') return;
-            if (item.ownerId !== activeUserId && !isAdminLoggedIn) return;
+            if (item.ownerId !== currentUser?.uid && !isAdminLoggedIn) return;
 
             try {
                 if (db) {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'items', id), {
-                        status: 'available',
-                        borrowerId: '',
-                        borrowedAt: null,
-                        lentAt: null,
-                        borrowerContact: '',
-                        borrowerEmail: ''
-                    });
+                    const batch = writeBatch(db);
+                    batch.update(
+                        doc(db, 'artifacts', appId, 'public', 'data', 'items', id),
+                        {
+                            status: 'available',
+                            borrowerId: '',
+                            borrowedAt: null,
+                            lentAt: null
+                        }
+                    );
+                    batch.delete(doc(
+                        db,
+                        'artifacts', appId, 'public', 'data',
+                        'item_private', id, 'requests', item.borrowerId
+                    ));
+                    await batch.commit();
                 }
 
                 item.status = 'available';
                 item.borrowerId = '';
                 item.borrowedAt = null;
                 item.lentAt = null;
-                item.borrowerContact = '';
-                item.borrowerEmail = '';
 
                 showInfoModal("Rückgabe bestätigt", "Das Werkzeug ist nun wieder in der Bibliothek verfügbar.");
                 renderAllViews();
@@ -1817,429 +3331,11 @@
             }
         };
 
-        window.openSwitchUserIdModal = function() {
-            openCustomModal("ID Laden", 
-                "Geben Sie Ihr ID ein:", 
-                true, "z.B. ABCD1234", (inputVal) => {
-                    const cleanId = (inputVal || '').trim().toUpperCase();
-                    if (!cleanId || cleanId.length < 4) {
-                        showInfoModal("Fehler", "Bitte geben Sie eine gültige ID ein.");
-                        return;
-                    }
-                    activeUserId = cleanId;
-                    renderAllViews();
-                    showInfoModal("ID Geladen", `Sie sind mit '${activeUserId}' verbunden.`);
-                }, 'text', 'ID Laden');
-        };
-
-        async function recoverIdByEmail(emailInput) {
-            const cleanEmail = (emailInput || '').trim().toLowerCase();
-
-            if (!cleanEmail || !cleanEmail.includes('@')) {
-                showInfoModal("Fehler", "Bitte geben Sie eine gültige E-Mail-Adresse ein.");
-                return false;
-            }
-
-            try {
-                let foundId = null;
-
-                if (db) {
-                    const emailsRef = collection(
-                        db,
-                        'artifacts',
-                        appId,
-                        'public',
-                        'data',
-                        'user_emails'
-                    );
-                    const snap = await getDocs(emailsRef);
-
-                    snap.forEach(d => {
-                        const dat = d.data();
-                        if (
-                            dat.email &&
-                            dat.email.toLowerCase() === cleanEmail
-                        ) {
-                            foundId = dat.userId;
-                        }
-                    });
-                }
-
-                if (!foundId) {
-                    showInfoModal(
-                        "Nicht gefunden",
-                        "Unter dieser E-Mail-Adresse wurde keine verknüpfte Konto-ID gefunden."
-                    );
-                    return false;
-                }
-
-                activeUserId = foundId;
-                sessionStorage.setItem('nb_session_user_id', activeUserId);
-                updateUserIdDisplays();
-                renderAllViews();
-
-                const recoveryMessage = [
-                    "Hallo!",
-                    "",
-                    `Ihre wiederhergestellte Konto-ID lautet: ${foundId}`,
-                    "",
-                    "Diese ID ist der Schlüssel, über den Sie Ihre Ausleihen und Einträge verwalten können.",
-                    "",
-                    "Viele Grüße",
-                    "Nachbarschafts-Werkzeugkiste"
-                ].join("\n");
-
-                try {
-                    await emailjs.send(
-                        EMAILJS_SERVICE_ID,
-                        EMAILJS_TEMPLATE_ID,
-                        {
-                            to_email: cleanEmail,
-                            user_id: foundId,
-                            subject: 'Ihre wiederhergestellte ID',
-                            message: recoveryMessage
-                        }
-                    );
-
-                    showInfoModal(
-                        "Wiederhergestellt",
-                        `Ihre ID wurde gefunden, geladen und erneut per E-Mail an ${cleanEmail} gesendet.`
-                    );
-                    return true;
-                } catch (emailJsError) {
-                    console.error(
-                        "EmailJS recovery send error:",
-                        emailJsError
-                    );
-                    showInfoModal(
-                        "Wiederhergestellt",
-                        "Ihre ID wurde gefunden und geladen, aber die E-Mail konnte über EmailJS nicht gesendet werden. Bitte prüfen Sie die EmailJS-Konfiguration."
-                    );
-                    return false;
-                }
-            } catch (err) {
-                console.error("Recovery error:", err);
-                showInfoModal(
-                    "Fehler",
-                    "Wiederherstellung fehlgeschlagen. Bitte versuchen Sie es erneut."
-                );
-                return false;
-            }
-        }
-
-        window.submitIdRecovery = async function() {
-            const inputEl = document.getElementById('recover-email-input');
-            const cleanEmail = inputEl ? inputEl.value.trim().toLowerCase() : '';
-
-            if (!cleanEmail || !cleanEmail.includes('@')) {
-                alert("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
-                return;
-            }
-
-            await recoverIdByEmail(cleanEmail);
-        };
-
-        window.openRecoverIdModal = function() {
-            openCustomModal(
-                "ID wiederherstellen",
-                "Geben Sie Ihre verknüpfte E-Mail-Adresse ein. Ihre Konto-ID wird anschließend über EmailJS erneut an diese Adresse gesendet.",
-                true,
-                "Ihre verknüpfte E-Mail-Adresse...",
-                async (emailInput) => {
-                    await recoverIdByEmail(emailInput);
-                },
-                'email',
-                'Wiederherstellen'
-            );
-        };
-
         window.openAdminContactModal = function() {
             showInfoModal(
                 "Admin Kontakt",
                 "E-Mail: <a href='mailto:noumanahmad1987@gmail.com' class='text-blue-600 underline'>noumanahmad1987@gmail.com</a>"
             );
-        };
-
-        async function hashAdminPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode((password || '').trim());
-            const buffer = await crypto.subtle.digest('SHA-256', data);
-
-            return Array.from(new Uint8Array(buffer))
-                .map(byte => byte.toString(16).padStart(2, '0'))
-                .join('');
-        }
-
-        function getLegacyAdminPasswordField(data) {
-            const preferred = Object.keys(data || {}).find(key =>
-                /password|passwort|pwd/i.test(key) &&
-                typeof data[key] === 'string'
-            );
-
-            if (preferred) return preferred;
-
-            return Object.keys(data || {}).find(key =>
-                typeof data[key] === 'string' &&
-                key !== 'adminPasswordHash'
-            ) || null;
-        }
-
-        async function verifyAndLoadAdminPassword(configRef, configData, enteredPassword) {
-            const entered = (enteredPassword || '').trim();
-
-            if (configData.adminPasswordHash) {
-                return (
-                    await hashAdminPassword(entered)
-                ) === String(configData.adminPasswordHash).trim();
-            }
-
-            const legacyField = getLegacyAdminPasswordField(configData);
-            const legacyPassword = legacyField
-                ? String(configData[legacyField] || '').trim()
-                : '';
-
-            if (entered && legacyPassword && entered === legacyPassword) {
-                // Migrate an older plaintext admin password to a SHA-256 hash.
-                try {
-                    const migrationUpdates = {
-                        adminPasswordHash: await hashAdminPassword(entered),
-                        passwordMigratedAt: Date.now()
-                    };
-
-                    if (legacyField) {
-                        migrationUpdates[legacyField] = deleteField();
-                    }
-
-                    await updateDoc(configRef, migrationUpdates);
-                } catch (migrationError) {
-                    console.warn(
-                        "Admin password migration could not be completed:",
-                        migrationError
-                    );
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        window.openAdminPasswordChangeModal = function() {
-            document.getElementById('modal').classList.add('hidden');
-
-            document.getElementById('modal-title').innerText =
-                "Admin-Passwort ändern";
-
-            document.getElementById('modal-message').innerHTML = `
-                <div class="space-y-3">
-                    <p class="text-sm text-slate-700">
-                        Geben Sie zuerst Ihr aktuelles Admin-Passwort ein und anschließend das neue Passwort.
-                    </p>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">
-                            Aktuelles Passwort
-                        </label>
-                        <input type="password" id="modal-admin-current-pwd"
-                               class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none"
-                               placeholder="Aktuelles Passwort">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">
-                            Neues Passwort
-                        </label>
-                        <input type="password" id="modal-admin-new-pwd"
-                               class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none"
-                               placeholder="Neues Passwort">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">
-                            Neues Passwort bestätigen
-                        </label>
-                        <input type="password" id="modal-admin-confirm-pwd"
-                               class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none"
-                               placeholder="Neues Passwort bestätigen">
-                    </div>
-
-                    <p class="text-xs text-slate-500">
-                        Das neue Passwort wird nach erfolgreicher Prüfung als Hash gespeichert.
-                    </p>
-                </div>
-            `;
-
-            document.getElementById('modal-confirm-btn').innerText =
-                "Passwort speichern";
-            document.getElementById('modal-confirm-btn').classList.remove('hidden');
-            document.getElementById('modal-cancel-btn').classList.remove('hidden');
-            document.getElementById('modal-input-container').classList.add('hidden');
-            document.getElementById('modal-eye-btn').classList.add('hidden');
-
-            modalCallback = async () => {
-                const currentPwd =
-                    document.getElementById('modal-admin-current-pwd')?.value.trim() || '';
-                const newPwd =
-                    document.getElementById('modal-admin-new-pwd')?.value.trim() || '';
-                const confirmPwd =
-                    document.getElementById('modal-admin-confirm-pwd')?.value.trim() || '';
-
-                if (!currentPwd || !newPwd || !confirmPwd) {
-                    showInfoModal("Fehler", "Bitte füllen Sie alle Passwortfelder aus.");
-                    return;
-                }
-
-                if (newPwd.length < 8) {
-                    showInfoModal(
-                        "Fehler",
-                        "Das neue Passwort muss mindestens 8 Zeichen lang sein."
-                    );
-                    return;
-                }
-
-                if (newPwd !== confirmPwd) {
-                    showInfoModal(
-                        "Fehler",
-                        "Die neuen Passwörter stimmen nicht überein."
-                    );
-                    return;
-                }
-
-                try {
-                    const configRef =
-                        doc(db, 'app_config', 'admin_settings');
-                    const configSnap = await getDoc(configRef);
-
-                    if (!configSnap.exists()) {
-                        showInfoModal(
-                            "Fehler",
-                            "Die Admin-Einstellungen wurden nicht gefunden."
-                        );
-                        return;
-                    }
-
-                    const configData = configSnap.data();
-
-                    const verified =
-                        await verifyAndLoadAdminPassword(
-                            configRef,
-                            configData,
-                            currentPwd
-                        );
-
-                    if (!verified) {
-                        showInfoModal(
-                            "Fehler",
-                            "Das aktuelle Admin-Passwort ist falsch."
-                        );
-                        return;
-                    }
-
-                    const updates = {
-                        adminPasswordHash: await hashAdminPassword(newPwd),
-                        passwordChangedAt: Date.now()
-                    };
-
-                    Object.keys(configData).forEach(key => {
-                        if (
-                            /password|passwort|pwd/i.test(key) &&
-                            key !== 'adminPasswordHash'
-                        ) {
-                            updates[key] = deleteField();
-                        }
-                    });
-
-                    await updateDoc(configRef, updates);
-
-                    showInfoModal(
-                        "Passwort geändert",
-                        "Das Admin-Passwort wurde erfolgreich geändert. Verwenden Sie beim nächsten Admin-Login das neue Passwort."
-                    );
-                } catch (err) {
-                    console.error("Admin password change error:", err);
-                    showInfoModal(
-                        "Fehler",
-                        "Das Admin-Passwort konnte nicht geändert werden."
-                    );
-                }
-            };
-
-            document.getElementById('modal').classList.remove('hidden');
-        };
-
-        window.handleAdminAuthClick = function() {
-            if (isAdminLoggedIn) {
-                isAdminLoggedIn = false;
-                document.getElementById('admin-status-badge').classList.add('hidden');
-                document.getElementById('admin-auth-btn').innerText =
-                    "Admin Einloggen";
-                showInfoModal(
-                    "Abgemeldet",
-                    "Sie haben den Admin-Modus verlassen."
-                );
-                renderAllViews();
-            } else {
-                openCustomModal(
-                    "Admin Einloggen",
-                    "Bitte geben Sie das Administrator-Passwort ein.<br>" +
-                    "<span class='text-xs text-slate-500'>Sie können das Passwort hier auch ändern:</span><br>" +
-                    "<button type='button' onclick='openAdminPasswordChangeModal()' " +
-                    "class='mt-2 text-xs font-semibold text-blue-800 hover:text-blue-900 underline'>" +
-                    "Passwort ändern</button>",
-                    true,
-                    "Passwort eingeben...",
-                    async (pw) => {
-                        if (!pw) return;
-
-                        try {
-                            const configRef =
-                                doc(db, 'app_config', 'admin_settings');
-                            const configSnap = await getDoc(configRef);
-
-                            if (!configSnap.exists()) {
-                                showInfoModal(
-                                    "Fehler",
-                                    "Die Admin-Einstellungen wurden nicht gefunden."
-                                );
-                                return;
-                            }
-
-                            const data = configSnap.data();
-                            const verified =
-                                await verifyAndLoadAdminPassword(
-                                    configRef,
-                                    data,
-                                    pw
-                                );
-
-                            if (verified) {
-                                isAdminLoggedIn = true;
-                                document.getElementById('admin-status-badge').classList.remove('hidden');
-                                document.getElementById('admin-auth-btn').innerText =
-                                    "Admin ausloggen";
-                                showInfoModal(
-                                    "Erfolg",
-                                    "Admin-Modus aktiv!"
-                                );
-                                renderAllViews();
-                            } else {
-                                showInfoModal(
-                                    "Fehler",
-                                    "Falsches Passwort."
-                                );
-                            }
-                        } catch (err) {
-                            console.error("Admin login error:", err);
-                            showInfoModal(
-                                "Fehler",
-                                "Verbindungsfehler."
-                            );
-                        }
-                    },
-                    'password',
-                    'Einloggen'
-                );
-            }
         };
 
         let modalCallback = null;
@@ -2274,8 +3370,8 @@
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-message').innerHTML = `
                 <p class="mb-3 text-slate-700 font-medium">Bitte geben Sie Ihre Kontaktdaten ein:</p>
-                <input type="text" id="req-contact" class="w-full border border-slate-300 rounded-lg p-3 mb-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Name & Adresse">
-                <input type="email" id="req-email" class="w-full border border-slate-300 rounded-lg p-3 mb-2 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Ihre E-Mail-Adresse">
+                <input type="text" id="req-contact" required maxlength="200" class="w-full border border-slate-300 rounded-lg p-3 mb-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Name oder Telefonnummer">
+                <p class="text-xs text-slate-500">Die E-Mail-Adresse Ihres Kontos wird vertraulich mit dem Anbieter geteilt.</p>
             `;
             document.getElementById('modal-confirm-btn').innerText = "Anfragen";
             document.getElementById('modal-confirm-btn').classList.remove('hidden');
@@ -2284,8 +3380,7 @@
             
             modalCallback = () => {
                 const reqContact = document.getElementById('req-contact') ? document.getElementById('req-contact').value : '';
-                const reqEmail = document.getElementById('req-email') ? document.getElementById('req-email').value : '';
-                callback(reqContact, reqEmail);
+                callback(reqContact);
             };
             
             document.getElementById('modal').classList.remove('hidden');
@@ -2316,5 +3411,61 @@
             return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
     </script>
+
+<script>
+    (() => {
+        const toggle = document.getElementById("mobile-menu-toggle");
+        const panel = document.getElementById("main-navigation-panel");
+        const navigation = toggle.closest(".main-navigation");
+        const mobileViewport = window.matchMedia("(max-width: 1050px)");
+
+        function setMenuOpen(open) {
+            navigation.classList.toggle("is-open", open);
+            toggle.setAttribute("aria-expanded", String(open));
+            toggle.setAttribute(
+                "aria-label",
+                open ? "Menü schließen" : "Menü öffnen"
+            );
+            if (open) {
+                document.body.style.setProperty(
+                    "padding-top",
+                    `${document.querySelector("header").offsetHeight + 24}px`,
+                    "important"
+                );
+            } else {
+                document.body.style.removeProperty("padding-top");
+            }
+        }
+
+        toggle.addEventListener("click", () => {
+            setMenuOpen(toggle.getAttribute("aria-expanded") !== "true");
+        });
+
+        panel.addEventListener("click", (event) => {
+            if (mobileViewport.matches && event.target.closest(".nav-tab")) {
+                setMenuOpen(false);
+                toggle.focus();
+            }
+        });
+
+        navigation.addEventListener("keydown", (event) => {
+            if (
+                event.key === "Escape" &&
+                mobileViewport.matches &&
+                navigation.classList.contains("is-open")
+            ) {
+                setMenuOpen(false);
+                toggle.focus();
+            }
+        });
+
+        mobileViewport.addEventListener("change", () => {
+            setMenuOpen(false);
+        });
+    })();
+</script>
+
+
+    
 </body>
 </html>
