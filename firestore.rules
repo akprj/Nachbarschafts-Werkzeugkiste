@@ -285,10 +285,22 @@ service cloud.firestore {
         );
       allow list: if false;
       allow create: if signedIn()
-        && request.resource.data.keys().hasOnly(['ownerId', 'ownerEmail', 'createdAt'])
-        && request.resource.data.keys().hasAll(['ownerId', 'ownerEmail', 'createdAt'])
+        && request.resource.data.keys().hasOnly([
+          'ownerId', 'ownerEmail', 'ownerName', 'ownerTelephone',
+          'ownerAddress', 'createdAt'
+        ])
+        && request.resource.data.keys().hasAll([
+          'ownerId', 'ownerEmail', 'ownerName', 'ownerTelephone',
+          'ownerAddress', 'createdAt'
+        ])
         && request.resource.data.ownerId == request.auth.uid
         && request.resource.data.ownerEmail == request.auth.token.email
+        && request.resource.data.ownerName is string
+        && request.resource.data.ownerName.size() <= 120
+        && request.resource.data.ownerTelephone is string
+        && request.resource.data.ownerTelephone.size() <= 40
+        && request.resource.data.ownerAddress is string
+        && request.resource.data.ownerAddress.size() <= 300
         && request.resource.data.createdAt is int
         && getAfter(itemPath(appId, itemId)).data.ownerId == request.auth.uid;
       allow update: if false;
@@ -306,15 +318,22 @@ service cloud.firestore {
         allow create: if signedIn()
           && borrowerId == request.auth.uid
           && request.resource.data.keys().hasOnly([
-            'borrowerId', 'contact', 'email', 'createdAt'
+            'borrowerId', 'contact', 'borrowerName', 'borrowerTelephone',
+            'borrowerAddress', 'email', 'createdAt'
           ])
           && request.resource.data.keys().hasAll([
-            'borrowerId', 'contact', 'email', 'createdAt'
+            'borrowerId', 'contact', 'borrowerName', 'borrowerTelephone',
+            'borrowerAddress', 'email', 'createdAt'
           ])
           && request.resource.data.borrowerId == request.auth.uid
           && request.resource.data.contact is string
-          && request.resource.data.contact.size() > 0
           && request.resource.data.contact.size() <= 200
+          && request.resource.data.borrowerName is string
+          && request.resource.data.borrowerName.size() <= 120
+          && request.resource.data.borrowerTelephone is string
+          && request.resource.data.borrowerTelephone.size() <= 40
+          && request.resource.data.borrowerAddress is string
+          && request.resource.data.borrowerAddress.size() <= 300
           && request.resource.data.email == request.auth.token.email
           && request.resource.data.createdAt is int
           && get(itemPath(appId, itemId)).data.approved == true

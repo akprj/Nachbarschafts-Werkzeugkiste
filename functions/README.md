@@ -4,10 +4,13 @@ The app uses Firebase Authentication email/password accounts. Enable the
 Email/Password provider in Firebase Console before allowing users to register.
 Registration collects a name, a required full address, and an optional
 telephone number. These profile details are stored in a private Firestore
-collection readable only by the account owner; they are not displayed in
-public listings. The login dialog has separate normal-user and administrator
-entry points; administrator access is still determined only by the Firebase
-Authentication `admin` custom claim.
+collection readable only by the account owner. They are copied to private
+listing/request records and shown only to the owner and requester while a
+request is active; they are not displayed in public listings. The login dialog
+has separate normal-user and administrator entry points; administrator access
+is still determined only by the Firebase Authentication `admin` custom claim.
+Existing users without a saved profile are prompted to add these details before
+their next listing or request.
 
 ## Grant or revoke administrator access
 
@@ -31,6 +34,10 @@ Only trusted project administrators should have access to the credentials used
 to run this command.
 For local Google credentials, sign in with `gcloud auth application-default login`
 before running the script.
+The administrator must first create the account with the intended email through
+the app's normal registration flow (or create it in Firebase Authentication),
+then grant the `admin` claim to that account's UID. The Admin Einloggen button
+does not create an account.
 
 ## Deploying access rules
 

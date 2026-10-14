@@ -2990,11 +2990,16 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                         'item_private',
                         newDocRef.id
                     );
+                    const profile = await getCurrentUserProfile();
+                    if (!profile) return;
                     const batch = writeBatch(db);
                     batch.set(newDocRef, newItem);
                     batch.set(privateRef, {
                         ownerId: currentUser.uid,
                         ownerEmail: currentUser.email,
+                        ownerName: profile.name || '',
+                        ownerTelephone: profile.telephone || '',
+                        ownerAddress: profile.address || '',
                         createdAt: Date.now()
                     });
                     await batch.commit();
@@ -3033,8 +3038,13 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                 const request = requestSnapshot.data();
                 showInfoModal(
                     "Kontaktdaten des Interessenten",
-                    `<p>${escapeHtml(request.contact || 'Keine Angabe')}</p>
-                    <p>E-Mail: <a class="underline" href="mailto:${escapeHtml(request.email || '')}">${escapeHtml(request.email || 'Keine Angabe')}</a></p>`
+                    formatProfileContact(
+                        request.borrowerName,
+                        request.borrowerTelephone,
+                        request.borrowerAddress,
+                        request.email,
+                        request.contact
+                    )
                 );
             } catch (error) {
                 console.error("Could not load private request contact:", error);
@@ -3059,10 +3069,15 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                     return;
                 }
 
-                const ownerEmail = privateSnapshot.data().ownerEmail;
+                const owner = privateSnapshot.data();
                 showInfoModal(
                     "Kontaktdaten des Anbieters",
-                    `<p>E-Mail: <a class="underline" href="mailto:${escapeHtml(ownerEmail || '')}">${escapeHtml(ownerEmail || 'Keine Angabe')}</a></p>`
+                    formatProfileContact(
+                        owner.ownerName,
+                        owner.ownerTelephone,
+                        owner.ownerAddress,
+                        owner.ownerEmail
+                    )
                 );
             } catch (error) {
                 console.error("Could not load private owner contact:", error);
@@ -3086,18 +3101,12 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
             openRequestModal("Werkzeug ausleihen", async reqContact => {
                 const contact = reqContact.trim();
-                if (!contact) {
-                    showInfoModal(
-                        "Fehler",
-                        "Bitte geben Sie Ihren Namen oder eine Kontaktmöglichkeit ein."
-                    );
-                    return;
-                }
-
                 const now = Date.now();
 
                 try {
                     if (db) {
+                        const profile = await getCurrentUserProfile();
+                        if (!profile) return;
                         const itemRef = doc(
                             db, 'artifacts', appId, 'public', 'data', 'items', id
                         );
@@ -3114,6 +3123,9 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                         batch.set(privateRequestRef, {
                             borrowerId: currentUser.uid,
                             contact,
+                            borrowerName: profile.name || '',
+                            borrowerTelephone: profile.telephone || '',
+                            borrowerAddress: profile.address || '',
                             email: currentUser.email,
                             createdAt: now
                         });
@@ -3176,13 +3188,10 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
             openRequestModal("Gegenstand abholen", async reqContact => {
                 const contact = reqContact.trim();
-                if (!contact) {
-                    showInfoModal("Fehler", "Bitte geben Sie Ihren Namen oder eine Kontaktmöglichkeit ein.");
-                    return;
-                }
-
                 try {
                     if (db) {
+                        const profile = await getCurrentUserProfile();
+                        if (!profile) return;
                         const itemRef = doc(
                             db, 'artifacts', appId, 'public', 'data', 'items', id
                         );
@@ -3199,6 +3208,9 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                         batch.set(privateRequestRef, {
                             borrowerId: currentUser.uid,
                             contact,
+                            borrowerName: profile.name || '',
+                            borrowerTelephone: profile.telephone || '',
+                            borrowerAddress: profile.address || '',
                             email: currentUser.email,
                             createdAt: Date.now()
                         });
@@ -3498,9 +3510,9 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         window.openRequestModal = function(title, callback) {
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-message').innerHTML = `
-                <p class="mb-3 text-slate-700 font-medium">Bitte geben Sie Ihre Kontaktdaten ein:</p>
-                <input type="text" id="req-contact" required maxlength="200" class="w-full border border-slate-300 rounded-lg p-3 mb-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Name oder Telefonnummer">
-                <p class="text-xs text-slate-500">Die E-Mail-Adresse Ihres Kontos wird vertraulich mit dem Anbieter geteilt.</p>
+                <p class="mb-3 text-slate-700 font-medium">Ihre Kontaktdaten aus dem Konto werden nach der Anfrage vertraulich mit dem Anbieter geteilt.</p>
+                <input type="text" id="req-contact" maxlength="200" class="w-full border border-slate-300 rounded-lg p-3 mb-3 text-sm focus:ring-2 focus:ring-blue-900 focus:outline-none" placeholder="Zusätzliche Kontaktangabe (optional)">
+                <p class="text-xs text-slate-500">Name, Adresse, E-Mail und gegebenenfalls Telefonnummer werden nur dem Anbieter dieser Anfrage angezeigt.</p>
             `;
             document.getElementById('modal-confirm-btn').innerText = "Anfragen";
             document.getElementById('modal-confirm-btn').classList.remove('hidden');
@@ -3508,12 +3520,89 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             document.getElementById('modal-cancel-btn').classList.remove('hidden');
             
             modalCallback = () => {
-                const reqContact = document.getElementById('req-contact') ? document.getElementById('req-contact').value : '';
+                const reqContact = document.getElementById('req-contact')?.value || '';
                 callback(reqContact);
             };
             
             document.getElementById('modal').classList.remove('hidden');
         };
+
+        async function getCurrentUserProfile() {
+            const profileRef = doc(
+                db,
+                'artifacts', appId, 'private', 'data',
+                'user_profiles', currentUser.uid
+            );
+            const profileSnapshot = await getDoc(profileRef);
+            if (profileSnapshot.exists()) return profileSnapshot.data();
+
+            return new Promise(resolve => {
+                document.getElementById('modal-title').innerText = "Kontaktdaten ergänzen";
+                document.getElementById('modal-message').innerHTML = `
+                    <form id="profile-setup-form" class="space-y-4">
+                        <p class="text-sm text-slate-600">Bitte vervollständigen Sie Ihr Profil. Diese Angaben werden nur dem Anbieter oder Interessenten nach einer Anfrage angezeigt.</p>
+                        <label class="block text-sm font-medium text-slate-700">
+                            Name
+                            <input id="profile-setup-name" type="text" autocomplete="name" maxlength="120" required
+                                class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5">
+                        </label>
+                        <label class="block text-sm font-medium text-slate-700">
+                            Telefon <span class="font-normal text-slate-500">(optional)</span>
+                            <input id="profile-setup-telephone" type="tel" autocomplete="tel" maxlength="40"
+                                class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5">
+                        </label>
+                        <label class="block text-sm font-medium text-slate-700">
+                            Vollständige Adresse
+                            <input id="profile-setup-address" type="text" autocomplete="street-address" maxlength="300" required
+                                class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
+                                placeholder="Straße, Hausnummer, PLZ und Ort">
+                        </label>
+                        <p id="profile-setup-error" class="text-sm text-rose-700" role="alert"></p>
+                    </form>`;
+
+                const modal = document.getElementById('modal');
+                const confirmButton = document.getElementById('modal-confirm-btn');
+                const cancelButton = document.getElementById('modal-cancel-btn');
+                const finish = profile => {
+                    modal.classList.add('hidden');
+                    confirmButton.classList.add('hidden');
+                    cancelButton.classList.add('hidden');
+                    confirmButton.onclick = window.closeModal;
+                    cancelButton.onclick = window.cancelModal;
+                    resolve(profile);
+                };
+
+                confirmButton.innerText = "Kontaktdaten speichern";
+                confirmButton.classList.remove('hidden');
+                confirmButton.onclick = () =>
+                    document.getElementById('profile-setup-form').requestSubmit();
+                cancelButton.classList.remove('hidden');
+                cancelButton.onclick = () => finish(null);
+                modalCallback = null;
+                modal.classList.remove('hidden');
+
+                document.getElementById('profile-setup-form').addEventListener(
+                    'submit',
+                    async event => {
+                        event.preventDefault();
+                        const profile = {
+                            name: document.getElementById('profile-setup-name').value.trim(),
+                            telephone: document.getElementById('profile-setup-telephone').value.trim(),
+                            address: document.getElementById('profile-setup-address').value.trim(),
+                            createdAt: Date.now()
+                        };
+                        try {
+                            await setDoc(profileRef, profile);
+                            finish(profile);
+                        } catch (error) {
+                            console.error("Could not save the account contact profile:", error);
+                            document.getElementById('profile-setup-error').textContent =
+                                "Die Kontaktdaten konnten nicht gespeichert werden. Bitte versuchen Sie es erneut.";
+                        }
+                    }
+                );
+            });
+        }
 
         window.showInfoModal = function(title, message) {
             openCustomModal(title, message, false, '', null, 'text', 'Verstanden');
@@ -3538,6 +3627,28 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
         function escapeHtml(str) {
             return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function formatProfileContact(name, telephone, address, email, additionalContact = '') {
+            const lines = [];
+            if (name) lines.push(`<p><strong>Name:</strong> ${escapeHtml(name)}</p>`);
+            if (telephone) {
+                lines.push(
+                    `<p><strong>Telefon:</strong> <a class="underline" href="tel:${encodeURIComponent(telephone)}">${escapeHtml(telephone)}</a></p>`
+                );
+            }
+            if (address) lines.push(`<p><strong>Adresse:</strong> ${escapeHtml(address)}</p>`);
+            if (email) {
+                lines.push(
+                    `<p><strong>E-Mail:</strong> <a class="underline" href="mailto:${encodeURIComponent(email)}">${escapeHtml(email)}</a></p>`
+                );
+            }
+            if (additionalContact) {
+                lines.push(`<p><strong>Zusätzliche Kontaktangabe:</strong> ${escapeHtml(additionalContact)}</p>`);
+            }
+            return lines.length
+                ? lines.join('')
+                : '<p>Keine Kontaktdaten verfügbar.</p>';
         }
     </script>
 
