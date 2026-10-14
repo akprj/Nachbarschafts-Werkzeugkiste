@@ -219,6 +219,29 @@ service cloud.firestore {
         );
     }
 
+    match /artifacts/{appId}/private/data/user_profiles/{userId} {
+      allow get: if signedIn()
+        && request.auth.uid == userId;
+      allow list: if false;
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly([
+          'name', 'telephone', 'address', 'createdAt'
+        ])
+        && request.resource.data.keys().hasAll([
+          'name', 'telephone', 'address', 'createdAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.telephone is string
+        && request.resource.data.telephone.size() <= 40
+        && request.resource.data.address is string
+        && request.resource.data.address.size() > 0
+        && request.resource.data.address.size() <= 300
+        && request.resource.data.createdAt is int;
+    }
+
     match /artifacts/{appId}/public/data/items/{itemId} {
       allow get, list: if signedIn()
         && (

@@ -2134,6 +2134,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         import {
             getAuth,
             createUserWithEmailAndPassword,
+            deleteUser,
             onAuthStateChanged,
             signInWithEmailAndPassword,
             sendPasswordResetEmail,
@@ -2145,6 +2146,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             doc, 
             getDoc,
             updateDoc, 
+            setDoc,
             writeBatch,
             query,
             where,
@@ -2169,6 +2171,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         let itemsCache = [];
         let unsubItems = [];
         let isAdminLoggedIn = false;
+        let pendingAuthMode = null;
 
         window.onload = () => {
             onAuthStateChanged(auth, async (user) => {
@@ -2187,17 +2190,56 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                     return;
                 }
 
+                let authClaimsLoaded = true;
                 try {
                     const token = await user.getIdTokenResult();
                     isAdminLoggedIn = token.claims.admin === true;
                 } catch (error) {
+                    authClaimsLoaded = false;
                     console.error("Could not load Firebase authorization claims:", error);
-                    showInfoModal(
-                        "Berechtigungen konnten nicht geladen werden",
-                        "Bitte laden Sie die Seite neu. Ihre Anmeldung bleibt bestehen."
-                    );
                 }
 
+                if (!authClaimsLoaded) {
+                    const attemptedMode = pendingAuthMode || 'signin';
+                    pendingAuthMode = null;
+                    try {
+                        await signOut(auth);
+                    } catch (error) {
+                        console.error("Could not sign out after authorization claims failed to load:", error);
+                    }
+                    showAuthModal(
+                        attemptedMode,
+                        "Die Berechtigungen konnten nicht sicher überprüft werden. Bitte melden Sie sich erneut an."
+                    );
+                    return;
+                }
+
+                if (
+                    pendingAuthMode &&
+                    (pendingAuthMode === 'admin') !== isAdminLoggedIn
+                ) {
+                    const attemptedMode = pendingAuthMode;
+                    pendingAuthMode = null;
+                    try {
+                        await signOut(auth);
+                    } catch (error) {
+                        console.error("Could not sign out after a role mismatch:", error);
+                        showAuthModal(
+                            attemptedMode,
+                            "Die Anmeldung konnte nicht abgeschlossen werden. Bitte melden Sie sich erneut an."
+                        );
+                        return;
+                    }
+                    showAuthModal(
+                        attemptedMode,
+                        attemptedMode === 'admin'
+                            ? "Dieses Konto hat keine Administratorberechtigung."
+                            : "Bitte verwenden Sie „Admin Einloggen“ für dieses Administratorkonto."
+                    );
+                    return;
+                }
+
+                pendingAuthMode = null;
                 document.getElementById('modal').classList.add('hidden');
                 document.getElementById('admin-auth-btn').innerText = "Abmelden";
                 document.getElementById('admin-status-badge').classList.toggle(
@@ -2212,16 +2254,41 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
         function showAuthModal(mode = 'signin', errorMessage = '') {
             const isRegistration = mode === 'register';
+            const isAdminLogin = mode === 'admin';
+            pendingAuthMode = mode;
             document.getElementById('modal-title').innerText = isRegistration
                 ? "Konto erstellen"
-                : "Anmelden";
+                : isAdminLogin ? "Admin Einloggen" : "Anmelden";
             document.getElementById('modal-message').innerHTML = `
                 <form id="auth-form" class="space-y-4">
                     <p class="text-sm text-slate-600">
                         ${isRegistration
                             ? 'Erstellen Sie ein Konto, um Werkzeuge anzubieten und Anfragen zu verwalten.'
-                            : 'Melden Sie sich an, um die Nachbarschafts-Werkzeugkiste zu nutzen.'}
+                            : isAdminLogin
+                                ? 'Dieser Zugang ist ausschließlich für Administratoren.'
+                                : 'Melden Sie sich an, um die Nachbarschafts-Werkzeugkiste zu nutzen.'}
                     </p>
+                    ${isRegistration ? `
+                        <label class="block text-sm font-medium text-slate-700">
+                            Name
+                            <input id="auth-name" type="text" autocomplete="name" maxlength="120" required
+                                class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
+                                placeholder="Vor- und Nachname">
+                        </label>
+                        <label class="block text-sm font-medium text-slate-700">
+                            Telefon <span class="font-normal text-slate-500">(optional)</span>
+                            <input id="auth-telephone" type="tel" autocomplete="tel" maxlength="40"
+                                class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
+                                placeholder="Telefonnummer">
+                        </label>
+                        <label class="block text-sm font-medium text-slate-700">
+                            Vollständige Adresse
+                            <input id="auth-address" type="text" autocomplete="street-address" maxlength="300" required
+                                class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
+                                placeholder="Straße, Hausnummer, PLZ und Ort">
+                        </label>
+                        <p class="text-xs text-slate-500">Ihre Adresse wird vertraulich gespeichert und nicht öffentlich angezeigt.</p>
+                    ` : ''}
                     <label class="block text-sm font-medium text-slate-700">
                         E-Mail-Adresse
                         <input id="auth-email" type="email" autocomplete="email" required
@@ -2254,18 +2321,39 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                     <p id="auth-error" class="min-h-5 text-sm text-rose-700" role="alert">${escapeHtml(errorMessage)}</p>
                     <button type="submit"
                         class="w-full rounded-lg bg-blue-900 px-4 py-2.5 font-semibold text-white hover:bg-blue-800">
-                        ${isRegistration ? 'Konto erstellen' : 'Anmelden'}
+                        ${isRegistration ? 'Konto erstellen' : isAdminLogin ? 'Admin Einloggen' : 'Anmelden'}
                     </button>
-                    <p class="text-center text-sm text-slate-600">
-                        ${isRegistration
-                            ? 'Bereits registriert?'
-                            : 'Noch kein Konto?'}
-                        <button type="button"
-                            onclick="showAuthModal('${isRegistration ? 'signin' : 'register'}')"
-                            class="font-semibold text-blue-800 underline">
-                            ${isRegistration ? 'Jetzt anmelden' : 'Konto erstellen'}
+                    ${!isAdminLogin && !isRegistration ? `
+                        <p class="text-center text-sm text-slate-600">
+                            Noch kein Konto?
+                            <button type="button" onclick="showAuthModal('register')"
+                                class="font-semibold text-blue-800 underline">
+                                Konto erstellen
+                            </button>
+                        </p>
+                    ` : ''}
+                    <div class="flex items-center justify-between gap-3 text-sm">
+                        <button type="button" onclick="openAdminContactModal()"
+                            class="text-left text-slate-600 underline">
+                            Kontakt Admin
                         </button>
-                    </p>
+                        ${isAdminLogin ? `
+                            <button type="button" onclick="showAuthModal('signin')"
+                                class="text-right font-semibold text-blue-800 underline">
+                                Zur normalen Anmeldung
+                            </button>
+                        ` : isRegistration ? `
+                            <button type="button" onclick="showAuthModal('signin')"
+                                class="text-right font-semibold text-blue-800 underline">
+                                Bereits registriert? Anmelden
+                            </button>
+                        ` : `
+                            <button type="button" onclick="showAuthModal('admin')"
+                                class="text-right font-semibold text-blue-800 underline">
+                                Admin Einloggen
+                            </button>
+                        `}
+                    </div>
                 </form>`;
             document.getElementById('modal-confirm-btn').classList.add('hidden');
             document.getElementById('modal-cancel-btn').classList.add('hidden');
@@ -2317,7 +2405,48 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 
             try {
                 if (mode === 'register') {
-                    await createUserWithEmailAndPassword(auth, email, password);
+                    const name = document.getElementById('auth-name').value.trim();
+                    const telephone = document.getElementById('auth-telephone').value.trim();
+                    const address = document.getElementById('auth-address').value.trim();
+                    if (!name || !address) {
+                        errorElement.textContent = "Bitte geben Sie Ihren Namen und Ihre vollständige Adresse ein.";
+                        return;
+                    }
+
+                    const credential = await createUserWithEmailAndPassword(auth, email, password);
+                    try {
+                        await setDoc(
+                            doc(db, 'artifacts', appId, 'private', 'data', 'user_profiles', credential.user.uid),
+                            {
+                                name,
+                                telephone,
+                                address,
+                                createdAt: Date.now()
+                            }
+                        );
+                    } catch (profileError) {
+                        console.error("Could not save the new account profile:", profileError);
+                        try {
+                            await deleteUser(credential.user);
+                        } catch (cleanupError) {
+                            console.error("Could not remove the account after profile creation failed:", cleanupError);
+                            try {
+                                await signOut(auth);
+                            } catch (signOutError) {
+                                console.error("Could not sign out after profile creation failed:", signOutError);
+                            }
+                            showInfoModal(
+                                "Konto konnte nicht vollständig eingerichtet werden",
+                                "Das Konto wurde erstellt, aber die vertraulichen Profildaten konnten nicht gespeichert werden. Bitte kontaktieren Sie den Administrator."
+                            );
+                            return;
+                        }
+                        showAuthModal(
+                            'register',
+                            "Das Profil konnte nicht sicher gespeichert werden. Bitte versuchen Sie die Kontoerstellung erneut."
+                        );
+                        return;
+                    }
                     showInfoModal(
                         "Konto erstellt",
                         "Sie sind jetzt angemeldet. Neue Einträge werden erst nach der Freigabe durch den Administrator veröffentlicht."
@@ -2335,7 +2464,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                     'auth/too-many-requests': "Zu viele Versuche. Bitte versuchen Sie es später erneut."
                 };
                 errorElement.textContent =
-                    messages[error.code] || "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.";
+                    messages[error.code] || "Anmeldung oder Profilspeicherung fehlgeschlagen. Bitte versuchen Sie es erneut.";
             }
         }
 

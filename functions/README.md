@@ -2,6 +2,12 @@
 
 The app uses Firebase Authentication email/password accounts. Enable the
 Email/Password provider in Firebase Console before allowing users to register.
+Registration collects a name, a required full address, and an optional
+telephone number. These profile details are stored in a private Firestore
+collection readable only by the account owner; they are not displayed in
+public listings. The login dialog has separate normal-user and administrator
+entry points; administrator access is still determined only by the Firebase
+Authentication `admin` custom claim.
 
 ## Grant or revoke administrator access
 
@@ -28,11 +34,17 @@ before running the script.
 
 ## Deploying access rules
 
-Deploy `firestore.rules` and the deny-all Realtime Database rules after
-reviewing them against the Firebase project:
+Deploy the Hosting page and Firestore rules after reviewing them against the
+Firebase project:
 
 ```powershell
-firebase deploy --only firestore,database
+firebase deploy --only hosting,firestore
+```
+
+The deny-all Realtime Database rules can be deployed separately if needed:
+
+```powershell
+firebase deploy --only database
 ```
 
 The legacy `recoverUserAccount` Cloud Function now returns HTTP 410 and no
