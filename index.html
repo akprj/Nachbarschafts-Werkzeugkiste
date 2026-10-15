@@ -1912,6 +1912,26 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         color: #dce7ea !important;
     }
 
+    #header-logout-link {
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        color: #a9bec5 !important;
+        font: inherit !important;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    #header-logout-link:hover,
+    #header-logout-link:focus-visible {
+        color: #fff !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
     @media (min-width: 1050.01px) {
         header > div:first-child {
             position: relative;
@@ -2008,6 +2028,12 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             top: 8px !important;
             right: 14px !important;
             left: auto !important;
+            gap: .4rem !important;
+            font-size: .62rem !important;
+        }
+
+        #header-logout-link {
+            font-size: .62rem !important;
         }
     }
 
@@ -2150,6 +2176,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                 <div id="header-user-info" class="hidden text-right text-xs text-slate-200" aria-live="polite">
                     <span id="header-user-welcome" class="font-semibold"></span>
                     <span id="header-user-id" class="text-xs text-slate-400"></span>
+                    <button id="header-logout-link" type="button" onclick="handleAuthButtonClick()">Abmelden</button>
                 </div>
             </div>
         </div>
