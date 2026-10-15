@@ -2011,6 +2011,63 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         }
     }
 
+    @media (max-width: 640px) {
+        main {
+            padding-top: 24px !important;
+        }
+
+        footer > div:first-child {
+            display: grid !important;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            grid-template-rows: auto;
+            column-gap: 6px;
+            row-gap: 0;
+            align-items: center;
+            padding: 12px 8px !important;
+        }
+
+        footer > div:first-child > div:first-child {
+            display: contents !important;
+        }
+
+        footer > div:first-child > div:first-child button:first-child {
+            grid-column: 1;
+            grid-row: 1;
+            justify-self: start;
+        }
+
+        footer > div:first-child > div:first-child button:last-child {
+            grid-column: 3;
+            grid-row: 1;
+            justify-self: end;
+        }
+
+        footer > div:first-child > div:first-child button {
+            padding: 5px 7px !important;
+            font-size: .65rem !important;
+            white-space: nowrap;
+        }
+
+        footer > div:first-child > div:nth-child(2) {
+            display: flex !important;
+            grid-column: 2;
+            grid-row: 1;
+            justify-self: center;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+            width: 100%;
+            gap: 4px;
+            text-align: center;
+        }
+
+        footer .copyright-text {
+            font-size: .58rem;
+            line-height: 1.2;
+            white-space: normal;
+        }
+    }
+
 </style>
 
 </head>
