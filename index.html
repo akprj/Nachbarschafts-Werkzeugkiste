@@ -1627,7 +1627,7 @@ header > nav.main-navigation {
 @media (min-width: 1050.01px) {
     header > div:first-child > .header-layout {
         display: grid !important;
-        grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) auto;
+        grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
         grid-template-rows: auto;
         column-gap: 24px;
         align-items: center;
@@ -1643,13 +1643,6 @@ header > nav.main-navigation {
 
     header > div:first-child > .header-layout > .main-navigation {
         display: contents !important;
-    }
-
-    #header-user-info {
-        grid-column: 3;
-        grid-row: 1;
-        justify-self: end;
-        text-align: right;
     }
 
     .main-navigation .mobile-menu-toggle {
@@ -1717,64 +1710,10 @@ header > nav.main-navigation {
         display: contents !important;
     }
 
-    #header-user-info {
-        align-items: center;
-        justify-content: flex-end;
-        gap: 8px;
-        white-space: nowrap;
-        font-size: .75rem;
-    }
-
-    #header-user-separator {
-        color: #78909b;
-    }
-
-    #header-user-info:not(.hidden) {
-        display: flex;
-    }
-
-    #header-user-welcome,
-    #header-user-id {
-        margin: 0;
-        font-size: inherit;
-        color: inherit;
-    }
-
-    #header-user-id {
-        overflow-wrap: normal;
-    }
-
-    #header-user-info {
-        position: static !important;
-        top: auto !important;
-        right: auto !important;
-        left: auto !important;
-        width: max-content !important;
-        max-width: 100% !important;
-        grid-column: 1 / -1;
-        grid-row: 1;
-        justify-self: end;
-        justify-content: flex-end !important;
-        flex-wrap: nowrap !important;
-        gap: 4px;
-        font-size: .65rem;
-        text-align: right;
-    }
-
-    #header-user-welcome,
-    #header-user-id {
-        color: #dce7ea;
-    }
-
-    header > div:first-child > .header-layout > div:first-child {
-        grid-column: 1;
-        grid-row: 2;
-    }
-
     .main-navigation .mobile-menu-toggle {
         display: flex !important;
         grid-column: 2;
-        grid-row: 2;
+        grid-row: 1;
         justify-self: end;
         align-self: center;
         margin: 0 !important;
@@ -1956,7 +1895,71 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 }
 
 
-    
+    header > div:first-child {
+        position: relative;
+    }
+
+    #header-user-info {
+        position: absolute !important;
+        top: 8px;
+        right: 16px;
+        z-index: 5;
+        display: none;
+        align-items: center;
+        justify-content: flex-end;
+        gap: .45rem;
+        width: max-content;
+        max-width: calc(100vw - 24px);
+        color: #fff;
+        font-size: .7rem;
+        line-height: 1.2;
+        text-align: right;
+        white-space: nowrap;
+        pointer-events: none;
+    }
+
+    #header-user-info:not(.hidden) {
+        display: flex;
+    }
+
+    #header-user-welcome {
+        color: #fff;
+        font-weight: 600;
+    }
+
+    #header-user-id {
+        color: #dce7ea;
+    }
+
+    @media (max-width: 1050px) {
+        header > div:first-child > .header-layout {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) 56px;
+            grid-template-rows: 24px auto auto;
+            position: relative;
+            align-items: center;
+        }
+
+        header > div:first-child > .header-layout > div:first-child {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        header > div:first-child > .header-layout > .main-navigation {
+            display: contents !important;
+        }
+
+        .main-navigation .mobile-menu-toggle {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .main-navigation .main-navigation-panel {
+            grid-column: 1 / -1;
+            grid-row: 3;
+        }
+    }
+
 </style>
 
 </head>
@@ -2038,7 +2041,6 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                 </nav>
                 <div id="header-user-info" class="hidden text-right text-xs text-slate-200" aria-live="polite">
                     <span id="header-user-welcome" class="font-semibold"></span>
-                    <span id="header-user-separator" aria-hidden="true">||</span>
                     <span id="header-user-id" class="text-xs text-slate-400"></span>
                 </div>
             </div>
