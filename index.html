@@ -640,7 +640,7 @@
     #auth-form .auth-submit-group {
         display: flex;
         flex-direction: column;
-        gap: .25rem;
+        gap: .5rem;
     }
 
     #auth-modal-links {
@@ -2549,7 +2549,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                                 : 'Melden Sie sich an, um die Nachbarschafts-Werkzeugkiste zu nutzen.'}
                     </p>
                     ${!isAdminLogin && !isRegistration ? `
-                        <p class="text-center text-sm text-slate-600">
+                        <p class="text-left text-sm text-slate-600">
                             Noch kein Konto?
                             <button type="button" onclick="showAuthModal('register')"
                                 class="font-semibold text-blue-800 underline">
@@ -2604,7 +2604,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                     <div class="auth-submit-group">
                         ${isRegistration ? '' : `
                             <button type="button" onclick="sendPasswordReset()"
-                                class="block text-sm text-blue-800 underline">
+                                class="block self-end text-right text-sm text-blue-800 underline">
                                 Passwort vergessen?
                             </button>
                         `}
