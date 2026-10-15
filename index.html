@@ -1913,14 +1913,17 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
     }
 
     @media (min-width: 1050.01px) {
+        header > div:first-child {
+            position: relative;
+        }
+
         header > div:first-child > .header-layout {
             display: grid !important;
             grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
-            grid-template-rows: auto auto;
+            grid-template-rows: auto;
             column-gap: 24px;
-            row-gap: 0;
             align-items: center;
-            padding: 8px 0 10px;
+            padding: 12px 0;
         }
 
         header > div:first-child > .header-layout > div:first-child {
@@ -1933,37 +1936,46 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             display: contents !important;
         }
 
-        #header-user-info {
-            position: static !important;
-            grid-column: 2;
-            grid-row: 1;
-            justify-self: end;
-            align-self: center;
+        header > div:first-child > .header-layout > #header-user-info {
+            position: absolute !important;
+            top: 6px !important;
+            right: max(14px, calc((100vw - 1320px) / 2)) !important;
+            left: auto !important;
+            z-index: 5;
+            width: max-content !important;
+            max-width: calc(100vw - 28px) !important;
+            column-gap: .65rem !important;
+            row-gap: 0 !important;
+            font-size: .7rem !important;
         }
 
         .main-navigation .main-navigation-panel {
-            grid-column: 1 / -1;
-            grid-row: 2;
+            grid-column: 2;
+            grid-row: 1;
             display: flex !important;
             flex-wrap: nowrap !important;
-            justify-content: center;
-            align-items: stretch;
-            gap: 4px !important;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 2px !important;
             min-width: 0;
             margin: 0;
-            padding: 0;
+            padding: 16px 0 0;
         }
 
         .main-navigation .nav-tab {
             flex: 0 1 auto !important;
             min-width: 0;
-            padding: 14px 12px !important;
-            font-size: .88rem !important;
+            padding: 14px 8px !important;
+            font-size: .9rem !important;
             white-space: nowrap !important;
         }
     }
 
     @media (max-width: 1050px) {
+        body {
+            padding-top: 160px !important;
+        }
+
         header > div:first-child > .header-layout {
             display: grid !important;
             grid-template-columns: minmax(0, 1fr) 56px;
