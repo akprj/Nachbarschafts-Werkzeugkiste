@@ -1627,7 +1627,7 @@ header > nav.main-navigation {
 @media (min-width: 1050.01px) {
     header > div:first-child > .header-layout {
         display: grid !important;
-        grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+        grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) auto;
         grid-template-rows: auto;
         column-gap: 24px;
         align-items: center;
@@ -1643,6 +1643,13 @@ header > nav.main-navigation {
 
     header > div:first-child > .header-layout > .main-navigation {
         display: contents !important;
+    }
+
+    #header-user-info {
+        grid-column: 3;
+        grid-row: 1;
+        justify-self: end;
+        text-align: right;
     }
 
     .main-navigation .mobile-menu-toggle {
@@ -1686,7 +1693,8 @@ header > nav.main-navigation {
     header > div:first-child > .header-layout {
         display: grid !important;
         grid-template-columns: minmax(0, 1fr) 56px;
-        grid-template-rows: auto auto;
+        grid-template-rows: auto auto auto;
+        position: relative;
        align-items: center;
         column-gap: 10px;
         row-gap: 8px;
@@ -1709,10 +1717,64 @@ header > nav.main-navigation {
         display: contents !important;
     }
 
+    #header-user-info {
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        white-space: nowrap;
+        font-size: .75rem;
+    }
+
+    #header-user-separator {
+        color: #78909b;
+    }
+
+    #header-user-info:not(.hidden) {
+        display: flex;
+    }
+
+    #header-user-welcome,
+    #header-user-id {
+        margin: 0;
+        font-size: inherit;
+        color: inherit;
+    }
+
+    #header-user-id {
+        overflow-wrap: normal;
+    }
+
+    #header-user-info {
+        position: static !important;
+        top: auto !important;
+        right: auto !important;
+        left: auto !important;
+        width: max-content !important;
+        max-width: 100% !important;
+        grid-column: 1 / -1;
+        grid-row: 1;
+        justify-self: end;
+        justify-content: flex-end !important;
+        flex-wrap: nowrap !important;
+        gap: 4px;
+        font-size: .65rem;
+        text-align: right;
+    }
+
+    #header-user-welcome,
+    #header-user-id {
+        color: #dce7ea;
+    }
+
+    header > div:first-child > .header-layout > div:first-child {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
     .main-navigation .mobile-menu-toggle {
         display: flex !important;
         grid-column: 2;
-        grid-row: 1;
+        grid-row: 2;
         justify-self: end;
         align-self: center;
         margin: 0 !important;
@@ -1721,7 +1783,7 @@ header > nav.main-navigation {
     .main-navigation .main-navigation-panel {
         display: none !important;
         grid-column: 1 / -1;
-        grid-row: 2;
+        grid-row: 3;
         flex-direction: column;
         align-items: stretch;
         width: 100%;
@@ -1735,6 +1797,10 @@ header > nav.main-navigation {
 
     .main-navigation.is-open .main-navigation-panel {
         display: flex !important;
+    }
+
+    body {
+        padding-top: 210px !important;
     }
 
     header > div:first-child > .header-layout .brand-lockup {
@@ -1763,6 +1829,18 @@ header > nav.main-navigation {
 
     .main-navigation .nav-tab::after {
         display: none !important;
+    }
+}
+
+@media (max-width: 720px) {
+    body {
+        padding-top: 310px !important;
+    }
+}
+
+@media (max-width: 640px) {
+    body {
+        padding-top: 343px !important;
     }
 }
 
@@ -1958,6 +2036,11 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                         </button>
                     </div>
                 </nav>
+                <div id="header-user-info" class="hidden text-right text-xs text-slate-200" aria-live="polite">
+                    <span id="header-user-welcome" class="font-semibold"></span>
+                    <span id="header-user-separator" aria-hidden="true">||</span>
+                    <span id="header-user-id" class="text-xs text-slate-400"></span>
+                </div>
             </div>
         </div>
 
@@ -2184,6 +2267,9 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                     itemsCache = [];
                     document.getElementById('admin-auth-btn').innerText = "Anmelden";
                     document.getElementById('admin-status-badge').classList.add('hidden');
+                    document.getElementById('header-user-info').classList.add('hidden');
+                    document.getElementById('header-user-welcome').textContent = '';
+                    document.getElementById('header-user-id').textContent = '';
                     updateAdminUIState();
                     renderAllViews();
                     showAuthModal();
@@ -2242,6 +2328,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                 pendingAuthMode = null;
                 document.getElementById('modal').classList.add('hidden');
                 document.getElementById('admin-auth-btn').innerText = "Abmelden";
+                await updateHeaderUserInfo(user);
                 document.getElementById('admin-status-badge').classList.toggle(
                     'hidden',
                     !isAdminLoggedIn
@@ -2251,6 +2338,31 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                 renderAllViews();
             });
         };
+
+        async function updateHeaderUserInfo(user) {
+            const welcomeElement = document.getElementById('header-user-welcome');
+            const userIdElement = document.getElementById('header-user-id');
+            document.getElementById('header-user-info').classList.remove('hidden');
+            welcomeElement.textContent = 'Welcome';
+            userIdElement.textContent = `User ID: ${user.email || ''}`;
+
+            try {
+                const profileSnapshot = await getDoc(doc(
+                    db,
+                    'artifacts', appId, 'private', 'data', 'user_profiles', user.uid
+                ));
+                const profileName = profileSnapshot.exists()
+                    ? profileSnapshot.data().name
+                    : '';
+                const name = typeof profileName === 'string' && profileName.trim()
+                    ? profileName
+                    : user.displayName || '';
+                const lastName = name.trim().split(/\s+/).filter(Boolean).pop();
+                if (lastName) welcomeElement.textContent = `Welcome, ${lastName}`;
+            } catch (error) {
+                console.error("Could not load the account name for the header:", error);
+            }
+        }
 
         function showAuthModal(mode = 'signin', errorMessage = '') {
             const isRegistration = mode === 'register';
