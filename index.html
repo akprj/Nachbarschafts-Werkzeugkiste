@@ -621,6 +621,36 @@
         letter-spacing: -.03em;
     }
 
+    #modal > div.auth-modal {
+        display: flex;
+        flex-direction: column;
+        min-height: min(70vh, 34rem);
+    }
+
+    #auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    #auth-form .auth-password-field {
+        margin-top: .5rem;
+    }
+
+    #auth-form .auth-submit-group {
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+    }
+
+    #auth-modal-links {
+        margin-top: auto;
+    }
+
+    #auth-modal-links button {
+        color: #fff !important;
+    }
+
     #modal-message,
     #modal-message :not(input):not(textarea):not(select) {
         color: #fff !important;
@@ -2346,6 +2376,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                 <button id="modal-cancel-btn" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-sm py-2 px-4 rounded-lg transition-colors" onclick="cancelModal()">Abbrechen</button>
                 <button id="modal-confirm-btn" class="bg-blue-900 hover:bg-blue-800 text-white font-semibold text-sm py-2 px-5 rounded-lg transition-colors" onclick="closeModal()">Verstanden</button>
             </div>
+            <div id="auth-modal-links" class="hidden flex items-center justify-between gap-3 text-sm"></div>
         </div>
     </div>
 
@@ -2509,7 +2540,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                 ? "Konto erstellen"
                 : isAdminLogin ? "Admin Einloggen" : "Anmelden";
             document.getElementById('modal-message').innerHTML = `
-                <form id="auth-form" class="space-y-4">
+                <form id="auth-form">
                     <p class="text-sm text-slate-600">
                         ${isRegistration
                             ? 'Erstellen Sie ein Konto, um Werkzeuge anzubieten und Anfragen zu verwalten.'
@@ -2517,6 +2548,15 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                                 ? 'Dieser Zugang ist ausschließlich für Administratoren.'
                                 : 'Melden Sie sich an, um die Nachbarschafts-Werkzeugkiste zu nutzen.'}
                     </p>
+                    ${!isAdminLogin && !isRegistration ? `
+                        <p class="text-center text-sm text-slate-600">
+                            Noch kein Konto?
+                            <button type="button" onclick="showAuthModal('register')"
+                                class="font-semibold text-blue-800 underline">
+                                Konto erstellen
+                            </button>
+                        </p>
+                    ` : ''}
                     ${isRegistration ? `
                         <label class="block text-sm font-medium text-slate-700">
                             Name
@@ -2544,7 +2584,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                             class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
                             placeholder="name@beispiel.de">
                     </label>
-                    <label class="block text-sm font-medium text-slate-700">
+                    <label class="block text-sm font-medium text-slate-700 ${isRegistration ? '' : 'auth-password-field'}">
                         Passwort
                         <input id="auth-password" type="password"
                             autocomplete="${isRegistration ? 'new-password' : 'current-password'}"
@@ -2561,49 +2601,45 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                                 placeholder="Passwort erneut eingeben">
                         </label>
                     ` : ''}
-                    ${isRegistration ? '' : `
-                        <button type="button" onclick="sendPasswordReset()"
-                            class="block text-sm text-blue-800 underline">
-                            Passwort vergessen?
-                        </button>
-                    `}
-                    <p id="auth-error" class="min-h-5 text-sm text-rose-700" role="alert">${escapeHtml(errorMessage)}</p>
-                    <button type="submit"
-                        class="w-full rounded-lg bg-blue-900 px-4 py-2.5 font-semibold text-white hover:bg-blue-800">
-                        ${isRegistration ? 'Konto erstellen' : isAdminLogin ? 'Admin Einloggen' : 'Anmelden'}
-                    </button>
-                    ${!isAdminLogin && !isRegistration ? `
-                        <p class="text-center text-sm text-slate-600">
-                            Noch kein Konto?
-                            <button type="button" onclick="showAuthModal('register')"
-                                class="font-semibold text-blue-800 underline">
-                                Konto erstellen
-                            </button>
-                        </p>
-                    ` : ''}
-                    <div class="flex items-center justify-between gap-3 text-sm">
-                        <button type="button" onclick="openAdminContactModal()"
-                            class="text-left text-slate-600 underline">
-                            Kontakt Admin
-                        </button>
-                        ${isAdminLogin ? `
-                            <button type="button" onclick="showAuthModal('signin')"
-                                class="text-right font-semibold text-blue-800 underline">
-                                Zur normalen Anmeldung
-                            </button>
-                        ` : isRegistration ? `
-                            <button type="button" onclick="showAuthModal('signin')"
-                                class="text-right font-semibold text-blue-800 underline">
-                                Bereits registriert? Anmelden
-                            </button>
-                        ` : `
-                            <button type="button" onclick="showAuthModal('admin')"
-                                class="text-right font-semibold text-blue-800 underline">
-                                Admin Einloggen
+                    <div class="auth-submit-group">
+                        ${isRegistration ? '' : `
+                            <button type="button" onclick="sendPasswordReset()"
+                                class="block text-sm text-blue-800 underline">
+                                Passwort vergessen?
                             </button>
                         `}
+                        <p id="auth-error" class="text-sm text-rose-700" role="alert">${escapeHtml(errorMessage)}</p>
+                        <button type="submit"
+                            class="w-full rounded-lg bg-blue-900 px-4 py-2.5 font-semibold text-white hover:bg-blue-800">
+                            ${isRegistration ? 'Konto erstellen' : isAdminLogin ? 'Admin Einloggen' : 'Anmelden'}
+                        </button>
                     </div>
                 </form>`;
+            const modalLinks = document.getElementById('auth-modal-links');
+            modalLinks.innerHTML = `
+                <button type="button" onclick="openAdminContactModal()"
+                    class="text-left text-slate-600 underline">
+                    Admin Kontakt
+                </button>
+                ${isAdminLogin ? `
+                    <button type="button" onclick="showAuthModal('signin')"
+                        class="text-right font-semibold text-blue-800 underline">
+                        Zur normalen Anmeldung
+                    </button>
+                ` : isRegistration ? `
+                    <button type="button" onclick="showAuthModal('signin')"
+                        class="text-right font-semibold text-blue-800 underline">
+                        Bereits registriert? Anmelden
+                    </button>
+                ` : `
+                    <button type="button" onclick="showAuthModal('admin')"
+                        class="text-right font-semibold text-blue-800 underline">
+                        Admin Einloggen
+                    </button>
+                `}
+            `;
+            modalLinks.classList.remove('hidden');
+            document.querySelector('#modal > div').classList.add('auth-modal');
             document.getElementById('modal-confirm-btn').classList.add('hidden');
             document.getElementById('modal-cancel-btn').classList.add('hidden');
             document.getElementById('modal-input-container').classList.add('hidden');
@@ -3737,7 +3773,15 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         };
 
         let modalCallback = null;
+        function hideAuthModalLinks() {
+            const modalLinks = document.getElementById('auth-modal-links');
+            modalLinks.classList.add('hidden');
+            modalLinks.innerHTML = '';
+            document.querySelector('#modal > div').classList.remove('auth-modal');
+        }
+
         function openCustomModal(title, message, showInput, placeholder, callback, inputType = 'text', confirmBtnText = 'Verstanden') {
+            hideAuthModalLinks();
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-message').innerHTML = `<p>${message}</p>`;
             document.getElementById('modal-confirm-btn').innerText = confirmBtnText;
@@ -3765,6 +3809,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         }
 
         window.openRequestModal = function(title, callback) {
+            hideAuthModalLinks();
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-message').innerHTML = `
                 <p class="mb-3 text-slate-700 font-medium">Ihre Kontaktdaten aus dem Konto werden nach der Anfrage vertraulich mit dem Anbieter geteilt.</p>
@@ -3794,6 +3839,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             if (profileSnapshot.exists()) return profileSnapshot.data();
 
             return new Promise(resolve => {
+                hideAuthModalLinks();
                 document.getElementById('modal-title').innerText = "Kontaktdaten ergänzen";
                 document.getElementById('modal-message').innerHTML = `
                     <form id="profile-setup-form" class="space-y-4">
