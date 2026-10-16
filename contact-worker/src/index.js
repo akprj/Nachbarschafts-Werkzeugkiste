@@ -7,6 +7,7 @@ const FIREBASE_APP_ID = "nachbarschafts-werkzeugkiste-default";
 const ALLOWED_ORIGINS = new Set([
   "https://nachbarschafts-werkzeugkiste.web.app",
   "https://nachbarschafts-werkzeugkiste.firebaseapp.com",
+  "https://akprj.github.io",
   "http://localhost:3000",
   "http://127.0.0.1:3000"
 ]);
