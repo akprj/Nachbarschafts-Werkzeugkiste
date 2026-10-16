@@ -627,10 +627,31 @@
         min-height: min(70vh, 34rem);
     }
 
+    #modal > div.contact-modal {
+        display: flex;
+        flex-direction: column;
+        min-height: min(70vh, 34rem);
+    }
+
     #auth-form {
         display: flex;
         flex-direction: column;
         gap: 1rem;
+    }
+
+    #admin-contact-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    #admin-contact-form textarea {
+        border-color: rgba(20,48,58,.14) !important;
+        border-radius: 12px !important;
+        background: #fff !important;
+        color: #17303a !important;
+        min-height: 140px;
+        resize: vertical;
     }
 
     #auth-form .auth-password-field {
@@ -640,7 +661,8 @@
     #auth-form .auth-submit-group {
         display: flex;
         flex-direction: column;
-        gap: .5rem;
+        gap: .55rem;
+        margin-top: -.75rem;
     }
 
     #auth-modal-links {
@@ -2403,7 +2425,6 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             where,
             onSnapshot, 
         } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
         const firebaseConfig = {
             apiKey: "AIzaSyDUs97-IvWqWCY5VktkzSUJ5j-xgx2sg40",
             authDomain: "nachbarschafts-werkzeugkiste.firebaseapp.com",
@@ -2416,6 +2437,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
+        const ADMIN_CONTACT_WORKER_URL = 'https://nachbarschafts-werkzeugkiste-contact.nachbarschafts-werkzeugkiste.workers.dev';
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'nachbarschafts-werkzeugkiste-default';
         let currentUser = null;
@@ -2584,7 +2606,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                             class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
                             placeholder="name@beispiel.de">
                     </label>
-                    <label class="block text-sm font-medium text-slate-700 ${isRegistration ? '' : 'auth-password-field'}">
+                    <label class="block text-sm font-medium text-slate-700">
                         Passwort
                         <input id="auth-password" type="password"
                             autocomplete="${isRegistration ? 'new-password' : 'current-password'}"
@@ -2604,16 +2626,16 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                     <div class="auth-submit-group">
                         ${isRegistration ? '' : `
                             <button type="button" onclick="sendPasswordReset()"
-                                class="block self-end text-right text-sm text-blue-800 underline">
+                                class="self-end text-sm text-blue-800 underline">
                                 Passwort vergessen?
                             </button>
                         `}
-                        <p id="auth-error" class="text-sm text-rose-700" role="alert">${escapeHtml(errorMessage)}</p>
                         <button type="submit"
                             class="w-full rounded-lg bg-blue-900 px-4 py-2.5 font-semibold text-white hover:bg-blue-800">
                             ${isRegistration ? 'Konto erstellen' : isAdminLogin ? 'Admin Einloggen' : 'Anmelden'}
                         </button>
                     </div>
+                    <p id="auth-error" class="min-h-5 text-sm text-rose-700" role="alert">${escapeHtml(errorMessage)}</p>
                 </form>`;
             const modalLinks = document.getElementById('auth-modal-links');
             modalLinks.innerHTML = `
@@ -3269,11 +3291,13 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                 createdAt: Date.now()
             };
 
+            let submittedItemId = '';
             try {
                 if (db) {
                     const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
                     const newDocRef = doc(colRef);
                     newItem.id = newDocRef.id;
+                    submittedItemId = newDocRef.id;
                     const privateRef = doc(
                         db,
                         'artifacts',
@@ -3299,9 +3323,57 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                 }
                 document.getElementById('offer-form').reset();
                 switchTab('eintraege');
+                let notificationSent = false;
+                if (submittedItemId && currentUser) {
+                    try {
+                        const notificationResponse = await fetch(
+                            `${ADMIN_CONTACT_WORKER_URL}/notify-pending-listing`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    itemId: submittedItemId,
+                                    title,
+                                    category,
+                                    type,
+                                    details: desc,
+                                    ownerName: profile.name || currentUser.displayName || '',
+                                    ownerEmail: currentUser.email || ''
+                                })
+                            }
+                        );
+                        if (!notificationResponse.ok) {
+                            let notificationErrorDetails = '';
+                            try {
+                                const responseBody = await notificationResponse.json();
+                                if (typeof responseBody.error === 'string') {
+                                    notificationErrorDetails = `: ${responseBody.error}`;
+                                }
+                            } catch (error) {
+                                console.error(
+                                    "Could not read listing notification error response:",
+                                    error
+                                );
+                            }
+                            throw new Error(
+                                `Admin email notification failed with status ${notificationResponse.status}${notificationErrorDetails}.`
+                            );
+                        }
+                        notificationSent = true;
+                    } catch (notificationError) {
+                        console.error(
+                            "Listing was saved, but the administrator email notification failed:",
+                            notificationError
+                        );
+                    }
+                }
                 showInfoModal(
                     "Zur Prüfung eingereicht",
-                    "Ihr Eintrag wird nach der Freigabe durch den Administrator in der Verleih-Bibliothek bzw. unter „Zu verschenken“ angezeigt."
+                    notificationSent
+                        ? "Ihr Eintrag wurde eingereicht und der Administrator per E-Mail benachrichtigt. Nach der Freigabe wird er in der Verleih-Bibliothek bzw. unter „Zu verschenken“ angezeigt."
+                        : "Ihr Eintrag wurde gespeichert und wartet auf die Freigabe. Die E-Mail-Benachrichtigung an den Administrator konnte nicht gesendet werden; bitte informieren Sie ihn direkt."
                 );
             } catch (err) {
                 console.error("Error adding item:", err);
@@ -3766,9 +3838,148 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
         };
 
         window.openAdminContactModal = function() {
-            showInfoModal(
-                "Admin Kontakt",
-                "E-Mail: <a href='mailto:noumanahmad1987@gmail.com' class='text-blue-600 underline'>noumanahmad1987@gmail.com</a>"
+            const returnMode = pendingAuthMode || 'signin';
+            const contactUser = currentUser;
+            const isSignedInContact = Boolean(contactUser);
+            hideAuthModalLinks();
+            document.querySelector('#modal > div').classList.add('contact-modal');
+            document.getElementById('modal-title').innerText = "Admin Kontakt";
+            document.getElementById('modal-message').innerHTML = `
+                <form id="admin-contact-form">
+                    ${isSignedInContact ? '' : `
+                        <label class="block text-sm font-medium text-slate-700">
+                            Vollständiger Name
+                            <input id="admin-contact-name" type="text" maxlength="120" autocomplete="name" required
+                                class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5">
+                        </label>
+                        <label class="block text-sm font-medium text-slate-700">
+                            E-Mail-Adresse
+                            <input id="admin-contact-email" type="email" maxlength="254" autocomplete="email" required
+                                class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5">
+                        </label>
+                    `}
+                    <label class="block text-sm font-medium text-slate-700">
+                        Details zum Anliegen
+                        <textarea id="admin-contact-details" maxlength="5000" required
+                            class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"></textarea>
+                    </label>
+                    <p id="admin-contact-error" class="text-sm text-rose-300" role="alert"></p>
+                    <div class="flex flex-wrap justify-between gap-3">
+                        <button id="admin-contact-return" type="button"
+                            class="rounded-lg border border-white/30 px-4 py-2 text-sm font-semibold text-white">
+                            ${isSignedInContact ? 'Schließen' : 'Zur Anmeldung'}
+                        </button>
+                        <button type="submit"
+                            class="rounded-lg bg-blue-900 px-4 py-2 font-semibold text-white hover:bg-blue-800">
+                            Nachricht senden
+                        </button>
+                    </div>
+                </form>`;
+            document.getElementById('modal-confirm-btn').classList.add('hidden');
+            document.getElementById('modal-cancel-btn').classList.add('hidden');
+            document.getElementById('modal-input-container').classList.add('hidden');
+            modalCallback = null;
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('admin-contact-return').addEventListener(
+                'click',
+                () => {
+                    if (isSignedInContact) {
+                        document.getElementById('modal').classList.add('hidden');
+                        document.querySelector('#modal > div').classList.remove('contact-modal');
+                    } else {
+                        showAuthModal(returnMode);
+                    }
+                }
+            );
+            document.getElementById('admin-contact-form').addEventListener(
+                'submit',
+                async event => {
+                    event.preventDefault();
+                    const form = event.currentTarget;
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    const errorElement = document.getElementById('admin-contact-error');
+                    submitButton.disabled = true;
+                    submitButton.textContent = "Wird gesendet...";
+                    errorElement.textContent = '';
+
+                    try {
+                        if (!ADMIN_CONTACT_WORKER_URL) {
+                            errorElement.textContent =
+                                "Der Kontaktdienst ist noch nicht konfiguriert. Bitte informieren Sie den Administrator.";
+                            return;
+                        }
+
+                        let fullName;
+                        let email;
+                        if (contactUser) {
+                            email = contactUser.email?.trim() || '';
+                            try {
+                                const profileSnapshot = await getDoc(doc(
+                                    db,
+                                    'artifacts', appId, 'private', 'data',
+                                    'user_profiles', contactUser.uid
+                                ));
+                                const profileName = profileSnapshot.exists()
+                                    ? profileSnapshot.data().name
+                                    : '';
+                                fullName = typeof profileName === 'string' && profileName.trim()
+                                    ? profileName.trim()
+                                    : contactUser.displayName?.trim() || '';
+                            } catch (error) {
+                                console.error("Could not load the contact sender's account profile:", error);
+                                errorElement.textContent =
+                                    "Ihre Kontaktdaten konnten nicht aus dem Konto geladen werden. Bitte versuchen Sie es erneut.";
+                                return;
+                            }
+                            if (!fullName || !email) {
+                                errorElement.textContent =
+                                    "Name oder E-Mail-Adresse fehlen in Ihrem Konto. Bitte prüfen Sie Ihre Kontodaten.";
+                                return;
+                            }
+                        } else {
+                            fullName = document.getElementById('admin-contact-name').value.trim();
+                            email = document.getElementById('admin-contact-email').value.trim();
+                        }
+
+                        const response = await fetch(ADMIN_CONTACT_WORKER_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                fullName,
+                                email,
+                                details: document.getElementById('admin-contact-details').value.trim()
+                            })
+                        });
+
+                        if (!response.ok) {
+                            const contactErrorMessages = {
+                                429: "Zu viele Anfragen. Bitte versuchen Sie es später erneut.",
+                                502: "Der E-Mail-Dienst hat die Nachricht abgelehnt. Bitte informieren Sie den Administrator.",
+                                503: "Der Kontaktdienst ist gerade nicht erreichbar. Bitte versuchen Sie es später erneut."
+                            };
+                            errorElement.textContent = contactErrorMessages[response.status]
+                                || "Die Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.";
+                            return;
+                        }
+
+                        openCustomModal(
+                            "Nachricht gesendet",
+                            "Ihre Nachricht wurde zum Versand an den Administrator übermittelt.",
+                            false,
+                            '',
+                            isSignedInContact ? null : () => showAuthModal(returnMode)
+                        );
+                    } catch (error) {
+                        console.error("Could not submit the admin contact request:", error);
+                        errorElement.textContent =
+                            "Der Kontaktdienst ist gerade nicht erreichbar. Bitte versuchen Sie es später erneut.";
+                    } finally {
+                        if (submitButton.isConnected) {
+                            submitButton.disabled = false;
+                            submitButton.textContent = "Nachricht senden";
+                        }
+                    }
+                }
             );
         };
 
@@ -3777,7 +3988,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             const modalLinks = document.getElementById('auth-modal-links');
             modalLinks.classList.add('hidden');
             modalLinks.innerHTML = '';
-            document.querySelector('#modal > div').classList.remove('auth-modal');
+            document.querySelector('#modal > div').classList.remove('auth-modal', 'contact-modal');
         }
 
         function openCustomModal(title, message, showInput, placeholder, callback, inputType = 'text', confirmBtnText = 'Verstanden') {
@@ -4009,6 +4220,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
 </script>
 
 
-    
+
+
 </body>
 </html>

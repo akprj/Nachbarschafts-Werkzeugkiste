@@ -54,6 +54,16 @@ The deny-all Realtime Database rules can be deployed separately if needed:
 firebase deploy --only database
 ```
 
+## Admin contact form email
+
+The Admin Kontakt form sends through a Cloudflare Worker so email sending does
+not require a Firebase Blaze plan. Follow the setup and deployment steps in
+[`contact-worker/README.md`](../contact-worker/README.md). The Resend API key
+must be stored as a Cloudflare Worker secret, never in this page or repository.
+Firebase does not provide a built-in SMTP server or direct email-sending
+service; the Worker also sends administrator notifications for new listings
+awaiting approval through the same Resend setup.
+
 The legacy `recoverUserAccount` Cloud Function now returns HTTP 410 and no
 longer accesses ID mappings. Deploy the functions source to replace the
 previous implementation:
