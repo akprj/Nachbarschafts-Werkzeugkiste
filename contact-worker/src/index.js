@@ -187,5 +187,23 @@ async function notifyPendingListing(request, env, data, origin) {
     return jsonResponse({ error: "Email provider rejected the notification." }, 502, origin);
   }
 
-  return jsonResponse({ success: true }, 200, origin);
+  let resendMessageId;
+  try {
+    const resendResult = await resendResponse.json();
+    if (typeof resendResult.id === "string") {
+      resendMessageId = resendResult.id;
+    }
+  } catch (error) {
+    console.error("Could not read Resend listing notification response:", error);
+  }
+
+  console.log("Resend accepted listing notification:", {
+    itemId,
+    messageId: resendMessageId || null
+  });
+
+  return jsonResponse({
+    success: true,
+    ...(resendMessageId ? { messageId: resendMessageId } : {})
+  }, 200, origin);
 }

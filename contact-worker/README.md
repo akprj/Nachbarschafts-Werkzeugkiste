@@ -44,7 +44,9 @@ submitted Firestore listing is still pending and belongs to that account.
 Deploy both the Worker and Firebase Hosting after changing notification code.
 To diagnose a failed notification, run `npx wrangler@latest tail` from this
 directory while reproducing the submission. Resend rejection logs include the
-provider's error response; they do not expose the API key to the browser.
+provider's error response. Successful listing notifications are also logged
+with their item ID and Resend message ID so they can be matched to the Resend
+dashboard. These logs do not expose the API key.
 
 ## Resend sender restrictions
 
