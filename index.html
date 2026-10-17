@@ -3292,6 +3292,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
             };
 
             let submittedItemId = '';
+            let profile;
             try {
                 if (db) {
                     const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'items');
@@ -3307,7 +3308,7 @@ header > div:first-child > .header-layout > .main-navigation .nav-tab:not(.activ
                         'item_private',
                         newDocRef.id
                     );
-                    const profile = await getCurrentUserProfile();
+                    profile = await getCurrentUserProfile();
                     if (!profile) return;
                     const batch = writeBatch(db);
                     batch.set(newDocRef, newItem);
